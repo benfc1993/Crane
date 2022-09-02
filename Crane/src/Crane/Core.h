@@ -1,5 +1,5 @@
 #pragma once
 
-#include "Crane/Log.h"
-#include "Crane/Application.h"
-#include "Crane/EntryPoint.h"
+#include "Log.h"
+#include "Application.h"
+#include "EntryPoint.h"

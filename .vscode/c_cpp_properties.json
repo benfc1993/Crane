@@ -4,7 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Crane/src"
+                "${workspaceFolder}/Crane/src/**",
+                "${workspaceFolder}/Crane/vendor",
+                "${workspaceFolder}/Crane/vendor/sdplog/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
