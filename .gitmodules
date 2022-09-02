@@ -1,3 +1,6 @@
 [submodule "Crane/vendor/spdlog"]
 	path = Crane/vendor/spdlog
 	url = git@github.com:gabime/spdlog.git
+[submodule "Crane/vendor/GLFW"]
+	path = Crane/vendor/GLFW
+	url = git@github.com:benfc1993/glfw.git

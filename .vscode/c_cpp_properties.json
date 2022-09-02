@@ -1,20 +1,56 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/Crane/src/**",
-                "${workspaceFolder}/Crane/vendor",
-                "${workspaceFolder}/Crane/vendor/sdplog/**"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c17",
-            "cppStandard": "c++14",
-            "intelliSenseMode": "linux-clang-x64",
-            "configurationProvider": "ms-vscode.makefile-tools"
-        }
+  "configurations": [
+  {
+    "name": "Crane Debug",
+    "includePath": [
+      "${workspaceFolder}/**"
+      ,"/home/ben/Projects/CraneEngine/Crane/src"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
     ],
-    "version": 4
+    "defines": [
+      "CR_DEBUG"
+    ],
+    "compilerPath": "/usr/bin/g++",
+    "intelliSenseMode": "gcc-x64",
+    "compilerArgs": [
+      ""
+    ]
+  }
+  ,{
+    "name": "Crane Release",
+    "includePath": [
+      "${workspaceFolder}/**"
+      ,"/home/ben/Projects/CraneEngine/Crane/src"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
+    ],
+    "defines": [
+      "CR_RELEASE"
+    ],
+    "compilerPath": "/usr/bin/g++",
+    "intelliSenseMode": "gcc-x64",
+    "compilerArgs": [
+      ""
+    ]
+  }
+  ,{
+    "name": "Crane Dist",
+    "includePath": [
+      "${workspaceFolder}/**"
+      ,"/home/ben/Projects/CraneEngine/Crane/src"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
+    ],
+    "defines": [
+      "CR_DIST"
+    ],
+    "compilerPath": "/usr/bin/g++",
+    "intelliSenseMode": "gcc-x64",
+    "compilerArgs": [
+      ""
+    ]
+  }
+  ],
+  "version": 4
 }

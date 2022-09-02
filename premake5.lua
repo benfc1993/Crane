@@ -1,3 +1,6 @@
+require "vscode"
+
+
 workspace "Crane"
     architecture "x64"
 
@@ -8,15 +11,25 @@ workspace "Crane"
         "Dist"
     }
 
-outputir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+    outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+    IncludeDir = {}
+
+    IncludeDir["GLFW"] = "Crane/vendor/GLFW/include"
+
+    include "Crane/vendor/GLFW"
 
 project "Crane"
     location "Crane"
     kind "SharedLib"
     language "c++"
 
-    targetdir ("bin/" .. outputir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputir .. "/%{prj.name}")
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "crpch.h"
+    pchsource "Crane/src/crpch.cpp"
 
     files
     {
@@ -28,6 +41,12 @@ project "Crane"
     {
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
     }
 
     
@@ -38,25 +57,25 @@ project "Crane"
         
         defines
         {
-            "HZ_PLATFORM_WINDOWS",
-            "HZ_BUILD_DLL"
+            "CR_PLATFORM_WINDOWS",
+            "CR_BUILD_DLL"
         }
         
-        -- postbuildcommands
-        -- {
-        --     ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputir .. "/Sandbox")
-        -- }
+        postbuildcommands
+        {
+            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+        }
 
     filter "configurations:Debug"
-        defines "HZ_DEBUG"
+        defines "CR_DEBUG"
         symbols "on"
     
     filter "configurations:Release"
-        defines "HZ_RELEASE"
+        defines "CR_RELEASE"
         optimize "on"
     
     filter "configurations:Dist"
-        defines "HZ_DIST"
+        defines "CR_DIST"
         optimize "on"
 
 
@@ -65,8 +84,8 @@ project "Sandbox"
     kind "ConsoleApp"
     language "c++"
 
-    targetdir ("bin/" .. outputir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputir .. "/%{prj.name}")
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
@@ -94,18 +113,18 @@ project "Sandbox"
         
         defines
         {
-            "HZ_PLATFORM_WINDOWS",
+            "CR_PLATFORM_WINDOWS",
         }
         
 
     filter "configurations:Debug"
-        defines "HZ_DEBUG"
+        defines "CR_DEBUG"
         symbols "on"
     
     filter "configurations:Release"
-        defines "HZ_RELEASE"
+        defines "CR_RELEASE"
         optimize "on"
     
     filter "configurations:Dist"
-        defines "HZ_DIST"
+        defines "CR_DIST"
         optimize "on"

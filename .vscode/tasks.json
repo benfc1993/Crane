@@ -6,7 +6,6 @@
 			"label": "build debug",
 			"command": "/usr/bin/make",
 			"args": [
-				"config=debug"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
