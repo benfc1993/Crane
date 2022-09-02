@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Crane/Log.h"
+
 #ifdef CR_PLATFORM_WINDOWS
 #include <windows.h>
 #endif

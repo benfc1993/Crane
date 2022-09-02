@@ -1,19 +1,24 @@
 #include "crpch.h"
 
 #include "Application.h"
-#include "Crane/Events/ApplicationEvent.h"
+
 #include "Crane/Log.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Crane
 {
-    Application::Application() {}
+    Application::Application()
+    {
+        m_Window = std::unique_ptr<Window>(Window::Create());
+    }
     Application::~Application() {}
 
     void Application::Run()
     {
-        WindowResizeEvent e(1200, 720);
-        CR_TRACE(e);
-        while (true)
-            ;
+        while (m_Running)
+        {
+            m_Window->OnUpdate();
+        }
     }
 }

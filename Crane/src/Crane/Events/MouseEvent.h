@@ -1,5 +1,7 @@
 #pragma once
 
+#include "crpch.h"
+
 #include "Event.h"
 
 namespace Crane
