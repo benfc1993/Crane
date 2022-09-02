@@ -1,10 +1,7 @@
 #pragma once
 
 // For use by Crane applications
+#include "Crane/Core/Base.h"
 
-#include "Crane/Application.h"
-#include "Crane/Log.h"
-
-// ---Entry Point---------------------
-#include "Crane/EntryPoint.h"
-// -----------------------------------
+#include "Crane/Core/Application.h"
+#include "Crane/Core/Log.h"

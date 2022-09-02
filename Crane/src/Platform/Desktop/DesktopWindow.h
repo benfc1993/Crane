@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crane/Window.h"
+#include "Crane/Core/Window.h"
 
 #include <GLFW/glfw3.h>
 

@@ -10,6 +10,7 @@
     ],
     "defines": [
       "CR_DEBUG"
+      ,"CR_ENABLE_ASSERTS"
     ],
     "compilerPath": "/usr/bin/g++",
     "intelliSenseMode": "gcc-x64",

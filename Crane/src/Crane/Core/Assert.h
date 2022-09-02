@@ -1,5 +1,3 @@
-#pragma once
-
 #ifdef CR_ENABLE_ASSERTS
 #define CR_ASSERT(x, ...)                                   \
     {                                                       \
@@ -19,5 +17,3 @@
 #define CR_ASSERT(x, ...)
 #define CR_CORE_ASSERT(x, ...)
 #endif
-
-#define BIT(x) (1 << x)

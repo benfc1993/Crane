@@ -1,8 +1,6 @@
 #pragma once
 
-#include "crpch.h"
-
-#include "Crane/Core.h"
+#include "Crane/Core/Base.h"
 #include "Crane/Events/Event.h"
 
 namespace Crane

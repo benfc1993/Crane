@@ -45,6 +45,7 @@ project "Crane"
 	links 
 	{ 
 		"GLFW",
+		--TODO: remove after add OpenGL
         "GL"
 	}
 
@@ -65,7 +66,11 @@ project "Crane"
 		}
 
 	filter "configurations:Debug"
-		defines "CR_DEBUG"
+		defines
+        {
+            "CR_DEBUG",
+            "CR_ENABLE_ASSERTS"
+        }
 		symbols "On"
 
 	filter "configurations:Release"
