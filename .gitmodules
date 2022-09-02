@@ -1,0 +1,3 @@
+[submodule "Crane/vendor/spdlog"]
+	path = Crane/vendor/spdlog
+	url = git@github.com:gabime/spdlog.git

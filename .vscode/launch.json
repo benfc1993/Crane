@@ -13,7 +13,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [{"name": "config", "value": "Debug"}],
-      "externalConsole": false,
+      "externalConsole": true,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -37,8 +37,8 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [{"name": "config", "value": "Debug"}],
-      "externalConsole": false,
+      "environment": [{"name": "config", "value": "Release"}],
+      "externalConsole": true,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -62,8 +62,8 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [{"name": "config", "value": "Debug"}],
-      "externalConsole": false,
+      "environment": [{"name": "config", "value": "Dist"}],
+      "externalConsole": true,
       "MIMode": "gdb",
       "setupCommands": [
         {

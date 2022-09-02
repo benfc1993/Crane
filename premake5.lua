@@ -26,7 +26,8 @@ project "Crane"
 
     includedirs 
     {
-
+		"%{prj.name}/src",
+		"%{prj.name}/vendor/spdlog/include",
     }
 
     
@@ -75,7 +76,9 @@ project "Sandbox"
 
     includedirs 
     {
-        "Crane/src"
+        "Crane/src",
+        "Crane/vendor",
+        "Crane/vendor/spdlog/include"
     }
 
     links

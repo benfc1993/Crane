@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
-cd ../../
+cd ../
 Crane/vendor/bin/premake5 gmake2

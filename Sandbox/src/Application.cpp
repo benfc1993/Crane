@@ -1,14 +1,13 @@
-#include "Application.h"
+#include <Crane.h>
 
-using namespace Crane;
-
-void Test::Entry()
+class Sandbox : public Crane::Application
 {
-    Run();
-}
+public:
+    Sandbox() {}
+    ~Sandbox() {}
+};
 
-int main()
+Crane::Application *Crane::CreateApplication()
 {
-    Test test;
-    test.Entry();
+    return new Sandbox();
 }
