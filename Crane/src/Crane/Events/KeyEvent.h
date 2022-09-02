@@ -19,7 +19,7 @@ namespace Crane
     class KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+        KeyPressedEvent(const int keycode, bool isRepeat = false)
             : KeyEvent(keycode), m_IsRepeat(isRepeat) {}
 
         bool IsRepeat() const { return m_IsRepeat; }
@@ -27,7 +27,7 @@ namespace Crane
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
+            ss << "KeyPressedEvent: " << m_keyCode << " (repeat = " << m_IsRepeat << ")";
             return ss.str();
         }
 

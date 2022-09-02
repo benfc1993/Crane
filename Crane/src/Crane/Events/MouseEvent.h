@@ -27,10 +27,10 @@ namespace Crane
         float m_MouseX, m_MouseY;
     };
 
-    class MouseScroledEvent : public Event
+    class MouseScrolledEvent : public Event
     {
     public:
-        MouseScroledEvent(float xOffset, float yOffset) : m_XOffset(xOffset), m_YOffset(yOffset) {}
+        MouseScrolledEvent(float xOffset, float yOffset) : m_XOffset(xOffset), m_YOffset(yOffset) {}
 
         inline float GetXOffset() const { return m_XOffset; }
         inline float GetYOffset() const { return m_YOffset; }

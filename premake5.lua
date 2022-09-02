@@ -1,130 +1,128 @@
 require "vscode"
 
-
 workspace "Crane"
-    architecture "x64"
+	architecture "x64"
 
-    configurations
-    {
-        "Debug",
-        "Release",
-        "Dist"
-    }
+	configurations
+	{
+		"Debug",
+		"Release",
+		"Dist"
+	}
 
+outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-    outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Crane/vendor/GLFW/include"
 
-    IncludeDir = {}
-
-    IncludeDir["GLFW"] = "Crane/vendor/GLFW/include"
-
-    include "Crane/vendor/GLFW"
+include "Crane/vendor/GLFW"
 
 project "Crane"
-    location "Crane"
-    kind "SharedLib"
-    language "c++"
+	location "Crane"
+	kind "SharedLib"
+	language "C++"
 
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    pchheader "crpch.h"
-    pchsource "Crane/src/crpch.cpp"
+	pchheader "crpch.h"
+	pchsource "Crane/src/crpch.cpp"
 
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
-    }
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
 
-    includedirs 
-    {
+	includedirs
+	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-        "%{IncludeDir.GLFW}"
-    }
+		"%{IncludeDir.GLFW}"
+	}
 
-    links
-    {
-        "GLFW",
-    }
+	links 
+	{ 
+		"GLFW",
+        "GL"
+	}
 
-    
-    filter "system:windows"
-        cppdialect "c++17"
-        staticruntime "on"
-        systemversion "latest"
-        
-        defines
-        {
-            "CR_PLATFORM_WINDOWS",
-            "CR_BUILD_DLL"
-        }
-        
-        postbuildcommands
-        {
-            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
-        }
+	filter "system:windows"
+		cppdialect "C++17"
+		staticruntime "On"
+		systemversion "latest"
 
-    filter "configurations:Debug"
-        defines "CR_DEBUG"
-        symbols "on"
-    
-    filter "configurations:Release"
-        defines "CR_RELEASE"
-        optimize "on"
-    
-    filter "configurations:Dist"
-        defines "CR_DIST"
-        optimize "on"
+		defines
+		{
+			"CR_PLATFORM_WINDOWS",
+			"CR_BUILD_DLL"
+		}
 
+		postbuildcommands
+		{
+			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+		}
+
+	filter "configurations:Debug"
+		defines "CR_DEBUG"
+		symbols "On"
+
+	filter "configurations:Release"
+		defines "CR_RELEASE"
+		optimize "On"
+
+	filter "configurations:Dist"
+		defines "CR_DIST"
+		optimize "On"
 
 project "Sandbox"
-    location "Sandbox"
-    kind "ConsoleApp"
-    language "c++"
+	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
 
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
-    }
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
 
-    includedirs 
-    {
-        "Crane/src",
-        "Crane/vendor",
-        "Crane/vendor/spdlog/include"
-    }
+	includedirs
+	{
+		"Crane/vendor/spdlog/include",
+		"Crane/src"
+	}
 
-    links
-    {
-        "Crane"
-    }
+	links
+	{
+		"Crane"
+	}
 
-    
-    filter "system:windows"
-        cppdialect "c++17"
-        staticruntime "on"
-        systemversion "latest"
-        
-        defines
+	filter "system:windows"
+		cppdialect "C++17"
+		staticruntime "On"
+		systemversion "latest"
+
+		defines
+		{
+			"CR_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines
         {
-            "CR_PLATFORM_WINDOWS",
+            "CR_DEBUG",
+            "CR_ENABLE_ASSERTS"
         }
-        
+		symbols "On"
 
-    filter "configurations:Debug"
-        defines "CR_DEBUG"
-        symbols "on"
-    
-    filter "configurations:Release"
-        defines "CR_RELEASE"
-        optimize "on"
-    
-    filter "configurations:Dist"
-        defines "CR_DIST"
-        optimize "on"
+	filter "configurations:Release"
+		defines "CR_RELEASE"
+		optimize "On"
+
+	filter "configurations:Dist"
+		defines "CR_DIST"
+		optimize "On"

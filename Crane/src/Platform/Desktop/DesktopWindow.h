@@ -7,11 +7,11 @@
 namespace Crane
 {
 
-    class WindowsWindow : public Window
+    class DesktopWindow : public Window
     {
     public:
-        WindowsWindow(const WindowProps &props);
-        virtual ~WindowsWindow();
+        DesktopWindow(const WindowProps &props);
+        virtual ~DesktopWindow();
 
         void OnUpdate() override;
 
