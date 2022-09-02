@@ -8,6 +8,7 @@
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"
@@ -28,6 +29,7 @@
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"
@@ -47,6 +49,7 @@
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"

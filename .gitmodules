@@ -4,3 +4,6 @@
 [submodule "Crane/vendor/GLFW"]
 	path = Crane/vendor/GLFW
 	url = git@github.com:benfc1993/glfw.git
+[submodule "Crane/vendor/imgui"]
+	path = Crane/vendor/imgui
+	url = git@github.com:benfc1993/imgui.git

@@ -7,3 +7,4 @@ rm -rf Crane/Crane
 rm -rf Sandbox/Sandbox
 rm -rf Crane/vendor/GLAD/GLAD
 rm -rf Crane/vendor/GLFW/GLFW
+rm -rf Crane/vendor/imgui/ImGui
