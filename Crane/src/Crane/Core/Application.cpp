@@ -3,7 +3,7 @@
 #include "Crane/Core/Application.h"
 #include "Crane/Core/Log.h"
 
-#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Crane
 {

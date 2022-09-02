@@ -15,9 +15,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Crane/vendor/GLFW/include"
+IncludeDir["GLAD"] = "Crane/vendor/GLAD/include"
 
 include "Crane/vendor/GLFW"
-
+include "Crane/vendor/GLAD"
 project "Crane"
 	location "Crane"
 	kind "SharedLib"
@@ -39,14 +40,19 @@ project "Crane"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLAD}"
 	}
 
 	links 
 	{ 
 		"GLFW",
-		--TODO: remove after add OpenGL
-        "GL"
+		"GLAD",
+	}
+
+	defines
+	{
+		"GLFW_INCLUDE_NONE",
 	}
 
 	filter "system:windows"

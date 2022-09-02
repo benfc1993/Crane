@@ -7,9 +7,11 @@
       ,"/home/ben/Projects/CraneEngine/Crane/src"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
     ],
     "defines": [
-      "CR_DEBUG"
+      "GLFW_INCLUDE_NONE"
+      ,"CR_DEBUG"
       ,"CR_ENABLE_ASSERTS"
     ],
     "compilerPath": "/usr/bin/g++",
@@ -25,9 +27,11 @@
       ,"/home/ben/Projects/CraneEngine/Crane/src"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
     ],
     "defines": [
-      "CR_RELEASE"
+      "GLFW_INCLUDE_NONE"
+      ,"CR_RELEASE"
     ],
     "compilerPath": "/usr/bin/g++",
     "intelliSenseMode": "gcc-x64",
@@ -42,9 +46,11 @@
       ,"/home/ben/Projects/CraneEngine/Crane/src"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
       ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
+      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
     ],
     "defines": [
-      "CR_DIST"
+      "GLFW_INCLUDE_NONE"
+      ,"CR_DIST"
     ],
     "compilerPath": "/usr/bin/g++",
     "intelliSenseMode": "gcc-x64",
