@@ -5,19 +5,18 @@
 			"type": "shell",
 			"label": "Premake",
 			"command": "cd ${workspaceFolder}/scripts && ./setup.sh",
-			"args": [
-			],
+			"args": [],
 			"group": "none",
-			"detail": "Premake: Create build files"
+			"detail": "Premake: Create build files",
+			"problemMatcher": []
 		},
 		{
 			"type": "cppbuild",
 			"label": "build debug",
 			"command": "/usr/bin/make",
-			"args": [
-			],
+			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}",
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": [
 				"$gcc"
