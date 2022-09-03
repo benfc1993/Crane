@@ -8,7 +8,6 @@ public:
 
     void OnUpdate() override
     {
-        CR_INFO("ExampleLayer::OnUpdate");
     }
 
     void OnEvent(Crane::Event &event) override

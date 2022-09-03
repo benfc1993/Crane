@@ -2,6 +2,15 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"type": "shell",
+			"label": "Premake",
+			"command": "cd ${workspaceFolder}/scripts && ./setup.sh",
+			"args": [
+			],
+			"group": "none",
+			"detail": "Premake: Create build files"
+		},
+		{
 			"type": "cppbuild",
 			"label": "build debug",
 			"command": "/usr/bin/make",

@@ -19,7 +19,7 @@ namespace Crane
     class KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(const int keycode, bool isRepeat = false)
+        KeyPressedEvent(int keycode, bool isRepeat = false)
             : KeyEvent(keycode), m_IsRepeat(isRepeat) {}
 
         bool IsRepeat() const { return m_IsRepeat; }
@@ -49,5 +49,21 @@ namespace Crane
         }
 
         EVENT_CLASS_TYPE(KeyReleased)
+    };
+
+    class KeyTypedEvent : public KeyEvent
+    {
+    public:
+        KeyTypedEvent(int keycode)
+            : KeyEvent(keycode) {}
+
+        std::string ToString() const override
+        {
+            std::stringstream ss;
+            ss << "KeyTypedEvent: " << m_keyCode;
+            return ss.str();
+        }
+
+        EVENT_CLASS_TYPE(KeyTyped)
     };
 }
