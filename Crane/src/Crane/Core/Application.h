@@ -4,6 +4,7 @@
 #include "Crane/Core/Window.h"
 #include "Crane/Core/LayerStack.h"
 #include "Crane/Events/ApplicationEvent.h"
+#include "Crane/ImGui/ImGuiLayer.h"
 
 namespace Crane
 {
@@ -28,6 +29,7 @@ namespace Crane
         bool OnWindowClose(WindowCloseEvent &e);
 
         std::unique_ptr<Window> m_Window;
+        ImGuiLayer *m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
 
