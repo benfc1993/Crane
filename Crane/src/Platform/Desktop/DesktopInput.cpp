@@ -1,6 +1,6 @@
 #include "crpch.h"
 
-#include "DesktopInput.h"
+#include "Crane/Input/Input.h"
 
 #include "Crane/Core/Application.h"
 
@@ -9,23 +9,21 @@
 namespace Crane
 {
 
-    Input *Input::s_Instance = new DesktopInput();
-
-    bool DesktopInput::IsKeyPressedImpl(int keycode)
+    bool Input::IsKeyPressed(int keycode)
     {
         auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
         auto state = glfwGetKey(window, keycode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    bool DesktopInput::IsMouseButtonPressedImpl(int button)
+    bool Input::IsMouseButtonPressed(int button)
     {
         auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
         auto state = glfwGetMouseButton(window, button);
         return state == GLFW_PRESS;
     }
 
-    std::pair<float, float> DesktopInput::GetMousePositionImpl()
+    std::pair<float, float> Input::GetMousePosition()
     {
         auto window = static_cast<GLFWwindow *>(Application::Get().GetWindow().GetNativeWindow());
         double xpos, ypos;
@@ -33,15 +31,15 @@ namespace Crane
         return {(float)xpos, (float)ypos};
     }
 
-    float DesktopInput::GetMouseXImpl()
+    float Input::GetMouseX()
     {
-        auto [x, y] = GetMousePositionImpl();
+        auto [x, y] = GetMousePosition();
         return x;
     }
 
-    float DesktopInput::GetMouseYImpl()
+    float Input::GetMouseY()
     {
-        auto [x, y] = GetMousePositionImpl();
+        auto [x, y] = GetMousePosition();
         return y;
     }
 }
