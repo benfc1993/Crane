@@ -5,6 +5,7 @@
 #include "Crane/Core/LayerStack.h"
 #include "Crane/Events/ApplicationEvent.h"
 #include "Crane/ImGui/ImGuiLayer.h"
+#include "Crane/Renderer/Shader.h"
 
 namespace Crane
 {
@@ -32,6 +33,9 @@ namespace Crane
         ImGuiLayer *m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
+
+        unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+        std::unique_ptr<Shader> m_Shader;
 
     private:
         static Application *s_Instance;

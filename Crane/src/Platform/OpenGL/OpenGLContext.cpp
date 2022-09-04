@@ -16,6 +16,11 @@ namespace Crane
         glfwMakeContextCurrent(m_WindowHandle);
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         CR_CORE_ASSERT(status, "Failed to initialize GLAD");
+
+        CR_CORE_INFO("OpenGL Info:");
+        CR_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
+        CR_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
+        CR_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
     }
 
     void OpenGLContext::SwapBuffers()
