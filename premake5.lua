@@ -26,16 +26,16 @@ include "Crane/vendor/imgui"
 
 project "Crane"
 	location "Crane"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
-	staticruntime "off"
-
+	cppdialect "C++17"
+	staticruntime "on"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "crpch.h"
 	pchsource "Crane/src/crpch.cpp"
-
+	
 	files
 	{
 		"%{prj.name}/src/**.h",
@@ -43,7 +43,7 @@ project "Crane"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
-
+	
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -53,17 +53,19 @@ project "Crane"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}"
 	}
-
+	
 	links 
 	{ 
 		"GLFW",
 		"GLAD",
 		"ImGui",
 	}
-
+	
+	
 	defines
 	{
 		"GLFW_INCLUDE_NONE",
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	filter "system:windows"
@@ -89,23 +91,24 @@ project "Crane"
             "CR_ENABLE_ASSERTS"
         }
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "CR_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "CR_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -145,14 +148,14 @@ project "Sandbox"
 			"CR_ENABLE_ASSERTS"
 		}
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "CR_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "CR_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
