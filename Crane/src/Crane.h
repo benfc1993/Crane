@@ -5,7 +5,6 @@
 #include "Crane/Core/Base.h"
 
 #include "Crane/Core/Application.h"
-#include "Crane/Core/Log.h"
 
 #include "Crane/Input/Input.h"
 

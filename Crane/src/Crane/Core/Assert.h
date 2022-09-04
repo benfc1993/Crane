@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef CR_ENABLE_ASSERTS
 #define CR_ASSERT(x, ...)                                   \
     {                                                       \

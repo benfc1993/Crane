@@ -26,16 +26,17 @@ include "Crane/vendor/imgui"
 
 project "Crane"
 	location "Crane"
-	kind "StaticLib"
+	kind "SharedLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
+
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "crpch.h"
 	pchsource "Crane/src/crpch.cpp"
-	
+
 	files
 	{
 		"%{prj.name}/src/**.h",
@@ -43,7 +44,7 @@ project "Crane"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
-	
+
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -53,14 +54,14 @@ project "Crane"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}"
 	}
-	
+
 	links 
 	{ 
 		"GLFW",
 		"GLAD",
 		"ImGui",
 	}
-	
+
 	
 	defines
 	{
@@ -69,7 +70,6 @@ project "Crane"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines
@@ -77,11 +77,6 @@ project "Crane"
 			"CR_PLATFORM_WINDOWS",
 			"CR_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
-		}
-
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
@@ -108,7 +103,7 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -133,7 +128,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines
