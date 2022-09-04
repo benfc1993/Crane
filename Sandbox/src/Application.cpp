@@ -1,5 +1,4 @@
 #include <Crane.h>
-#include <Crane/Core/EntryPoint.h>
 
 class ExampleLayer : public Crane::Layer
 {
