@@ -7,3 +7,6 @@
 [submodule "Crane/vendor/imgui"]
 	path = Crane/vendor/imgui
 	url = git@github.com:benfc1993/imgui.git
+[submodule "Crane/vendor/glm"]
+	path = Crane/vendor/glm
+	url = git@github.com:g-truc/glm.git
