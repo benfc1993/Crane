@@ -2,6 +2,8 @@
 
 #include "Crane/Core/Window.h"
 
+#include "Crane/Renderer/GraphicsContext.h"
+
 struct GLFWwindow;
 
 namespace Crane
@@ -31,6 +33,7 @@ namespace Crane
 
     private:
         GLFWwindow *m_Window;
+        GraphicsContext *m_Context;
 
         struct WindowData
         {
