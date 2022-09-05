@@ -7,6 +7,7 @@
 #include "Crane/ImGui/ImGuiLayer.h"
 #include "Crane/Renderer/Shader.h"
 #include "Crane/Renderer/Buffer.h"
+#include "Crane/Renderer/VertexArray.h"
 
 namespace Crane
 {
@@ -19,30 +20,28 @@ namespace Crane
 
         void Run();
 
-        void OnEvent(Event &e);
+        void OnEvent(Event& e);
 
-        void PushLayer(Layer *layer);
-        void PushOverlay(Layer *overlay);
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
 
-        static inline Application &Get() { return *s_Instance; }
-        inline Window &GetWindow() { return *m_Window; }
+        static inline Application& Get() { return *s_Instance; }
+        inline Window& GetWindow() { return *m_Window; }
 
     private:
-        bool OnWindowClose(WindowCloseEvent &e);
+        bool OnWindowClose(WindowCloseEvent& e);
 
         std::unique_ptr<Window> m_Window;
-        ImGuiLayer *m_ImGuiLayer;
+        ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
 
-        unsigned int m_VertexArray;
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
 
     private:
-        static Application *s_Instance;
+        static Application* s_Instance;
     };
 
-    Application *CreateApplication();
+    Application* CreateApplication();
 }

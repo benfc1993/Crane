@@ -13,26 +13,6 @@ namespace Crane
 
     Application* Application::s_Instance = nullptr;
 
-    static GLenum ShaderDataTypeToOpenGLDataType(ShaderDataType type) {
-        switch (type)
-        {
-        case Crane::ShaderDataType::Float:      return GL_FLOAT;
-        case Crane::ShaderDataType::Float2:     return GL_FLOAT;
-        case Crane::ShaderDataType::Float3:     return GL_FLOAT;
-        case Crane::ShaderDataType::Float4:     return GL_FLOAT;
-        case Crane::ShaderDataType::Mat3:       return GL_FLOAT;
-        case Crane::ShaderDataType::Mat4:       return GL_FLOAT;
-        case Crane::ShaderDataType::Int:        return GL_INT;
-        case Crane::ShaderDataType::Int2:       return GL_INT;
-        case Crane::ShaderDataType::Int3:       return GL_INT;
-        case Crane::ShaderDataType::Int4:       return GL_INT;
-        case Crane::ShaderDataType::Bool:       return GL_BOOL;
-        }
-
-        CR_CORE_ASSERT(false, "Invalid shader data type!");
-        return 0;
-    }
-
     Application::Application()
     {
         CR_CORE_ASSERT(!s_Instance, "Application already exists!");
@@ -44,8 +24,7 @@ namespace Crane
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
 
-        glGenVertexArrays(1, &m_VertexArray);
-        glBindVertexArray(m_VertexArray);
+        m_VertexArray.reset(VertexArray::Create());
 
         float vertices[3 * 7] = {
             -0.5f, -0.5f, 0.0f, 0.8f, 0.13f, 0.3f, 1.0f,
@@ -53,27 +32,23 @@ namespace Crane
             0.0f, 0.5f, 0.0f, 0.13f, 0.3f, 0.8f, 1.0f,
         };
 
-        m_VertexBuffer.reset(VertexBuffer::Create(sizeof(vertices), vertices));
+        std::shared_ptr<VertexBuffer> vertexBuffer;
+        vertexBuffer.reset(VertexBuffer::Create(sizeof(vertices), vertices));
 
         BufferLayout layout = {
             {ShaderDataType::Float3, "a_Position"},
             {ShaderDataType::Float4, "a_Color"}
         };
 
-        m_VertexBuffer->SetLayout(layout);
+        vertexBuffer->SetLayout(layout);
 
-        uint32_t index = 0;
-        for (const auto& element : m_VertexBuffer->GetLayout())
-        {
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLDataType(element.Type),
-                element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.Offset);
-            index++;
-        }
-
+        m_VertexArray->AddVertexBuffer(vertexBuffer);
 
         uint32_t indices[3] = { 0, 1, 2 };
-        m_IndexBuffer.reset(IndexBuffer::Create(sizeof(indices) / sizeof(u_int32_t), indices));
+        std::shared_ptr<IndexBuffer> indexBuffer;
+        indexBuffer.reset(IndexBuffer::Create(sizeof(indices) / sizeof(u_int32_t), indices));
+
+        m_VertexArray->SetIndexBuffer(indexBuffer);
 
         std::string vertexSrc = R"(
             #version 330 core
@@ -148,8 +123,9 @@ namespace Crane
 
             m_Shader->Bind();
 
-            glBindVertexArray(m_VertexArray);
-            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+            m_VertexArray->Bind();
+
+            glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();

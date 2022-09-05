@@ -44,7 +44,7 @@ namespace Crane
         std::string Name;
         ShaderDataType Type;
         uint32_t Size;
-        uint32_t Offset;
+        size_t Offset;
         bool Normalized;
         BufferElement() {}
         BufferElement(ShaderDataType type, std::string name, bool normalized = false)
@@ -82,13 +82,13 @@ namespace Crane
         {
             CalculateOffsetAndStride();
         }
-        inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
-        inline uint32_t GetStride() const { return m_Stride; }
+        const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+        uint32_t GetStride() const { return m_Stride; }
 
         std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
         std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
-        const std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
-        const std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
+        std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
+        std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
 
     private:
         void CalculateOffsetAndStride() {
