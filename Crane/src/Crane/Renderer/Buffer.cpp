@@ -9,14 +9,14 @@
 namespace Crane
 {
 
-    VertexBuffer *VertexBuffer::Create(uint32_t size, float *vertices)
+    VertexBuffer* VertexBuffer::Create(uint32_t size, float* vertices)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::None:
+        case RendererAPI::API::None:
             CR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
-        case RendererAPI::OpenGL:
+        case RendererAPI::API::OpenGL:
             return new OpenGLVertexBuffer(size, vertices);
         }
 
@@ -24,14 +24,14 @@ namespace Crane
         return nullptr;
     }
 
-    IndexBuffer *IndexBuffer::Create(uint32_t size, uint32_t *indices)
+    IndexBuffer* IndexBuffer::Create(uint32_t size, uint32_t* indices)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::None:
+        case RendererAPI::API::None:
             CR_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
             return nullptr;
-        case RendererAPI::OpenGL:
+        case RendererAPI::API::OpenGL:
             return new OpenGLIndexBuffer(size, indices);
         }
 

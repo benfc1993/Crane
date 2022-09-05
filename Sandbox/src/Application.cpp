@@ -18,7 +18,7 @@ public:
         ImGui::End();
     }
 
-    void OnEvent(Crane::Event &event) override
+    void OnEvent(Crane::Event& event) override
     {
     }
 };
@@ -34,7 +34,7 @@ public:
     ~Sandbox() {}
 };
 
-Crane::Application *Crane::CreateApplication()
+Crane::Application* Crane::CreateApplication()
 {
     return new Sandbox();
 }
