@@ -3,17 +3,18 @@
 #include "Shader.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Crane
 {
-    Shader::Shader(const std::string &vertexSrc, const std::string &fragmentSrc)
+    Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)
     {
         // Create an empty vertex shader handle
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
         // Send the vertex shader source code to GL
         // Note that std::string's .c_str is NULL character terminated.
-        const GLchar *source = vertexSrc.c_str();
+        const GLchar* source = vertexSrc.c_str();
         glShaderSource(vertexShader, 1, &source, 0);
 
         // Compile the vertex shader
@@ -87,7 +88,7 @@ namespace Crane
 
         // Note the different functions here: glGetProgram* instead of glGetShader*.
         GLint isLinked = 0;
-        glGetProgramiv(m_RendererId, GL_LINK_STATUS, (int *)&isLinked);
+        glGetProgramiv(m_RendererId, GL_LINK_STATUS, (int*)&isLinked);
         if (isLinked == GL_FALSE)
         {
             GLint maxLength = 0;
@@ -125,4 +126,12 @@ namespace Crane
     {
         glUseProgram(0);
     }
+
+    void Shader::UploadUniformMat4(const std::string name, const glm::mat4& matrix)
+    {
+        GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+
+    }
+
 }

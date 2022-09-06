@@ -20,9 +20,12 @@ IncludeDir["GLAD"] = "Crane/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Crane/vendor/imgui"
 IncludeDir["glm"] = "Crane/vendor/glm"
 
-include "Crane/vendor/GLFW"
-include "Crane/vendor/GLAD"
-include "Crane/vendor/imgui"
+group "Dependencies"
+	include "Crane/vendor/GLFW"
+	include "Crane/vendor/GLAD"
+	include "Crane/vendor/imgui"
+
+group ""
 
 project "Crane"
 	location "Crane"
@@ -68,6 +71,10 @@ project "Crane"
 		"GLFW_INCLUDE_NONE",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
+
+	filter "system:windows"
+		systemversion "latest"
+		pic "off"
 
 	filter "system:windows"
 		systemversion "latest"
@@ -126,6 +133,10 @@ project "Sandbox"
 	{
 		"Crane"
 	}
+
+	filter "system:windows"
+		systemversion "latest"
+		pic "off"
 
 	filter "system:windows"
 		systemversion "latest"

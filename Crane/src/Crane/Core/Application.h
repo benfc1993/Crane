@@ -8,6 +8,7 @@
 #include "Crane/Renderer/Shader.h"
 #include "Crane/Renderer/Buffer.h"
 #include "Crane/Renderer/VertexArray.h"
+#include "Crane/Renderer/OrthographicCamera.h"
 
 namespace Crane
 {
@@ -38,7 +39,7 @@ namespace Crane
 
         std::shared_ptr<Shader> m_Shader;
         std::shared_ptr<VertexArray> m_VertexArray;
-
+        OrthographicCamera m_Camera;
     private:
         static Application* s_Instance;
     };

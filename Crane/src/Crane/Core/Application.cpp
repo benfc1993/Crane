@@ -6,7 +6,6 @@
 
 #include "Crane/Renderer/Renderer.h"
 
-
 namespace Crane
 {
 
@@ -15,6 +14,7 @@ namespace Crane
     Application* Application::s_Instance = nullptr;
 
     Application::Application()
+        : m_Camera(-1.0f, 1.0f, -1.0f, 1.0f)
     {
         CR_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
@@ -57,6 +57,8 @@ namespace Crane
             layout(location = 0) in vec3 a_Position;
             layout(location = 1) in vec4 a_Color;
 
+            uniform mat4 u_ProjectionView;
+
             out vec3 v_Position;
             out vec4 v_Color;
 
@@ -64,7 +66,7 @@ namespace Crane
             {
                 v_Position = a_Position;
                 v_Color = a_Color;
-                gl_Position = vec4(a_Position, 1.0);
+                gl_Position = u_ProjectionView * vec4(a_Position, 1.0);
             }
         )";
 
@@ -122,9 +124,9 @@ namespace Crane
             RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
             RenderCommand::Clear();
 
-            Renderer::BeginScene();
-            m_Shader->Bind();
-            Renderer::Submit(m_VertexArray);
+            m_Camera.SetRotation(m_Camera.GetRotation() + 0.01f);
+            Renderer::BeginScene(m_Camera);
+            Renderer::Submit(m_Shader, m_VertexArray);
             Renderer::EndScene();
 
             for (Layer* layer : m_LayerStack)
