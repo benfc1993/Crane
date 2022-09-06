@@ -2,6 +2,8 @@
 
 #include "imgui/imgui.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 class ExampleLayer : public Crane::Layer
 {
 public:
@@ -39,6 +41,7 @@ public:
             layout(location = 1) in vec4 a_Color;
 
             uniform mat4 u_ProjectionView;
+            uniform mat4 u_Transform;
 
             out vec3 v_Position;
             out vec4 v_Color;
@@ -47,7 +50,7 @@ public:
             {
                 v_Position = a_Position;
                 v_Color = a_Color;
-                gl_Position = u_ProjectionView * vec4(a_Position, 1.0);
+                gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
             }
         )";
 
@@ -83,7 +86,7 @@ public:
         m_Camera.SetRotation(m_CameraRotation);
 
         Crane::Renderer::BeginScene(m_Camera);
-        Crane::Renderer::Submit(m_Shader, m_VertexArray);
+        Crane::Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f), m_TrianglePosition));
         Crane::Renderer::EndScene();
     }
 
@@ -132,6 +135,8 @@ private:
     float m_CameraSpeed = 2.0f;
     float m_CameraRotation = 0.0f;
     float m_CameraRotationSpeed = 100.0f;
+
+    glm::vec3 m_TrianglePosition{ -0.75f, 0.0f, 0.0f };
 };
 
 class Sandbox : public Crane::Application
