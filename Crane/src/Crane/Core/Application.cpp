@@ -1,10 +1,11 @@
 #include "crpch.h"
 #include "Crane/Core/Application.h"
 
-
 #include "Crane/Core/Log.h"
 
 #include "Crane/Renderer/Renderer.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Crane
 {
@@ -55,8 +56,12 @@ namespace Crane
     {
         while (m_Running)
         {
+            float time = (float)glfwGetTime();
+            Time timestep((float)time, (float)time - m_LastFrameTime);
+            m_LastFrameTime = time;
+
             for (Layer* layer : m_LayerStack)
-                layer->OnUpdate();
+                layer->OnUpdate(timestep);
 
             m_ImGuiLayer->Begin();
             for (Layer* layer : m_LayerStack)

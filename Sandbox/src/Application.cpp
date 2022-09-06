@@ -69,15 +69,19 @@ public:
         m_Shader.reset(new Crane::Shader(vertexSrc, fragmentSrc));
     }
 
-    void OnUpdate() override
+    void OnUpdate(Crane::Time time) override
     {
+        CR_TRACE("Current time: {0} s, {1} ms", time.GetTime(), time.GetMilliseconds());
+        CR_TRACE("Delta time: {0} s", time.DeltaTime());
+
         Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
         Crane::RenderCommand::Clear();
 
-        OnKeyPressedEvent();
+        OnKeyPressedEvent(time.DeltaTime());
 
         m_Camera.SetPosition(m_CameraPosition);
         m_Camera.SetRotation(m_CameraRotation);
+
         Crane::Renderer::BeginScene(m_Camera);
         Crane::Renderer::Submit(m_Shader, m_VertexArray);
         Crane::Renderer::EndScene();
@@ -91,32 +95,32 @@ public:
     {
     }
 
-    void OnKeyPressedEvent()
+    void OnKeyPressedEvent(float deltaTime)
     {
 
         if (Crane::Input::IsKeyPressed(CR_KEY_LEFT))
         {
-            m_CameraPosition.x -= m_CameraSpeed;
+            m_CameraPosition.x -= m_CameraSpeed * deltaTime;
         }
         if (Crane::Input::IsKeyPressed(CR_KEY_RIGHT))
         {
-            m_CameraPosition.x += m_CameraSpeed;
+            m_CameraPosition.x += m_CameraSpeed * deltaTime;
         }
         if (Crane::Input::IsKeyPressed(CR_KEY_UP))
         {
-            m_CameraPosition.y += m_CameraSpeed;
+            m_CameraPosition.y += m_CameraSpeed * deltaTime;
         }
         if (Crane::Input::IsKeyPressed(CR_KEY_DOWN))
         {
-            m_CameraPosition.y -= m_CameraSpeed;
+            m_CameraPosition.y -= m_CameraSpeed * deltaTime;
         }
         if (Crane::Input::IsKeyPressed(CR_KEY_Q))
         {
-            m_CameraRotation -= m_CameraRotationSpeed;
+            m_CameraRotation -= m_CameraRotationSpeed * deltaTime;
         }
         if (Crane::Input::IsKeyPressed(CR_KEY_E))
         {
-            m_CameraRotation += m_CameraRotationSpeed;
+            m_CameraRotation += m_CameraRotationSpeed * deltaTime;
         }
     }
 private:
@@ -125,9 +129,9 @@ private:
     Crane::OrthographicCamera m_Camera;
 
     glm::vec3 m_CameraPosition{ 0.0f, 0.0f, 0.0f };
-    float m_CameraSpeed = 0.002f;
+    float m_CameraSpeed = 2.0f;
     float m_CameraRotation = 0.0f;
-    float m_CameraRotationSpeed = 0.3f;
+    float m_CameraRotationSpeed = 100.0f;
 };
 
 class Sandbox : public Crane::Application
