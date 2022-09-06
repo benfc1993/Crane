@@ -19,7 +19,7 @@ namespace Crane
 
     }
 
-    void Renderer::Submit(const std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray>& vertexArray, glm::mat4 transform)
+    void Renderer::Submit(const Ref<Shader>& shader, Ref<VertexArray>& vertexArray, glm::mat4 transform)
     {
         shader->Bind();
         std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ProjectionView", m_SceneData->projectionViewMatrix);

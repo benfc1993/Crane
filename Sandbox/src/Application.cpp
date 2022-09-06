@@ -19,7 +19,7 @@ public:
             0.0f, 0.5f, 0.0f, 0.13f, 0.3f, 0.8f, 1.0f,
         };
 
-        std::shared_ptr<Crane::VertexBuffer> vertexBuffer;
+        Crane::Ref<Crane::VertexBuffer> vertexBuffer;
         vertexBuffer.reset(Crane::VertexBuffer::Create(sizeof(vertices), vertices));
 
         Crane::BufferLayout layout = {
@@ -32,7 +32,7 @@ public:
         m_VertexArray->AddVertexBuffer(vertexBuffer);
 
         uint32_t indices[3] = { 0, 1, 2 };
-        std::shared_ptr<Crane::IndexBuffer> indexBuffer;
+        Crane::Ref<Crane::IndexBuffer> indexBuffer;
         indexBuffer.reset(Crane::IndexBuffer::Create(sizeof(indices) / sizeof(u_int32_t), indices));
 
         m_VertexArray->SetIndexBuffer(indexBuffer);
@@ -157,17 +157,17 @@ public:
         }
     }
 private:
-    std::shared_ptr<Crane::Shader> m_Shader;
-    std::shared_ptr<Crane::Shader> m_FlatShader;
-    std::shared_ptr<Crane::VertexArray> m_VertexArray;
+    Crane::Ref<Crane::Shader> m_Shader;
+    Crane::Ref<Crane::Shader> m_FlatShader;
+    Crane::Ref<Crane::VertexArray> m_VertexArray;
     Crane::OrthographicCamera m_Camera;
 
     glm::vec3 m_CameraPosition{ 0.0f, 0.0f, 0.0f };
     float m_CameraSpeed = 2.0f;
     float m_CameraRotation = 0.0f;
     float m_CameraRotationSpeed = 100.0f;
-    glm::vec3 m_TriangleColor{ 0.8f, 0.2f, 0.3f };
 
+    glm::vec3 m_TriangleColor{ 0.8f, 0.2f, 0.3f };
     glm::vec3 m_TrianglePosition{ -0.75f, 0.0f, 0.0f };
 };
 
