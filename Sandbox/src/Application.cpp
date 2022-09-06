@@ -1,8 +1,11 @@
 #include <Crane.h>
 
+#include "Platform/OpenGL/OpenGLShader.h"
+
 #include "imgui/imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class ExampleLayer : public Crane::Layer
 {
@@ -68,30 +71,57 @@ public:
                 color = v_Color;
             }
         )";
+        m_Shader.reset(Crane::Shader::Create(vertexSrc, fragmentSrc));
 
-        m_Shader.reset(new Crane::Shader(vertexSrc, fragmentSrc));
+        std::string flatColorShader = R"(
+            #version 330 core
+
+            layout(location = 0) out vec4 color;
+            
+            uniform vec3 u_Color;
+
+            void main()
+            {
+                color = vec4(u_Color, 1.0f);
+            }
+        )";
+        m_FlatShader.reset(Crane::Shader::Create(vertexSrc, flatColorShader));
+
     }
 
     void OnUpdate(Crane::Time time) override
     {
+        OnKeyPressedEvent(time.DeltaTime());
+
         CR_TRACE("Current time: {0} s, {1} ms", time.GetTime(), time.GetMilliseconds());
         CR_TRACE("Delta time: {0} s", time.DeltaTime());
 
         Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
         Crane::RenderCommand::Clear();
 
-        OnKeyPressedEvent(time.DeltaTime());
 
         m_Camera.SetPosition(m_CameraPosition);
         m_Camera.SetRotation(m_CameraRotation);
 
         Crane::Renderer::BeginScene(m_Camera);
-        Crane::Renderer::Submit(m_Shader, m_VertexArray, glm::translate(glm::mat4(1.0f), m_TrianglePosition));
+
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->Bind();
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->UploadUniformFloat3("u_Color", m_TriangleColor);
+
+        glm::mat4 triangleTransform = glm::translate(glm::mat4(1.0f), m_TrianglePosition);
+        Crane::Renderer::Submit(m_FlatShader, m_VertexArray, triangleTransform);
+
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_Shader)->Bind();
+        Crane::Renderer::Submit(m_Shader, m_VertexArray);
+
         Crane::Renderer::EndScene();
     }
 
     virtual void OnImGuiRender() override
     {
+        ImGui::Begin("Settings");
+        ImGui::ColorEdit3("Triangle color", glm::value_ptr(m_TriangleColor));
+        ImGui::End();
     }
 
     void OnEvent(Crane::Event& event) override
@@ -128,6 +158,7 @@ public:
     }
 private:
     std::shared_ptr<Crane::Shader> m_Shader;
+    std::shared_ptr<Crane::Shader> m_FlatShader;
     std::shared_ptr<Crane::VertexArray> m_VertexArray;
     Crane::OrthographicCamera m_Camera;
 
@@ -135,6 +166,7 @@ private:
     float m_CameraSpeed = 2.0f;
     float m_CameraRotation = 0.0f;
     float m_CameraRotationSpeed = 100.0f;
+    glm::vec3 m_TriangleColor{ 0.8f, 0.2f, 0.3f };
 
     glm::vec3 m_TrianglePosition{ -0.75f, 0.0f, 0.0f };
 };
