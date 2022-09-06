@@ -5,10 +5,6 @@
 #include "Crane/Core/LayerStack.h"
 #include "Crane/Events/ApplicationEvent.h"
 #include "Crane/ImGui/ImGuiLayer.h"
-#include "Crane/Renderer/Shader.h"
-#include "Crane/Renderer/Buffer.h"
-#include "Crane/Renderer/VertexArray.h"
-#include "Crane/Renderer/OrthographicCamera.h"
 
 namespace Crane
 {
@@ -37,9 +33,6 @@ namespace Crane
         bool m_Running = true;
         LayerStack m_LayerStack;
 
-        std::shared_ptr<Shader> m_Shader;
-        std::shared_ptr<VertexArray> m_VertexArray;
-        OrthographicCamera m_Camera;
     private:
         static Application* s_Instance;
     };
