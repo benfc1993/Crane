@@ -10,49 +10,78 @@
 class ExampleLayer : public Crane::Layer
 {
 public:
-    ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f) {
-        m_VertexArray.reset(Crane::VertexArray::Create());
+    ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+    {
 
-        float vertices[3 * 7] = {
-            -0.5f, -0.5f, 0.0f, 0.8f, 0.13f, 0.3f, 1.0f,
-            0.5f, -0.5f, 0.0f, 0.3f, 0.8f, 0.13f, 1.0f,
-            0.0f, 0.5f, 0.0f, 0.13f, 0.3f, 0.8f, 1.0f,
+        // --------- Square --------
+        m_SquareVertexArray.reset(Crane::VertexArray::Create());
+
+        float squareVertices[4 * 5] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
         };
 
-        Crane::Ref<Crane::VertexBuffer> vertexBuffer;
-        vertexBuffer.reset(Crane::VertexBuffer::Create(sizeof(vertices), vertices));
+        Crane::Ref<Crane::VertexBuffer> squareVertexBuffer;
+        squareVertexBuffer.reset(Crane::VertexBuffer::Create(sizeof(squareVertices), squareVertices));
 
         Crane::BufferLayout layout = {
             {Crane::ShaderDataType::Float3, "a_Position"},
-            {Crane::ShaderDataType::Float4, "a_Color"}
+            {Crane::ShaderDataType::Float2, "a_Texture"}
         };
 
-        vertexBuffer->SetLayout(layout);
+        squareVertexBuffer->SetLayout(layout);
 
-        m_VertexArray->AddVertexBuffer(vertexBuffer);
+        m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
 
-        uint32_t indices[3] = { 0, 1, 2 };
+        uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
         Crane::Ref<Crane::IndexBuffer> indexBuffer;
         indexBuffer.reset(Crane::IndexBuffer::Create(sizeof(indices) / sizeof(u_int32_t), indices));
 
-        m_VertexArray->SetIndexBuffer(indexBuffer);
+        m_SquareVertexArray->SetIndexBuffer(indexBuffer);
+
+        // --------- Triangle --------
+        m_TriangleVertexArray.reset(Crane::VertexArray::Create());
+
+        float triangleVertices[3 * 5] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
+        };
+
+        Crane::Ref<Crane::VertexBuffer> triangleVertexBuffer;
+        triangleVertexBuffer.reset(Crane::VertexBuffer::Create(sizeof(triangleVertices), triangleVertices));
+
+        Crane::BufferLayout triangleLayout = {
+            {Crane::ShaderDataType::Float3, "a_Position"},
+            {Crane::ShaderDataType::Float2, "a_Texture"}
+        };
+
+        triangleVertexBuffer->SetLayout(triangleLayout);
+
+        m_TriangleVertexArray->AddVertexBuffer(triangleVertexBuffer);
+
+        uint32_t triangleIndices[6] = { 0, 1, 2 };
+        Crane::Ref<Crane::IndexBuffer> triangleIndexBuffer;
+        triangleIndexBuffer.reset(Crane::IndexBuffer::Create(sizeof(triangleIndices) / sizeof(u_int32_t), triangleIndices));
+
+        m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
+
 
         std::string vertexSrc = R"(
             #version 330 core
 
             layout(location = 0) in vec3 a_Position;
-            layout(location = 1) in vec4 a_Color;
 
             uniform mat4 u_ProjectionView;
             uniform mat4 u_Transform;
 
             out vec3 v_Position;
-            out vec4 v_Color;
 
             void main()
             {
                 v_Position = a_Position;
-                v_Color = a_Color;
                 gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
             }
         )";
@@ -63,12 +92,10 @@ public:
             layout(location = 0) out vec4 color;
             
             in vec3 v_Position;
-            in vec4 v_Color;
 
             void main()
             {
-                color = vec4(v_Position * 0.5 + 0.5 , 1.0);
-                color = v_Color;
+                color = vec4(v_Position * 0.5 + 0.5, 1.0);
             }
         )";
         m_Shader.reset(Crane::Shader::Create(vertexSrc, fragmentSrc));
@@ -87,14 +114,50 @@ public:
         )";
         m_FlatShader.reset(Crane::Shader::Create(vertexSrc, flatColorShader));
 
+        std::string TextureVertexSrc = R"(
+            #version 330 core
+
+            layout(location = 0) in vec3 a_Position;
+            layout(location = 1) in vec2 a_TexCoord;
+
+            uniform mat4 u_ProjectionView;
+            uniform mat4 u_Transform;
+
+            out vec2 v_TexCoord;
+
+            void main()
+            {
+                v_TexCoord = a_TexCoord;
+                gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
+            }
+        )";
+
+        std::string TexturefragmentSrc = R"(
+            #version 330 core
+
+            layout(location = 0) out vec4 color;
+            
+            in vec2 v_TexCoord;
+
+            uniform sampler2D u_Texture;
+
+            void main()
+            {
+                color = texture(u_Texture, v_TexCoord);
+            }
+        )";
+        m_TextureShader.reset(Crane::Shader::Create(TextureVertexSrc, TexturefragmentSrc));
+
+        m_Texture = Crane::Texture2D::Create("Sandbox/assets/textures/test.png");
+        m_AlphaTexture = Crane::Texture2D::Create("Sandbox/assets/textures/logo.png");
+
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_TextureShader)->Bind();
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnUpdate(Crane::Time time) override
     {
         OnKeyPressedEvent(time.DeltaTime());
-
-        CR_TRACE("Current time: {0} s, {1} ms", time.GetTime(), time.GetMilliseconds());
-        CR_TRACE("Delta time: {0} s", time.DeltaTime());
 
         Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
         Crane::RenderCommand::Clear();
@@ -105,14 +168,25 @@ public:
 
         Crane::Renderer::BeginScene(m_Camera);
 
-        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->Bind();
-        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->UploadUniformFloat3("u_Color", m_TriangleColor);
+        glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
+
+        m_Texture->Bind();
+        Crane::Renderer::Submit(m_TextureShader, m_SquareVertexArray, squareTransform);
+
+        m_AlphaTexture->Bind();
+        Crane::Renderer::Submit(m_TextureShader, m_SquareVertexArray);
+
+        // std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->Bind();
+        // std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->UploadUniformFloat3("u_Color", m_TriangleColor);
 
         glm::mat4 triangleTransform = glm::translate(glm::mat4(1.0f), m_TrianglePosition);
-        Crane::Renderer::Submit(m_FlatShader, m_VertexArray, triangleTransform);
 
-        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_Shader)->Bind();
-        Crane::Renderer::Submit(m_Shader, m_VertexArray);
+        m_Texture->Bind();
+        Crane::Renderer::Submit(m_TextureShader, m_TriangleVertexArray, triangleTransform);
+
+        m_AlphaTexture->Bind();
+        Crane::Renderer::Submit(m_TextureShader, m_TriangleVertexArray);
+
 
         Crane::Renderer::EndScene();
     }
@@ -157,10 +231,12 @@ public:
         }
     }
 private:
-    Crane::Ref<Crane::Shader> m_Shader;
-    Crane::Ref<Crane::Shader> m_FlatShader;
-    Crane::Ref<Crane::VertexArray> m_VertexArray;
+    Crane::Ref<Crane::Shader> m_Shader, m_FlatShader, m_TextureShader;
+    Crane::Ref<Crane::VertexArray> m_SquareVertexArray;
+    Crane::Ref<Crane::VertexArray> m_TriangleVertexArray;
     Crane::OrthographicCamera m_Camera;
+
+    Crane::Ref<Crane::Texture2D> m_Texture, m_AlphaTexture;
 
     glm::vec3 m_CameraPosition{ 0.0f, 0.0f, 0.0f };
     float m_CameraSpeed = 2.0f;
@@ -168,7 +244,9 @@ private:
     float m_CameraRotationSpeed = 100.0f;
 
     glm::vec3 m_TriangleColor{ 0.8f, 0.2f, 0.3f };
-    glm::vec3 m_TrianglePosition{ -0.75f, 0.0f, 0.0f };
+    glm::vec3 m_TrianglePosition{ 1.0f, 0.0f, 0.0f };
+
+    glm::vec3 m_SquarePosition{ -1.1f, 0.0f, 0.0f };
 };
 
 class Sandbox : public Crane::Application

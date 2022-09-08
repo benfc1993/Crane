@@ -19,6 +19,7 @@ IncludeDir["GLFW"] = "Crane/vendor/GLFW/include"
 IncludeDir["GLAD"] = "Crane/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Crane/vendor/imgui"
 IncludeDir["glm"] = "Crane/vendor/glm"
+IncludeDir["stb_image"] = "Crane/vendor/stb_image"
 
 group "Dependencies"
 	include "Crane/vendor/GLFW"
@@ -44,6 +45,8 @@ project "Crane"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
@@ -55,7 +58,8 @@ project "Crane"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
 	}
 
 	links 
