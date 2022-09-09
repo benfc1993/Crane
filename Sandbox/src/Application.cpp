@@ -68,88 +68,11 @@ public:
 
         m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
+        m_FlatShader.reset(Crane::Shader::Create("assets/shaders/FlatShader.glsl"));
+        m_TextureShader.reset(Crane::Shader::Create("assets/shaders/TextureShader.glsl"));
 
-        std::string vertexSrc = R"(
-            #version 330 core
-
-            layout(location = 0) in vec3 a_Position;
-
-            uniform mat4 u_ProjectionView;
-            uniform mat4 u_Transform;
-
-            out vec3 v_Position;
-
-            void main()
-            {
-                v_Position = a_Position;
-                gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
-            }
-        )";
-
-        std::string fragmentSrc = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-            
-            in vec3 v_Position;
-
-            void main()
-            {
-                color = vec4(v_Position * 0.5 + 0.5, 1.0);
-            }
-        )";
-        m_Shader.reset(Crane::Shader::Create(vertexSrc, fragmentSrc));
-
-        std::string flatColorShader = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-            
-            uniform vec3 u_Color;
-
-            void main()
-            {
-                color = vec4(u_Color, 1.0f);
-            }
-        )";
-        m_FlatShader.reset(Crane::Shader::Create(vertexSrc, flatColorShader));
-
-        std::string TextureVertexSrc = R"(
-            #version 330 core
-
-            layout(location = 0) in vec3 a_Position;
-            layout(location = 1) in vec2 a_TexCoord;
-
-            uniform mat4 u_ProjectionView;
-            uniform mat4 u_Transform;
-
-            out vec2 v_TexCoord;
-
-            void main()
-            {
-                v_TexCoord = a_TexCoord;
-                gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
-            }
-        )";
-
-        std::string TexturefragmentSrc = R"(
-            #version 330 core
-
-            layout(location = 0) out vec4 color;
-            
-            in vec2 v_TexCoord;
-
-            uniform sampler2D u_Texture;
-
-            void main()
-            {
-                color = texture(u_Texture, v_TexCoord);
-            }
-        )";
-        m_TextureShader.reset(Crane::Shader::Create(TextureVertexSrc, TexturefragmentSrc));
-
-        m_Texture = Crane::Texture2D::Create("Sandbox/assets/textures/test.png");
-        m_AlphaTexture = Crane::Texture2D::Create("Sandbox/assets/textures/logo.png");
+        m_Texture = Crane::Texture2D::Create("assets/textures/test.png");
+        m_AlphaTexture = Crane::Texture2D::Create("assets/textures/logo.png");
 
         std::dynamic_pointer_cast<Crane::OpenGLShader>(m_TextureShader)->Bind();
         std::dynamic_pointer_cast<Crane::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
@@ -176,17 +99,11 @@ public:
         m_AlphaTexture->Bind();
         Crane::Renderer::Submit(m_TextureShader, m_SquareVertexArray);
 
-        // std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->Bind();
-        // std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->UploadUniformFloat3("u_Color", m_TriangleColor);
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->Bind();
+        std::dynamic_pointer_cast<Crane::OpenGLShader>(m_FlatShader)->UploadUniformFloat3("u_Color", m_TriangleColor);
 
         glm::mat4 triangleTransform = glm::translate(glm::mat4(1.0f), m_TrianglePosition);
-
-        m_Texture->Bind();
-        Crane::Renderer::Submit(m_TextureShader, m_TriangleVertexArray, triangleTransform);
-
-        m_AlphaTexture->Bind();
-        Crane::Renderer::Submit(m_TextureShader, m_TriangleVertexArray);
-
+        Crane::Renderer::Submit(m_FlatShader, m_TriangleVertexArray, triangleTransform);
 
         Crane::Renderer::EndScene();
     }

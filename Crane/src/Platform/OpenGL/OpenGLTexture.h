@@ -2,7 +2,6 @@
 
 #include "Crane/Renderer/Texture.h"
 
-
 namespace Crane {
     class OpenGLTexture2D : public Texture2D
     {
