@@ -21,9 +21,18 @@ namespace Crane
         std::string source = ReadFile(filePath);
         auto shaderSources = PreProcess(source);
         Compile(shaderSources);
+
+        auto lastSlash = filePath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+
+        auto lastDot = filePath.rfind(".");
+
+        auto count = lastDot == std::string::npos ? filePath.size() - lastSlash : lastDot - lastSlash;
+        m_Name = filePath.substr(lastSlash, count);
     }
 
-    OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+        : m_Name(name)
     {
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
@@ -38,7 +47,7 @@ namespace Crane
     std::string OpenGLShader::ReadFile(const std::string& filePath)
     {
         std::string result;
-        std::ifstream in(filePath, std::ifstream::in);
+        std::ifstream in(filePath, std::ios::in | std::ios::binary);
 
         if (in)
         {
@@ -59,6 +68,7 @@ namespace Crane
     std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
     {
         std::unordered_map<GLenum, std::string> shaderSources;
+        CR_CORE_ASSERT(shaderSources.size() <= 2, "Too many shader sources only 2 are supported");
 
         const char* typeToken = "#type";
         size_t typeTokenLength = strlen(typeToken);
@@ -88,7 +98,7 @@ namespace Crane
         GLuint program = glCreateProgram();
         std::array<GLenum, 2> glShaderIds;
 
-        uint8_t i = 0;
+        int i = 0;
 
         for (auto& kv : shaderSources)
         {

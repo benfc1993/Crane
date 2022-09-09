@@ -20,7 +20,8 @@ namespace Crane
 
     static uint32_t ShaderTypeSize(ShaderDataType type)
     {
-        switch (type) {
+        switch (type)
+        {
         case ShaderDataType::Float:     return 1 * 4;
         case ShaderDataType::Float2:    return 2 * 4;
         case ShaderDataType::Float3:    return 3 * 4;
@@ -52,8 +53,10 @@ namespace Crane
         {
         }
 
-        uint32_t GetComponentCount() const {
-            switch (Type) {
+        uint32_t GetComponentCount() const
+        {
+            switch (Type)
+            {
             case ShaderDataType::Float:     return 1;
             case ShaderDataType::Float2:    return 2;
             case ShaderDataType::Float3:    return 3;
@@ -91,11 +94,13 @@ namespace Crane
         std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
 
     private:
-        void CalculateOffsetAndStride() {
+        void CalculateOffsetAndStride()
+        {
 
             uint32_t offset = 0;
             m_Stride = 0;
-            for (auto& element : m_Elements) {
+            for (auto& element : m_Elements)
+            {
                 element.Offset = offset;
                 offset += element.Size;
                 m_Stride += element.Size;
@@ -118,7 +123,7 @@ namespace Crane
         virtual void SetLayout(BufferLayout& layout) = 0;
         virtual const BufferLayout& GetLayout() const = 0;
 
-        static VertexBuffer* Create(uint32_t size, float* vertices);
+        static Ref<VertexBuffer> Create(uint32_t size, float* vertices);
     };
 
     class IndexBuffer
@@ -131,6 +136,6 @@ namespace Crane
 
         virtual uint32_t GetCount() const = 0;
 
-        static IndexBuffer* Create(uint32_t size, uint32_t* indices);
+        static Ref<IndexBuffer> Create(uint32_t size, uint32_t* indices);
     };
 }
