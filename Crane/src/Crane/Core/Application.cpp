@@ -45,6 +45,8 @@ namespace Crane
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(CR_BIND_EVENT_FN(Application::OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(CR_BIND_EVENT_FN(Application::OnWindowResize));
+        dispatcher.Dispatch<WindowMinimizeEvent>(CR_BIND_EVENT_FN(Application::OnWindowMinimize));
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
@@ -62,13 +64,18 @@ namespace Crane
             Time timestep((float)time, (float)time - m_LastFrameTime);
             m_LastFrameTime = time;
 
-            for (Layer* layer : m_LayerStack)
-                layer->OnUpdate(timestep);
+            if (!m_Minimised)
+            {
+                CR_CORE_INFO("Application::Run");
+                for (Layer* layer : m_LayerStack)
+                    layer->OnUpdate(timestep);
 
-            m_ImGuiLayer->Begin();
-            for (Layer* layer : m_LayerStack)
-                layer->OnImGuiRender();
-            m_ImGuiLayer->End();
+                m_ImGuiLayer->Begin();
+                for (Layer* layer : m_LayerStack)
+                    layer->OnImGuiRender();
+                m_ImGuiLayer->End();
+            }
+
 
             m_Window->OnUpdate();
         }
@@ -78,5 +85,19 @@ namespace Crane
     {
         m_Running = false;
         return true;
+    }
+
+    bool Application::OnWindowMinimize(WindowMinimizeEvent& e)
+    {
+        m_Minimised = e.IsMinimized();
+        return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent& e)
+    {
+        if (m_Minimised)
+            return false;
+
+        return false;
     }
 }

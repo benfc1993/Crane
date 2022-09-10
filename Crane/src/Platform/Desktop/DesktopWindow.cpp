@@ -59,6 +59,14 @@ namespace Crane
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
+        glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified) {
+            WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+            data.IsMinimized = iconified;
+
+            WindowMinimizeEvent event(iconified);
+            data.EventCallback(event);
+            });
+
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -66,6 +74,7 @@ namespace Crane
                 data.Height = height;
 
                 WindowResizeEvent event(width, height);
+                CR_CORE_WARN("{0}, {1}: ", data.Width, data.Height);
                 data.EventCallback(event); });
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
