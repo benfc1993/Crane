@@ -74,7 +74,6 @@ namespace Crane
                 data.Height = height;
 
                 WindowResizeEvent event(width, height);
-                CR_CORE_WARN("{0}, {1}: ", data.Width, data.Height);
                 data.EventCallback(event); });
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)

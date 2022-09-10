@@ -66,7 +66,6 @@ namespace Crane
 
             if (!m_Minimised)
             {
-                CR_CORE_INFO("Application::Run");
                 for (Layer* layer : m_LayerStack)
                     layer->OnUpdate(timestep);
 
@@ -97,6 +96,8 @@ namespace Crane
     {
         if (m_Minimised)
             return false;
+
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
         return false;
     }
