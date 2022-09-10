@@ -11,7 +11,7 @@
 class ExampleLayer : public Crane::Layer
 {
 public:
-    ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+    ExampleLayer() : Layer("Example"), m_CameraController(1.6f / 0.9f)
     {
 
         // --------- Square --------
@@ -81,18 +81,14 @@ public:
 
     void OnUpdate(Crane::Time time) override
     {
-        OnKeyPressedEvent(time.DeltaTime());
+        m_CameraController.OnUpdate(time);
 
         Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
         Crane::RenderCommand::Clear();
 
-
-        m_Camera.SetPosition(m_CameraPosition);
-        m_Camera.SetRotation(m_CameraRotation);
-
         auto textureShader = m_ShaderLibrary.Get("TextureShader");
 
-        Crane::Renderer::BeginScene(m_Camera);
+        Crane::Renderer::BeginScene(m_CameraController.GetCamera());
 
         glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), m_SquarePosition);
 
@@ -120,42 +116,15 @@ public:
 
     void OnEvent(Crane::Event& event) override
     {
+        m_CameraController.OnEvent(event);
     }
 
-    void OnKeyPressedEvent(float deltaTime)
-    {
-
-        if (Crane::Input::IsKeyPressed(CR_KEY_LEFT))
-        {
-            m_CameraPosition.x -= m_CameraSpeed * deltaTime;
-        }
-        if (Crane::Input::IsKeyPressed(CR_KEY_RIGHT))
-        {
-            m_CameraPosition.x += m_CameraSpeed * deltaTime;
-        }
-        if (Crane::Input::IsKeyPressed(CR_KEY_UP))
-        {
-            m_CameraPosition.y += m_CameraSpeed * deltaTime;
-        }
-        if (Crane::Input::IsKeyPressed(CR_KEY_DOWN))
-        {
-            m_CameraPosition.y -= m_CameraSpeed * deltaTime;
-        }
-        if (Crane::Input::IsKeyPressed(CR_KEY_Q))
-        {
-            m_CameraRotation -= m_CameraRotationSpeed * deltaTime;
-        }
-        if (Crane::Input::IsKeyPressed(CR_KEY_E))
-        {
-            m_CameraRotation += m_CameraRotationSpeed * deltaTime;
-        }
-    }
 private:
     Crane::ShaderLibrary m_ShaderLibrary;
     Crane::Ref<Crane::Shader> m_Shader, m_FlatShader;
     Crane::Ref<Crane::VertexArray> m_SquareVertexArray;
     Crane::Ref<Crane::VertexArray> m_TriangleVertexArray;
-    Crane::OrthographicCamera m_Camera;
+    Crane::OrthographicCameraController m_CameraController;
 
     Crane::Ref<Crane::Texture2D> m_GridTexture, m_LogoTexture;
 

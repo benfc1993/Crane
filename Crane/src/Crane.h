@@ -14,6 +14,8 @@
 #include "Crane/Input/KeyCodes.h"
 #include "Crane/Input/MouseButtonCodes.h"
 
+#include "Crane/Camera/OrthographicCamera.h"
+#include "Crane/Camera/OrthographicCameraController.h"
 
 #include "Crane/Renderer/Renderer.h"
 #include "Crane/Renderer/RenderCommand.h"
@@ -21,7 +23,6 @@
 #include "Crane/Renderer/Shader.h"
 #include "Crane/Renderer/Texture.h"
 #include "Crane/Renderer/VertexArray.h"
-#include "Crane/Renderer/OrthographicCamera.h"
 
 
 

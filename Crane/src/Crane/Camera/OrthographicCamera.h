@@ -9,6 +9,7 @@ namespace Crane {
     {
     public:
         OrthographicCamera(float left, float right, float bottom, float top);
+        void SetProjection(float left, float right, float bottom, float top);
 
         void SetPosition(glm::vec3 position) { m_Position = position; RecalculateViewMatrix(); };
         const glm::vec3& GetPosition() const { return m_Position; };
