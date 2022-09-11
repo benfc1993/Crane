@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crane/Renderer/Shader.h"
+#include "Crane/Renderer/Shader/Shader.h"
 
 #include <string>
 #include <glm/glm.hpp>

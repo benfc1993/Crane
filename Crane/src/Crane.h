@@ -19,13 +19,7 @@
 
 #include "Crane/Renderer/Renderer.h"
 #include "Crane/Renderer/RenderCommand.h"
-#include "Crane/Renderer/Buffer.h"
-#include "Crane/Renderer/Shader.h"
-#include "Crane/Renderer/Texture.h"
-#include "Crane/Renderer/VertexArray.h"
-
-
-
-// ---Entry Point---------------------
-#include "Crane/Core/EntryPoint.h"
-// -----------------------------------
+#include "Crane/Renderer/Shader/Buffer.h"
+#include "Crane/Renderer/Shader/Shader.h"
+#include "Crane/Renderer/Shader/Texture.h"
+#include "Crane/Renderer/Shader/VertexArray.h"

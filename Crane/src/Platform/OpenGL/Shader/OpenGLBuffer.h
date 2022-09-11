@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crane/Renderer/Buffer.h"
+#include "Crane/Renderer/Shader/Buffer.h"
 
 namespace Crane
 {

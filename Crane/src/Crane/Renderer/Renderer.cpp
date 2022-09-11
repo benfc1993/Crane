@@ -2,7 +2,7 @@
 
 #include "Renderer.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/OpenGL/Shader/OpenGLShader.h"
 
 
 namespace Crane

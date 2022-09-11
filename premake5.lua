@@ -30,10 +30,8 @@ group ""
 
 project "Crane"
 	location "Crane"
-	kind "SharedLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -76,12 +74,17 @@ project "Crane"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 
+	filter "system:linux"
+		kind "SharedLib"
+		systemversion "latest"
+		pic "On"
+		staticruntime "off"
+		
+		
 	filter "system:windows"
 		systemversion "latest"
-		pic "off"
-
-	filter "system:windows"
-		systemversion "latest"
+		kind "StaticLib"
+		staticruntime "on"
 
 		defines
 		{
@@ -114,17 +117,16 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "off"
-
+	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
+	
 	files
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
-
+	
 	includedirs
 	{
 		"Crane/vendor/spdlog/include",
@@ -132,21 +134,29 @@ project "Sandbox"
 		"Crane/vendor",
 		"%{IncludeDir.glm}"
 	}
-
+	
 	links
 	{
 		"Crane"
 	}
+	
+	prebuildcommands
+	{
+		("{COPY} assets ../bin/" .. outputdir .. "/Sandbox/assets")
+	}
 
+	filter "system:linux"
+		systemversion "latest"
+		pic "On"
+		staticruntime "off"
+
+	
 	filter "system:windows"
 		systemversion "latest"
-		pic "off"
-
-	filter "system:windows"
-		systemversion "latest"
-
-		defines
-		{
+		staticruntime "on"
+	
+	defines
+	{
 			"CR_PLATFORM_WINDOWS"
 		}
 

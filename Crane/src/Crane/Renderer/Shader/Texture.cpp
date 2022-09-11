@@ -2,9 +2,9 @@
 
 #include "Texture.h"
 
-#include "Renderer.h"
+#include "Crane/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/OpenGLTexture.h"
+#include "Platform/OpenGL/Shader/OpenGLTexture.h"
 
 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crane/Renderer/Texture.h"
+#include "Crane/Renderer/Shader/Texture.h"
 
 namespace Crane {
     class OpenGLTexture2D : public Texture2D

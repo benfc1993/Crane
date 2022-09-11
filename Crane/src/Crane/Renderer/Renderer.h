@@ -4,7 +4,7 @@
 
 #include "Crane/Camera/OrthographicCamera.h"
 
-#include "Shader.h"
+#include "Crane/Renderer/Shader/Shader.h"
 
 namespace Crane
 {

@@ -2,9 +2,9 @@
 
 #include "Buffer.h"
 
-#include "Renderer.h"
+#include "Crane/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/OpenGLBuffer.h"
+#include "Platform/OpenGL/Shader/OpenGLBuffer.h"
 
 namespace Crane
 {

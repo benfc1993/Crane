@@ -45,7 +45,7 @@
 			"label": "build dist",
 			"command": "/usr/bin/make",
 			"args": [
-				"config=dist"
+				"config=dist",
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

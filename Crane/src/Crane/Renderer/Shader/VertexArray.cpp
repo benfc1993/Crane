@@ -1,9 +1,9 @@
 #include "crpch.h"
 #include "VertexArray.h"
 
-#include "Renderer.h"
+#include "Crane/Renderer/Renderer.h"
 
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/Shader/OpenGLVertexArray.h"
 
 namespace Crane {
     Ref<VertexArray> VertexArray::Create()
@@ -20,6 +20,7 @@ namespace Crane {
         CR_CORE_ASSERT(false, "Unknown RendererAPI!");
         return nullptr;
     }
+
 }
 
 

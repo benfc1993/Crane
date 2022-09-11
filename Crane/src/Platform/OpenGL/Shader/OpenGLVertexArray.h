@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crane/Renderer/VertexArray.h"
+#include "Crane/Renderer/Shader/VertexArray.h"
 
 namespace Crane {
     class OpenGLVertexArray : public VertexArray

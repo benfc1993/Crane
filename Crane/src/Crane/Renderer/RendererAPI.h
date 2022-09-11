@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "VertexArray.h"
+#include "Crane/Renderer/Shader/VertexArray.h"
 
 namespace Crane {
     class RendererAPI
