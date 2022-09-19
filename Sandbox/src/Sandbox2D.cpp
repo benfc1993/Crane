@@ -29,7 +29,7 @@ void Sandbox2D::OnUpdate(Crane::Time time)
     Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
     Crane::Renderer2D::DrawQuad(m_Position, m_Angle, m_Scale, m_Color);
-    Crane::Renderer2D::DrawQuad({ -0.2f, 0.5f, 0.0f }, m_Angle, m_Scale, m_Texture, m_Color);
+    Crane::Renderer2D::DrawQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, m_Texture, m_Color);
 
     Crane::Renderer2D::EndScene();
 }
