@@ -13,6 +13,7 @@ public:
     virtual void OnUpdate(Crane::Time time) override;
     virtual void OnImGuiRender() override;
     virtual void OnEvent(Crane::Event& event) override;
+
 private:
     Crane::OrthographicCameraController m_CameraController;
 
@@ -26,4 +27,8 @@ private:
     float m_Angle = 0.0f;
     Crane::Ref<Crane::VertexArray> m_SquareVertexArray;
     Crane::Ref<Crane::VertexArray> m_TriangleVertexArray;
+
+    Crane::ParticleData m_Particle;
+    Crane::ParticleSystem m_ParticleSystem;
+    int m_ParticleBurstSize = 5;
 };

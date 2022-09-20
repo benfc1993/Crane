@@ -142,7 +142,7 @@ project "Sandbox"
 	
 	prebuildcommands
 	{
-		("{COPY} assets ../bin/" .. outputdir .. "/Sandbox/assets")
+		("{COPY} assets ../bin/" .. outputdir .. "/Sandbox")
 	}
 
 	filter "system:linux"

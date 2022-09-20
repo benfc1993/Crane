@@ -9,6 +9,7 @@
 #include "Crane/Core/Log.h"
 #include "Crane/Core/Assert.h"
 #include "Crane/Core/Time.h"
+#include "Crane/Core/Random.h"
 
 namespace Crane {
 
