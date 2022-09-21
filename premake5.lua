@@ -164,7 +164,8 @@ project "Sandbox"
 		defines 
 		{
 			"CR_DEBUG",
-			"CR_ENABLE_ASSERTS"
+			"CR_ENABLE_ASSERTS",
+			"CR_PROFILE"
 		}
 		runtime "Debug"
 		symbols "on"

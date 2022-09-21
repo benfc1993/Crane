@@ -15,6 +15,8 @@ namespace Crane {
 
     void ParticleSystem::OnUpdate(Time time)
     {
+        CR_PROFILE_FUNCTION();
+
         if (time.DeltaTime() > 1)
             return;
         for (auto& particle : m_ParticlePool)
@@ -37,6 +39,8 @@ namespace Crane {
 
     void ParticleSystem::OnRender(OrthographicCamera& camera)
     {
+        CR_PROFILE_FUNCTION();
+
         for (auto& particle : m_ParticlePool)
         {
             if (!particle.Active)
@@ -52,6 +56,8 @@ namespace Crane {
 
     void ParticleSystem::Emit(const ParticleData& particleData)
     {
+        CR_PROFILE_FUNCTION();
+
         Particle& particle = m_ParticlePool[m_PoolIndex];
 
         particle.Active = true;

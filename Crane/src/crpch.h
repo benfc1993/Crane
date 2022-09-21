@@ -14,6 +14,8 @@
 
 #include "Crane/Core/Base.h"
 #include "Crane/Core/Log.h"
+#include "Crane/Debug/Instrumentor.h"
+
 
 #ifdef CR_PLATFORM_WINDOWS
 #include <windows.h>

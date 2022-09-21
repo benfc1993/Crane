@@ -35,26 +35,40 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Crane::Time time)
 {
-    m_CameraController.OnUpdate(time);
+    CR_PROFILE_FUNCTION();
 
-    Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
-    Crane::RenderCommand::Clear();
-
-    Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    Crane::Renderer2D::DrawQuad(m_Position, m_Angle, m_Scale, m_Color);
-    Crane::Renderer2D::DrawQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, m_Texture);
-
-    for (int i = 0; i < m_ParticleBurstSize; i++)
     {
-        m_ParticleSystem.Emit(m_Particle);
+        CR_PROFILE_FUNCTION();
+        m_CameraController.OnUpdate(time);
+    }
+    {
+        CR_PROFILE_FUNCTION();
+
+        Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
+        Crane::RenderCommand::Clear();
+
+        Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
+        Crane::Renderer2D::DrawQuad(m_Position, m_Angle, m_Scale, m_Color);
+        Crane::Renderer2D::DrawQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, m_Texture);
     }
 
-    m_ParticleSystem.OnUpdate(time);
-    m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    {
+        CR_PROFILE_FUNCTION();
+
+        for (int i = 0; i < m_ParticleBurstSize; i++)
+        {
+            m_ParticleSystem.Emit(m_Particle);
+        }
+
+        m_ParticleSystem.OnUpdate(time);
+        m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    }
     Crane::Renderer2D::EndScene();
 }
 void Sandbox2D::OnImGuiRender()
 {
+    CR_PROFILE_FUNCTION();
+
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Triangle color", glm::value_ptr(m_Color));
     ImGui::DragFloat3("Position", glm::value_ptr(m_Position));

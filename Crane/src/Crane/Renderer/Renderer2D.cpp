@@ -22,6 +22,8 @@ namespace Crane {
 
     void Renderer2D::Init()
     {
+        CR_PROFILE_FUNCTION();
+
         s_Data = new Renderer2DData();
 
         s_Data->QuadVertexArray = VertexArray::Create();
@@ -60,17 +62,21 @@ namespace Crane {
     }
     void Renderer2D::Shutdown()
     {
+        CR_PROFILE_FUNCTION();
+
         delete s_Data;
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
+        CR_PROFILE_FUNCTION();
+
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetMat4("u_ProjectionView", camera.GetProjectionViewMatrix());
     }
     void Renderer2D::EndScene()
     {
-
+        CR_PROFILE_FUNCTION();
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const float angle, const glm::vec2& size, glm::vec4& color)
@@ -80,6 +86,8 @@ namespace Crane {
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const float angle, const glm::vec2& size, glm::vec4& color)
     {
+        CR_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", color);
         s_Data->WhiteTexture->Bind();
 
@@ -100,6 +108,8 @@ namespace Crane {
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const float angle, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color)
     {
+        CR_PROFILE_FUNCTION();
+
         texture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
