@@ -12,19 +12,19 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1.6f / 0.9f), m_
 
 void Sandbox2D::OnAttach()
 {
-    m_Texture = Crane::Texture2D::Create("assets/textures/logo.png");
+    // m_Texture = Crane::Texture2D::Create("assets/textures/logo.png");
 
-    m_Particle.ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
-    m_Particle.ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
-    m_Particle.Lifetime = 9.5f;
-    m_Particle.LifetimeVariation = 0.6f;
-    m_Particle.Position = { 0.0f, 0.0f };
-    m_Particle.SizeBegin = 0.2f;
-    m_Particle.SizeEnd = 0.75f;
-    m_Particle.SizeVariation = 0.7f;
-    m_Particle.Velocity = { 0.420f, 0.370f };
-    m_Particle.VelocityVariation = { 1.0f, 0.4f };
-    m_Particle.Texture = m_Texture;
+    // m_Particle.ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
+    // m_Particle.ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
+    // m_Particle.Lifetime = 9.5f;
+    // m_Particle.LifetimeVariation = 0.6f;
+    // m_Particle.Position = { 0.0f, 0.0f };
+    // m_Particle.SizeBegin = 0.2f;
+    // m_Particle.SizeEnd = 0.75f;
+    // m_Particle.SizeVariation = 0.7f;
+    // m_Particle.Velocity = { 0.420f, 0.370f };
+    // m_Particle.VelocityVariation = { 1.0f, 0.4f };
+    // m_Particle.Texture = m_Texture;
 
 }
 void Sandbox2D::OnDetach()
@@ -49,18 +49,19 @@ void Sandbox2D::OnUpdate(Crane::Time time)
 
         Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
         Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));    }
+        // Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));    }
 
-    {
-        CR_PROFILE_FUNCTION();
+    // {
+    //     CR_PROFILE_FUNCTION();
 
-        for (int i = 0; i < m_ParticleBurstSize; i++)
-        {
-            m_ParticleSystem.Emit(m_Particle);
-        }
+    //     for (int i = 0; i < m_ParticleBurstSize; i++)
+    //     {
+    //         m_ParticleSystem.Emit(m_Particle);
+    //     }
 
-        m_ParticleSystem.OnUpdate(time);
-        m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    //     m_ParticleSystem.OnUpdate(time);
+    //     m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    // }
     }
     Crane::Renderer2D::EndScene();
 }

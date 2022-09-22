@@ -29,7 +29,7 @@ public:
         };
 
         Crane::Ref<Crane::VertexBuffer> squareVertexBuffer;
-        squareVertexBuffer = Crane::VertexBuffer::Create(sizeof(squareVertices), squareVertices);
+        squareVertexBuffer = Crane::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
         Crane::BufferLayout layout = {
             {Crane::ShaderDataType::Float3, "a_Position"},
@@ -42,7 +42,7 @@ public:
 
         uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
         Crane::Ref<Crane::IndexBuffer> indexBuffer;
-        indexBuffer = Crane::IndexBuffer::Create(sizeof(indices) / sizeof(u_int32_t), indices);
+        indexBuffer = Crane::IndexBuffer::Create(indices, sizeof(indices) / sizeof(u_int32_t));
 
         m_SquareVertexArray->SetIndexBuffer(indexBuffer);
 
@@ -56,7 +56,7 @@ public:
         };
 
         Crane::Ref<Crane::VertexBuffer> triangleVertexBuffer;
-        triangleVertexBuffer = Crane::VertexBuffer::Create(sizeof(triangleVertices), triangleVertices);
+        triangleVertexBuffer = Crane::VertexBuffer::Create(triangleVertices, sizeof(triangleVertices));
 
         Crane::BufferLayout triangleLayout = {
             {Crane::ShaderDataType::Float3, "a_Position"},
@@ -69,7 +69,7 @@ public:
 
         uint32_t triangleIndices[6] = { 0, 1, 2 };
         Crane::Ref<Crane::IndexBuffer> triangleIndexBuffer;
-        triangleIndexBuffer = Crane::IndexBuffer::Create(sizeof(triangleIndices) / sizeof(u_int32_t), triangleIndices);
+        triangleIndexBuffer = Crane::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(u_int32_t));
 
         m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
