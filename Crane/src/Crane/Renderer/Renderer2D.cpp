@@ -79,12 +79,12 @@ namespace Crane {
         CR_PROFILE_FUNCTION();
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const float angle, const glm::vec2& size, glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, angle, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const float angle, const glm::vec2& size, glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         CR_PROFILE_FUNCTION();
 
@@ -92,7 +92,6 @@ namespace Crane {
         s_Data->WhiteTexture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f))
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         s_Data->TextureShader->SetMat4("u_Transform", transform);
@@ -101,23 +100,68 @@ namespace Crane {
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const float angle, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters textureParameters)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, angle, size, texture, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const float angle, const glm::vec2& size, Ref<Texture2D>& texture, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters textureParameters)
     {
         CR_PROFILE_FUNCTION();
 
-        texture->Bind();
+        textureParameters.Texture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f))
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         s_Data->TextureShader->SetMat4("u_Transform", transform);
+        s_Data->TextureShader->SetFloat4("u_Color", textureParameters.Color);
+        s_Data->TextureShader->SetFloat("u_TillingFactor", textureParameters.TillingFactor);
+
+        s_Data->QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float angle, const glm::vec2& size, const glm::vec4& color)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, angle, size, color);
+    }
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float angle, const glm::vec2& size, const glm::vec4& color)
+    {
+        CR_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat("u_TillingFactor", 1.0f);
+
+        s_Data->WhiteTexture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+            * glm::rotate(glm::mat4(1.0f), angle, { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+        s_Data->QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float angle, const glm::vec2& size, TextureParameters textureParameters)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, angle, size, textureParameters);
+    }
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float angle, const glm::vec2& size, TextureParameters textureParameters)
+    {
+        CR_PROFILE_FUNCTION();
+
+        textureParameters.Texture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+            * glm::rotate(glm::mat4(1.0f), angle, { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
+        s_Data->TextureShader->SetFloat4("u_Color", textureParameters.Color);
+        s_Data->TextureShader->SetFloat("u_TillingFactor", textureParameters.TillingFactor);
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
