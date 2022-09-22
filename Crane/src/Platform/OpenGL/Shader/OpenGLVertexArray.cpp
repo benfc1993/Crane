@@ -8,7 +8,8 @@
 namespace Crane
 {
 
-    static GLenum ShaderDataTypeToOpenGLDataType(ShaderDataType type) {
+    static GLenum ShaderDataTypeToOpenGLDataType(ShaderDataType type)
+    {
         switch (type)
         {
         case Crane::ShaderDataType::Float:      return GL_FLOAT;
@@ -30,12 +31,16 @@ namespace Crane
 
     OpenGLVertexArray::OpenGLVertexArray()
     {
+        CR_PROFILE_FUNCTION();
+
         glCreateVertexArrays(1, &m_RendererId);
     }
 
 
     OpenGLVertexArray::~OpenGLVertexArray()
     {
+        CR_PROFILE_FUNCTION();
+
         glDeleteVertexArrays(1, &m_RendererId);
     }
 

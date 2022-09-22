@@ -7,12 +7,14 @@
 
 namespace Crane
 {
-    OpenGLContext::OpenGLContext(GLFWwindow *windowHandle) : m_WindowHandle(windowHandle)
+    OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) : m_WindowHandle(windowHandle)
     {
     }
 
     void OpenGLContext::Init()
     {
+        CR_PROFILE_FUNCTION();
+
         glfwMakeContextCurrent(m_WindowHandle);
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         CR_CORE_ASSERT(status, "Failed to initialize GLAD");
@@ -25,6 +27,8 @@ namespace Crane
 
     void OpenGLContext::SwapBuffers()
     {
+        CR_PROFILE_FUNCTION();
+
         glfwSwapBuffers(m_WindowHandle);
     }
 }

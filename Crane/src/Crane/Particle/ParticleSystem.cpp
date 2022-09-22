@@ -50,7 +50,10 @@ namespace Crane {
 
             float size = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
 
-            Renderer2D::DrawQuad(particle.Position, particle.Rotation, { size, size }, particle.Texture, color);
+            TextureParameters textureParameters = TextureParameters(particle.Texture);
+            textureParameters.Color = color;
+
+            Renderer2D::DrawRotatedQuad(particle.Position, particle.Rotation, { size, size }, textureParameters);
         }
     }
 

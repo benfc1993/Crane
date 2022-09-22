@@ -18,6 +18,8 @@ namespace Crane
 
     OpenGLShader::OpenGLShader(const std::string& filePath)
     {
+        CR_PROFILE_FUNCTION();
+
         std::string source = ReadFile(filePath);
         auto shaderSources = PreProcess(source);
         Compile(shaderSources);
@@ -34,6 +36,8 @@ namespace Crane
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
         : m_Name(name)
     {
+        CR_PROFILE_FUNCTION();
+
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
         shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -182,6 +186,15 @@ namespace Crane
         UploadUniformInt(name, value);
     }
 
+    void OpenGLShader::SetFloat(const std::string& name, const float& value)
+    {
+        UploadUniformFloat(name, value);
+    }
+
+    void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
+    {
+        UploadUniformFloat2(name, value);
+    }
 
     void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
     {

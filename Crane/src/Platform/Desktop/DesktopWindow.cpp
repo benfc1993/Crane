@@ -27,11 +27,15 @@ namespace Crane
 
     DesktopWindow::DesktopWindow(const WindowProps& props)
     {
+        CR_PROFILE_FUNCTION();
+
         Init(props);
     }
 
     DesktopWindow::~DesktopWindow()
     {
+        CR_PROFILE_FUNCTION();
+
         Shutdown();
     }
 

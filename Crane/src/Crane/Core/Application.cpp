@@ -13,6 +13,8 @@ namespace Crane
 
     Application::Application()
     {
+        CR_PROFILE_FUNCTION();
+
         CR_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
@@ -27,6 +29,7 @@ namespace Crane
 
     Application::~Application()
     {
+        CR_PROFILE_FUNCTION();
     }
 
     void Application::PushLayer(Layer* layer)

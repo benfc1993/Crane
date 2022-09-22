@@ -10,11 +10,12 @@ namespace Crane {
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
         : m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
     {
-
     }
 
     void OrthographicCameraController::OnUpdate(Time time)
     {
+        CR_PROFILE_FUNCTION();
+
         m_CameraTranslationSpeed = m_ZoomLevel;
 
         m_CameraTranslationSpeed = std::max(m_CameraTranslationSpeed, 0.5f);
@@ -63,6 +64,8 @@ namespace Crane {
 
     void OrthographicCameraController::OnEvent(Event& e)
     {
+        CR_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseScrolledEvent>(CR_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolledEvent));
         dispatcher.Dispatch<WindowResizeEvent>(CR_BIND_EVENT_FN(OrthographicCameraController::OnResizeEvent));

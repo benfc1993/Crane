@@ -8,6 +8,8 @@ namespace Crane {
     OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
         : m_Width(width), m_Height(height)
     {
+        CR_PROFILE_FUNCTION();
+
         m_InternalFormat = GL_RGBA8;
         m_DataFormat = GL_RGBA;
 
@@ -25,6 +27,8 @@ namespace Crane {
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
         : m_Path(path)
     {
+        CR_PROFILE_FUNCTION();
+
         int width, height, channels;
         stbi_set_flip_vertically_on_load(1);
         stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);

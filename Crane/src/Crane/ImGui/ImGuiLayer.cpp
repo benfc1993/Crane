@@ -24,10 +24,12 @@ namespace Crane
 
     void ImGuiLayer::OnAttach()
     {
+        CR_PROFILE_FUNCTION();
+
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiIO &io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO();
         (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -41,15 +43,15 @@ namespace Crane
         // ImGui::StyleColorsLight();
 
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-        ImGuiStyle &style = ImGui::GetStyle();
+        ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             style.WindowRounding = 0.0f;
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        Application &app = Application::Get();
-        GLFWwindow *window = static_cast<GLFWwindow *>(app.GetWindow().GetNativeWindow());
+        Application& app = Application::Get();
+        GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
         // Setup Platform/Renderer backends
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -58,6 +60,8 @@ namespace Crane
 
     void ImGuiLayer::OnDetach()
     {
+        CR_PROFILE_FUNCTION();
+
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -72,8 +76,8 @@ namespace Crane
 
     void ImGuiLayer::End()
     {
-        ImGuiIO &io = ImGui::GetIO();
-        Application &app = Application::Get();
+        ImGuiIO& io = ImGui::GetIO();
+        Application& app = Application::Get();
         io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
         ImGui::Render();
@@ -81,7 +85,7 @@ namespace Crane
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            GLFWwindow *backup_current_context = glfwGetCurrentContext();
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
