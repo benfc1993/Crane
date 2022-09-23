@@ -85,6 +85,6 @@ namespace Crane {
 
     void OpenGLTexture2D::Bind(uint32_t slot) const
     {
-        glBindTextureUnit(0, m_RendererId);
+        glBindTextureUnit(slot, m_RendererId);
     }
 }

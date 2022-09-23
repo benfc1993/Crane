@@ -42,17 +42,21 @@ void Sandbox2D::OnUpdate(Crane::Time time)
     Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
     Crane::RenderCommand::Clear();
 
+    Crane::TextureParameters textureParameters(m_Texture);
+    textureParameters.Color = m_Color;
+
     Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
     Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
+    Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f }, { 0.5f, 0.75f }, textureParameters);
     // Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
 
-    //     for (int i = 0; i < m_ParticleBurstSize; i++)
-    //     {
-    //         m_ParticleSystem.Emit(m_Particle);
-    //     }
+    // for (int i = 0; i < m_ParticleBurstSize; i++)
+    // {
+    //     m_ParticleSystem.Emit(m_Particle);
+    // }
 
-    //     m_ParticleSystem.OnUpdate(time);
-    //     m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    // m_ParticleSystem.OnUpdate(time);
+    // m_ParticleSystem.OnRender(m_CameraController.GetCamera());
 
     Crane::Renderer2D::EndScene();
 }

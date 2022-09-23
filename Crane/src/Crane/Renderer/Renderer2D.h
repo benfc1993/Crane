@@ -8,7 +8,7 @@
 namespace Crane {
     struct TextureParameters
     {
-        Ref<Texture2D> Texture;
+        Ref<Texture2D>& Texture;
         float TillingFactor = 1.0f;
         glm::vec4 Color = glm::vec4(1.0f);
 

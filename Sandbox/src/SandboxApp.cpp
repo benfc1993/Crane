@@ -33,7 +33,7 @@ public:
 
         Crane::BufferLayout layout = {
             {Crane::ShaderDataType::Float3, "a_Position"},
-            {Crane::ShaderDataType::Float2, "a_Texture"}
+            {Crane::ShaderDataType::Float2, "a_TextureCoord"}
         };
 
         squareVertexBuffer->SetLayout(layout);
@@ -60,7 +60,7 @@ public:
 
         Crane::BufferLayout triangleLayout = {
             {Crane::ShaderDataType::Float3, "a_Position"},
-            {Crane::ShaderDataType::Float2, "a_Texture"}
+            {Crane::ShaderDataType::Float2, "a_TextureCoord"}
         };
 
         triangleVertexBuffer->SetLayout(triangleLayout);
