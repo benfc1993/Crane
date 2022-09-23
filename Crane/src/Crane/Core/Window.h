@@ -20,7 +20,6 @@ namespace Crane
         }
     };
 
-    // Interface representing a desktop system based Window
     class Window
     {
     public:

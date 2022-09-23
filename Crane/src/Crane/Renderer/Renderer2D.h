@@ -9,7 +9,7 @@ namespace Crane {
     struct TextureParameters
     {
         Ref<Texture2D>& Texture;
-        float TillingFactor = 1.0f;
+        float TilingFactor = 1.0f;
         glm::vec4 Color = glm::vec4(1.0f);
 
         TextureParameters(Ref<Texture2D>& texture) : Texture(texture) {}
@@ -32,10 +32,22 @@ namespace Crane {
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters textureParameters);
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters textureParameters);
 
-        static void DrawRotatedQuad(const glm::vec2& position, const float angle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-        static void DrawRotatedQuad(const glm::vec3& position, const float angle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
 
-        static void DrawRotatedQuad(const glm::vec2& position, const float angle, const glm::vec2& size, TextureParameters textureParameters);
-        static void DrawRotatedQuad(const glm::vec3& position, const float angle, const glm::vec2& size, TextureParameters textureParameters);
+        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters textureParameters);
+        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters textureParameters);
+
+        struct Statistics
+        {
+            uint32_t DrawCalls = 0;
+            uint32_t QuadsDrawn = 0;
+
+            uint32_t GetTotalVertexCount() { return QuadsDrawn * 4; }
+            uint32_t GetTotalIndexCount() { return QuadsDrawn * 6; }
+        };
+
+        static void ResetStats();
+        static Statistics GetStats();
     };
 }

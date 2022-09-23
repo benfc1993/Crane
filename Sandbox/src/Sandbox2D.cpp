@@ -39,24 +39,36 @@ void Sandbox2D::OnUpdate(Crane::Time time)
 
     m_CameraController.OnUpdate(time);
 
-    Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
-    Crane::RenderCommand::Clear();
+    Crane::Renderer2D::ResetStats();
 
-    Crane::TextureParameters textureParameters(m_Texture);
-    textureParameters.Color = m_Color;
+    {
+        CR_PROFILE_SCOPE("Renderer Prep");
+        Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
+        Crane::RenderCommand::Clear();
+    }
 
-    Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
-    Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f }, { 0.5f, 0.75f }, textureParameters);
-    // Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+    {
+        CR_PROFILE_SCOPE("Renderer Draw");
+        Crane::TextureParameters textureParameters(m_Texture);
+        textureParameters.Color = m_Color;
 
-    // for (int i = 0; i < m_ParticleBurstSize; i++)
-    // {
-    //     m_ParticleSystem.Emit(m_Particle);
-    // }
+        Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
+        Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
+        Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f }, { 0.5f, 0.75f }, textureParameters);
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
 
-    // m_ParticleSystem.OnUpdate(time);
-    // m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+        for (int i = 0; i < m_ParticleBurstSize; i++)
+        {
+            m_ParticleSystem.Emit(m_Particle);
+        }
+
+        m_ParticleSystem.OnUpdate(time);
+        m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+    }
 
     Crane::Renderer2D::EndScene();
 }
@@ -86,6 +98,12 @@ void Sandbox2D::OnImGuiRender()
     ImGui::DragFloat2("Velocity Variation", glm::value_ptr(m_Particle.VelocityVariation), 0.1f, 0.0f, 1.0f);
 
     ImGui::InputInt("Burst Size", &m_ParticleBurstSize);
+    ImGui::End();
+
+    auto stats = Crane::Renderer2D::GetStats();
+    ImGui::Begin("Render Statistics");
+    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+    ImGui::Text("Quads Drawn: %d", stats.QuadsDrawn);
     ImGui::End();
 }
 void Sandbox2D::OnEvent(Crane::Event& event)

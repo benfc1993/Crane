@@ -23,6 +23,7 @@ namespace Crane {
     {
     public:
         ParticleSystem(u_int32_t particleCount);
+        ~ParticleSystem() {}
 
         void OnUpdate(Time time);
         void OnRender(OrthographicCamera& camera);
