@@ -20,6 +20,7 @@
 #include "Crane/Renderer/Renderer.h"
 #include "Crane/Renderer/Renderer2D.h"
 #include "Crane/Renderer/RenderCommand.h"
+#include "Crane/Renderer/Framebuffer.h"
 #include "Crane/Renderer/Shader/Buffer.h"
 #include "Crane/Renderer/Shader/Shader.h"
 #include "Crane/Renderer/Shader/Texture.h"

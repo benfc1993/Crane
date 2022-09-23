@@ -15,6 +15,11 @@ void Sandbox2D::OnAttach()
 {
     m_Texture = Crane::Texture2D::Create("assets/textures/logo.png");
 
+    Crane::FramebufferSpecification spec;
+    spec.Width = 1280;
+    spec.Height = 720;
+    m_Framebuffer = Crane::Framebuffer::Create(spec);
+
     m_Particle.ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
     m_Particle.ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
     m_Particle.Lifetime = 9.5f;
@@ -26,7 +31,6 @@ void Sandbox2D::OnAttach()
     m_Particle.Velocity = { 0.420f, 0.370f };
     m_Particle.VelocityVariation = { 1.0f, 0.4f };
     m_Particle.Texture = m_Texture;
-
 }
 void Sandbox2D::OnDetach()
 
@@ -44,6 +48,9 @@ void Sandbox2D::OnUpdate(Crane::Time time)
 
     {
         CR_PROFILE_SCOPE("Renderer Prep");
+
+        m_Framebuffer->Bind();
+
         Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
         Crane::RenderCommand::Clear();
     }
@@ -72,6 +79,9 @@ void Sandbox2D::OnUpdate(Crane::Time time)
     }
 
     Crane::Renderer2D::EndScene();
+
+    m_Framebuffer->Unbind();
+
 }
 void Sandbox2D::OnImGuiRender()
 {
@@ -154,6 +164,11 @@ void Sandbox2D::OnImGuiRender()
     ImGui::DragFloat3("Position", glm::value_ptr(m_Position));
     ImGui::SliderAngle("Rotation", &m_Angle);
     ImGui::DragFloat2("Scale", glm::value_ptr(m_Scale));
+    ImGui::End();
+
+    uint32_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
+    ImGui::Begin("Viewport");
+    ImGui::Image((void*)textureId, ImVec2(320.0f, 180.0f));
     ImGui::End();
 
     ParticleSystemPropertiesPanel(m_Particle);
