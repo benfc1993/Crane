@@ -17,6 +17,8 @@ namespace Crane {
         float Lifetime = 1.0f;
         float LifetimeVariation = 0.1f, SizeVariation = 0.3f;
         Ref<Texture2D> Texture;
+
+        int BurstSize = 5;
     };
 
     class ParticleSystem

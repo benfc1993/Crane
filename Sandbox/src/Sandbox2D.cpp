@@ -4,9 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
-
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
+
+#include "Panels/ParticleSystemPropertiesPanel.h"
+#include "Panels/RenderStatsPanel.h"
 
 Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1.6f / 0.9f), m_ParticleSystem(10000) {}
 
@@ -61,7 +62,7 @@ void Sandbox2D::OnUpdate(Crane::Time time)
         Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
         Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
 
-        for (int i = 0; i < m_ParticleBurstSize; i++)
+        for (int i = 0; i < m_Particle.BurstSize; i++)
         {
             m_ParticleSystem.Emit(m_Particle);
         }
@@ -76,6 +77,78 @@ void Sandbox2D::OnImGuiRender()
 {
     CR_PROFILE_FUNCTION();
 
+
+    static bool opt_fullscreen = true;
+    static bool opt_padding = false;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen)
+    {
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+    else
+    {
+        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+    }
+
+    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+    // and handle the pass-thru hole, so we ask Begin() to not render a background.
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+        window_flags |= ImGuiWindowFlags_NoBackground;
+
+    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+    // all active windows docked into it will lose their parent and become undocked.
+    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+    if (!opt_padding)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    bool p_open = true;
+
+    ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+    if (!opt_padding)
+        ImGui::PopStyleVar();
+
+    if (opt_fullscreen)
+        ImGui::PopStyleVar(2);
+
+    // Submit the DockSpace
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("Options"))
+        {
+            // Disabling fullscreen would allow the window to be moved to the front of other windows,
+            // which we can't undo at the moment without finer window depth/z control.
+            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+            ImGui::MenuItem("Padding", NULL, &opt_padding);
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Exit")) Crane::Application::Get().Close();
+            ImGui::Separator();
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Triangle color", glm::value_ptr(m_Color));
     ImGui::DragFloat3("Position", glm::value_ptr(m_Position));
@@ -83,27 +156,10 @@ void Sandbox2D::OnImGuiRender()
     ImGui::DragFloat2("Scale", glm::value_ptr(m_Scale));
     ImGui::End();
 
-    ImGui::Begin("Particles");
-    ImGui::ColorEdit4("Start Color", glm::value_ptr(m_Particle.ColorBegin));
-    ImGui::ColorEdit4("End Color", glm::value_ptr(m_Particle.ColorEnd));
+    ParticleSystemPropertiesPanel(m_Particle);
 
-    ImGui::DragFloat("Life Time", &m_Particle.Lifetime, 0.1f, 0.0f, 1000.0f);
-    ImGui::DragFloat("Life Time Variation", &m_Particle.LifetimeVariation, 0.1f, 0.0f, 1.0f);
+    RenderStatsPanel();
 
-    ImGui::InputFloat("Initial Size", &m_Particle.SizeBegin);
-    ImGui::InputFloat("End Size", &m_Particle.SizeEnd);
-    ImGui::DragFloat("Size Variation", &m_Particle.SizeVariation, 0.1f, 0.0f, 1.0f);
-
-    ImGui::InputFloat2("Initial Velocity", glm::value_ptr(m_Particle.Velocity));
-    ImGui::DragFloat2("Velocity Variation", glm::value_ptr(m_Particle.VelocityVariation), 0.1f, 0.0f, 1.0f);
-
-    ImGui::InputInt("Burst Size", &m_ParticleBurstSize);
-    ImGui::End();
-
-    auto stats = Crane::Renderer2D::GetStats();
-    ImGui::Begin("Render Statistics");
-    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-    ImGui::Text("Quads Drawn: %d", stats.QuadsDrawn);
     ImGui::End();
 }
 void Sandbox2D::OnEvent(Crane::Event& event)

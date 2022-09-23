@@ -30,5 +30,4 @@ private:
 
     Crane::ParticleData m_Particle;
     Crane::ParticleSystem m_ParticleSystem;
-    int m_ParticleBurstSize = 5;
 };
