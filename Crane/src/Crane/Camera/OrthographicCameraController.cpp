@@ -72,6 +72,13 @@ namespace Crane {
 
     }
 
+    void OrthographicCameraController::OnResize(float width, float height)
+    {
+        m_AspectRatio = width / height;
+        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    }
+
+
     bool OrthographicCameraController::OnMouseScrolledEvent(MouseScrolledEvent& event)
     {
         m_ZoomLevel += event.GetYOffset() * 0.12f;
@@ -84,6 +91,7 @@ namespace Crane {
     {
         m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        OnResize((float)event.GetWidth(), (float)event.GetHeight());
         return false;
     }
 }

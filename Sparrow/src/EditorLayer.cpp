@@ -161,15 +161,24 @@ namespace Crane {
         ImGui::DragFloat2("Scale", glm::value_ptr(m_Scale));
         ImGui::End();
 
-        uint32_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("Viewport");
-        ImGui::Image((void*)textureId, ImVec2(320.0f, 180.0f), ImVec2({ 0,1 }), ImVec2({ 1,0 }));
+        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+        if (m_ViewportSize != *((glm::vec2*)&viewportSize))
+        {
+            m_ViewportSize = { viewportSize.x, viewportSize.y };
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+            m_CameraController.OnResize(viewportSize.x, viewportSize.y);
+        }
+        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererId();
+        ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
+        ImGui::PopStyleVar();
 
         ParticleSystemPropertiesPanel(m_Particle);
 
         RenderStatsPanel();
-
         ImGui::End();
     }
     void EditorLayer::OnEvent(Crane::Event& event)

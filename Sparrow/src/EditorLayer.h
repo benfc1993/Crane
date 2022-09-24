@@ -33,5 +33,7 @@ namespace Crane {
 
         ParticleData m_Particle;
         ParticleSystem m_ParticleSystem;
+
+        glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
     };
 }
