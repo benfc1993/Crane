@@ -2,7 +2,7 @@ require "vscode"
 
 workspace "Crane"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "Sparrow"
 
 	configurations
 	{
@@ -157,6 +157,74 @@ project "Sandbox"
 	
 	defines
 	{
+			"CR_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines 
+		{
+			"CR_DEBUG",
+			"CR_ENABLE_ASSERTS",
+			"CR_PROFILE"
+		}
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "CR_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "CR_DIST"
+		runtime "Release"
+		optimize "on"
+
+project "Sparrow"
+	location "Sparrow"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+	
+	includedirs
+	{
+		"Crane/vendor/spdlog/include",
+		"Crane/src",
+		"Crane/vendor",
+		"%{IncludeDir.glm}"
+	}
+	
+	links
+	{
+		"Crane"
+	}
+	
+	prebuildcommands
+	{
+		("{COPY} assets ../bin/" .. outputdir .. "/Sparrow")
+	}
+
+	filter "system:linux"
+		systemversion "latest"
+		pic "On"
+		staticruntime "off"
+
+	
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "on"
+	
+		defines
+		{
 			"CR_PLATFORM_WINDOWS"
 		}
 

@@ -11,7 +11,7 @@ namespace Crane
     class Application
     {
     public:
-        Application();
+        Application(const std::string& name = "Crane App");
 
         virtual ~Application();
 
