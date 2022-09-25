@@ -68,8 +68,6 @@ namespace Crane {
 
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseScrolledEvent>(CR_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolledEvent));
-        dispatcher.Dispatch<WindowResizeEvent>(CR_BIND_EVENT_FN(OrthographicCameraController::OnResizeEvent));
-
     }
 
     void OrthographicCameraController::OnResize(float width, float height)
@@ -81,17 +79,9 @@ namespace Crane {
 
     bool OrthographicCameraController::OnMouseScrolledEvent(MouseScrolledEvent& event)
     {
-        m_ZoomLevel += event.GetYOffset() * 0.12f;
+        m_ZoomLevel -= event.GetYOffset() * 0.12f;
         m_ZoomLevel = std::max(m_ZoomLevel, 0.2f);
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
-        return false;
-    }
-
-    bool OrthographicCameraController::OnResizeEvent(WindowResizeEvent& event)
-    {
-        m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
-        OnResize((float)event.GetWidth(), (float)event.GetHeight());
         return false;
     }
 }

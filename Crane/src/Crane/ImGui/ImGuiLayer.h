@@ -16,12 +16,16 @@ namespace Crane
 
         virtual void OnAttach() override;
         virtual void OnDetach() override;
+        virtual void OnEvent(Event& e) override;
         virtual void OnImGuiRender() override;
 
         void Begin();
         void End();
 
+        void ShouldBlockEvents(bool shouldHandleEvents) { m_ShouldBlockEvents = shouldHandleEvents; }
+
     private:
+        bool m_ShouldBlockEvents = true;
         float m_Time = 0.0f;
     };
 }

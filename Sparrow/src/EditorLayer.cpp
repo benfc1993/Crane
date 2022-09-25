@@ -32,7 +32,7 @@ namespace Crane {
         m_Particle.SizeVariation = 0.7f;
         m_Particle.Velocity = { 0.420f, 0.370f };
         m_Particle.VelocityVariation = { 1.0f, 0.4f };
-        m_Particle.Texture = m_Texture;
+        m_Particle.Texture = Crane::Texture2D::Create("assets/textures/white-smoke.png");
     }
     void EditorLayer::OnDetach()
     {
@@ -42,8 +42,8 @@ namespace Crane {
     void EditorLayer::OnUpdate(Crane::Time time)
     {
         CR_PROFILE_FUNCTION();
-
-        m_CameraController.OnUpdate(time);
+        if (m_ViewportFocused)
+            m_CameraController.OnUpdate(time);
 
         Crane::Renderer2D::ResetStats();
 
@@ -63,12 +63,8 @@ namespace Crane {
 
             Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
             Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
-            Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f }, { 0.5f, 0.75f }, textureParameters);
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+            Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f, -0.2f }, { 1.0f, 1.0f }, textureParameters);
+            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, -0.3f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
 
             for (int i = 0; i < m_Particle.BurstSize; i++)
             {
@@ -163,6 +159,12 @@ namespace Crane {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("Viewport");
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+
+        Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || !m_ViewportFocused);
+
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
         if (m_ViewportSize != *((glm::vec2*)&viewportSize))
         {

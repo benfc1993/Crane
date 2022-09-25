@@ -35,5 +35,7 @@ namespace Crane {
         ParticleSystem m_ParticleSystem;
 
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+
+        bool m_ViewportFocused = false, m_ViewportHovered = false;
     };
 }

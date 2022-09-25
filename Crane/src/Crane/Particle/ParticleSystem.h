@@ -34,7 +34,7 @@ namespace Crane {
     private:
         struct Particle
         {
-            glm::vec2 Position;
+            glm::vec3 Position;
             glm::vec2 Velocity;
             glm::vec4 ColorBegin, ColorEnd;
             Ref<Texture2D> Texture;

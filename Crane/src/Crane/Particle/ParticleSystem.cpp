@@ -32,8 +32,8 @@ namespace Crane {
             }
 
             particle.LifeRemaining -= time.DeltaTime();
-            particle.Position += particle.Velocity * (float)time.DeltaTime();
-            particle.Rotation += 0.01f * time.DeltaTime();
+            particle.Position += glm::vec3{ particle.Velocity.x, particle.Velocity.y, 0.0f } *(float)time.DeltaTime();
+            particle.Rotation += Random::Float() * 10.0f * time.DeltaTime();
         }
     }
 
@@ -63,9 +63,11 @@ namespace Crane {
 
         Particle& particle = m_ParticlePool[m_PoolIndex];
 
+        float particleZ = 0.000001f * (float)m_PoolIndex;
+
         particle.Active = true;
-        particle.Position = particleData.Position;
-        particle.Rotation = Random::Float() * 2.0f * glm::pi<float>();
+        particle.Position = { particleData.Position.x, particleData.Position.y,  particleZ };
+        particle.Rotation = Random::Float() * 60.0f;
         particle.SizeBegin = particleData.SizeBegin + (particleData.SizeBegin * (particleData.SizeVariation * (((float)Random::Float() * 2.0f) - 1.0f)));
         particle.SizeEnd = particleData.SizeEnd;
 
