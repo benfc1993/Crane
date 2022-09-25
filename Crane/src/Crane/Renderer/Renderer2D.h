@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Crane/Camera/OrthographicCamera.h"
+#include "Crane/Camera/Camera.h"
+
 #include "Shader/Texture.h"
 
 
@@ -21,6 +23,7 @@ namespace Crane {
         static void Init();
         static void Shutdown();
 
+        static void BeginScene(const Camera& camera, const glm::mat4& transform);
         static void BeginScene(const OrthographicCamera& camera);
         static void EndScene();
 

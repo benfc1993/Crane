@@ -33,6 +33,7 @@ namespace Crane {
 
         Ref<Scene> m_ActiveScene = nullptr;
         Entity m_QuadEntity;
+        Entity m_CameraEntity;
 
 
         ParticleData m_Particle;

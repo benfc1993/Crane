@@ -2,7 +2,6 @@
 
 #include "Crane.h"
 
-
 #include "imgui/imgui.h"
 
 namespace Crane {

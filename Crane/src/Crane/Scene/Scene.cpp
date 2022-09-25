@@ -29,13 +29,33 @@ namespace Crane {
 
     void Scene::OnUpdate(Time time)
     {
-        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-        for (auto entity : group)
+        Camera* mainCamera = nullptr;
+        glm::mat4* cameraTransform = nullptr;
+        auto view = m_Registry.view <TransformComponent, CameraComponent>();
+        for (auto entity : view)
         {
-            const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-            Renderer2D::DrawQuad(transform, sprite.Color);
+            const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+            if (camera.primary)
+            {
+                mainCamera = &camera.Camera;
+                cameraTransform = &transform.Transform;
+                break;
+            }
         }
+
+        if (mainCamera)
+        {
+            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+            auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+            for (auto entity : spriteGroup)
+            {
+                const auto& [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                Renderer2D::DrawQuad(transform, sprite.Color);
+            }
+            Renderer2D::EndScene();
+        }
+
     }
 
 }

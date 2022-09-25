@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Crane/Camera/Camera.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -50,5 +52,19 @@ namespace Crane {
             : Color(color)
         {
         }
+    };
+
+    struct CameraComponent
+    {
+        Crane::Camera Camera;
+        bool primary = true;
+
+        CameraComponent() = default;
+        CameraComponent(const CameraComponent&) = default;
+        CameraComponent(const glm::mat4& projection)
+            : Camera(projection)
+        {
+        }
+
     };
 }

@@ -38,6 +38,9 @@ namespace Crane {
 
         m_QuadEntity = m_ActiveScene->CreateEntity("Square");
         m_QuadEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f));
     }
     void EditorLayer::OnDetach()
     {
@@ -90,8 +93,6 @@ namespace Crane {
         static bool opt_padding = false;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-        // because it would be confusing to have two docking targets within each others.
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
         if (opt_fullscreen)
         {
@@ -109,16 +110,9 @@ namespace Crane {
             dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
         }
 
-        // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-        // and handle the pass-thru hole, so we ask Begin() to not render a background.
         if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
             window_flags |= ImGuiWindowFlags_NoBackground;
 
-        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-        // all active windows docked into it will lose their parent and become undocked.
-        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         if (!opt_padding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
@@ -150,40 +144,48 @@ namespace Crane {
             ImGui::EndMenuBar();
         }
 
-        auto& tag = m_QuadEntity.GetComponent<TagComponent>().Tag;
-        auto& transform = m_QuadEntity.GetComponent<TransformComponent>();
-        auto& sprite = m_QuadEntity.GetComponent<SpriteRendererComponent>().Color;
+        auto& squareTag = m_QuadEntity.GetComponent<TagComponent>().Tag;
+        auto& squareTransform = m_QuadEntity.GetComponent<TransformComponent>();
+        auto& squareSprite = m_QuadEntity.GetComponent<SpriteRendererComponent>().Color;
 
         ImGui::Begin("Settings");
+
         ImGui::Separator();
-        ImGui::Text("%s", tag.c_str());
-        ImGui::ColorEdit4("Triangle color", glm::value_ptr(sprite));
-        ImGui::DragFloat3("Position", glm::value_ptr(transform.Position), 0.1f);
-        ImGui::SliderAngle("Rotation", &transform.Rotation);
-        ImGui::DragFloat2("Scale", glm::value_ptr(transform.Scale), 0.1f);
+
+        ImGui::PushID((uint32_t)m_QuadEntity);
+        ImGui::Text("%s", squareTag.c_str());
+        ImGui::ColorEdit4("Triangle color", glm::value_ptr(squareSprite));
+        ImGui::DragFloat3("Position", glm::value_ptr(squareTransform.Position), 0.1f);
+        ImGui::SliderAngle("Rotation", &squareTransform.Rotation);
+        ImGui::DragFloat2("Scale", glm::value_ptr(squareTransform.Scale), 0.1f);
+        ImGui::PopID();
+
         ImGui::Separator();
+
         ImGui::End();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("Viewport");
-
-        m_ViewportFocused = ImGui::IsWindowFocused();
-        m_ViewportHovered = ImGui::IsWindowHovered();
-
-        Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || !m_ViewportFocused);
-
-        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-        if (m_ViewportSize != *((glm::vec2*)&viewportSize))
         {
-            m_ViewportSize = { viewportSize.x, viewportSize.y };
-            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            ImGui::Begin("Viewport");
 
-            m_CameraController.OnResize(viewportSize.x, viewportSize.y);
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+
+            Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || !m_ViewportFocused);
+
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+            if (m_ViewportSize != *((glm::vec2*)&viewportSize))
+            {
+                m_ViewportSize = { (float)viewportSize.x, (float)viewportSize.y };
+                m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+                m_CameraController.OnResize(viewportSize.x, viewportSize.y);
+            }
+            uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
+            ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+            ImGui::End();
+            ImGui::PopStyleVar();
         }
-        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererId();
-        ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-        ImGui::End();
-        ImGui::PopStyleVar();
 
         ParticleSystemPropertiesPanel(m_Particle);
 
