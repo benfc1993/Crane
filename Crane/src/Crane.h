@@ -26,4 +26,8 @@
 #include "Crane/Renderer/Shader/Texture.h"
 #include "Crane/Renderer/Shader/VertexArray.h"
 
+#include "Crane/Scene/Scene.h"
+#include "Crane/Scene/Components.h"
+#include "Crane/Scene/Entity.h"
+
 #include "Crane/Particle/ParticleSystem.h"

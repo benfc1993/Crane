@@ -15,12 +15,12 @@ namespace Crane {
 
     void EditorLayer::OnAttach()
     {
-        m_Texture = Crane::Texture2D::Create("assets/textures/logo.png");
+        m_Texture = Texture2D::Create("assets/textures/logo.png");
 
-        Crane::FramebufferSpecification spec;
+        FramebufferSpecification spec;
         spec.Width = 1280;
         spec.Height = 720;
-        m_Framebuffer = Crane::Framebuffer::Create(spec);
+        m_Framebuffer = Framebuffer::Create(spec);
 
         m_Particle.ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
         m_Particle.ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
@@ -32,39 +32,40 @@ namespace Crane {
         m_Particle.SizeVariation = 0.7f;
         m_Particle.Velocity = { 0.420f, 0.370f };
         m_Particle.VelocityVariation = { 1.0f, 0.4f };
-        m_Particle.Texture = Crane::Texture2D::Create("assets/textures/white-smoke.png");
+        m_Particle.Texture = Texture2D::Create("assets/textures/white-smoke.png");
+
+        m_ActiveScene = CreateRef<Scene>();
+
+        m_QuadEntity = m_ActiveScene->CreateEntity("Square");
+        m_QuadEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
     }
     void EditorLayer::OnDetach()
     {
 
     }
 
-    void EditorLayer::OnUpdate(Crane::Time time)
+    void EditorLayer::OnUpdate(Time time)
     {
         CR_PROFILE_FUNCTION();
         if (m_ViewportFocused)
             m_CameraController.OnUpdate(time);
 
-        Crane::Renderer2D::ResetStats();
+
+        Renderer2D::ResetStats();
 
         {
             CR_PROFILE_SCOPE("Renderer Prep");
 
             m_Framebuffer->Bind();
 
-            Crane::RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
-            Crane::RenderCommand::Clear();
+            RenderCommand::SetClearColor(glm::vec4(0.1333f, 0.1333f, 0.1333f, 1));
+            RenderCommand::Clear();
         }
 
+
+        Renderer2D::BeginScene(m_CameraController.GetCamera());
         {
             CR_PROFILE_SCOPE("Renderer Draw");
-            Crane::TextureParameters textureParameters(m_Texture);
-            textureParameters.Color = m_Color;
-
-            Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
-            Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
-            Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f, -0.2f }, { 1.0f, 1.0f }, textureParameters);
-            Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, -0.3f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
 
             for (int i = 0; i < m_Particle.BurstSize; i++)
             {
@@ -74,8 +75,8 @@ namespace Crane {
             m_ParticleSystem.OnUpdate(time);
             m_ParticleSystem.OnRender(m_CameraController.GetCamera());
         }
-
-        Crane::Renderer2D::EndScene();
+        m_ActiveScene->OnUpdate(time);
+        Renderer2D::EndScene();
 
         m_Framebuffer->Unbind();
 
@@ -141,7 +142,7 @@ namespace Crane {
         {
             if (ImGui::BeginMenu("Options"))
             {
-                if (ImGui::MenuItem("Exit")) Crane::Application::Get().Close();
+                if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::Separator();
                 ImGui::EndMenu();
             }
@@ -149,12 +150,18 @@ namespace Crane {
             ImGui::EndMenuBar();
         }
 
+        auto& tag = m_QuadEntity.GetComponent<TagComponent>().Tag;
+        auto& transform = m_QuadEntity.GetComponent<TransformComponent>();
+        auto& sprite = m_QuadEntity.GetComponent<SpriteRendererComponent>().Color;
 
         ImGui::Begin("Settings");
-        ImGui::ColorEdit4("Triangle color", glm::value_ptr(m_Color));
-        ImGui::DragFloat3("Position", glm::value_ptr(m_Position));
-        ImGui::SliderAngle("Rotation", &m_Angle);
-        ImGui::DragFloat2("Scale", glm::value_ptr(m_Scale));
+        ImGui::Separator();
+        ImGui::Text("%s", tag.c_str());
+        ImGui::ColorEdit4("Triangle color", glm::value_ptr(sprite));
+        ImGui::DragFloat3("Position", glm::value_ptr(transform.Position), 0.1f);
+        ImGui::SliderAngle("Rotation", &transform.Rotation);
+        ImGui::DragFloat2("Scale", glm::value_ptr(transform.Scale), 0.1f);
+        ImGui::Separator();
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -183,7 +190,7 @@ namespace Crane {
         RenderStatsPanel();
         ImGui::End();
     }
-    void EditorLayer::OnEvent(Crane::Event& event)
+    void EditorLayer::OnEvent(Event& event)
     {
         m_CameraController.OnEvent(event);
 

@@ -53,11 +53,11 @@ void Sandbox2D::OnUpdate(Crane::Time time)
         Crane::Renderer2D::BeginScene(m_CameraController.GetCamera());
         Crane::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_Color);
         Crane::Renderer2D::DrawQuad({ 0.0f, -0.5f }, { 0.5f, 0.75f }, textureParameters);
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
-        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, Crane::TextureParameters(m_Texture));
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, textureParameters);
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, textureParameters);
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, textureParameters);
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, textureParameters);
+        Crane::Renderer2D::DrawRotatedQuad({ -0.2f, 0.5f, 0.2f }, m_Angle, m_Scale, textureParameters);
     }
 
     Crane::Renderer2D::EndScene();

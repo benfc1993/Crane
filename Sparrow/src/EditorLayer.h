@@ -31,6 +31,10 @@ namespace Crane {
         Ref<VertexArray> m_TriangleVertexArray;
         Ref<Framebuffer> m_Framebuffer;
 
+        Ref<Scene> m_ActiveScene = nullptr;
+        Entity m_QuadEntity;
+
+
         ParticleData m_Particle;
         ParticleSystem m_ParticleSystem;
 

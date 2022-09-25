@@ -20,6 +20,7 @@ IncludeDir["GLAD"] = "Crane/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Crane/vendor/imgui"
 IncludeDir["glm"] = "Crane/vendor/glm"
 IncludeDir["stb_image"] = "Crane/vendor/stb_image"
+IncludeDir["entt"] = "Crane/vendor/entt/include"
 
 group "Dependencies"
 	include "Crane/vendor/GLFW"
@@ -47,6 +48,7 @@ project "Crane"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/entt/include/**.hpp",
 	}
 
 	includedirs
@@ -58,6 +60,7 @@ project "Crane"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links 
@@ -132,7 +135,8 @@ project "Sandbox"
 		"Crane/vendor/spdlog/include",
 		"Crane/src",
 		"Crane/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 	
 	links
@@ -200,7 +204,8 @@ project "Sparrow"
 		"Crane/vendor/spdlog/include",
 		"Crane/src",
 		"Crane/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 	
 	links
