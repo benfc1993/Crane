@@ -16,7 +16,7 @@ namespace Crane
 
     void EditorLayer::OnAttach()
     {
-        m_Texture = Texture2D::Create("Sparrow/assets/textures/logo.png");
+        m_Texture = Texture2D::Create("assets/textures/logo.png");
 
         FramebufferSpecification spec;
         spec.Width = 1280;
@@ -33,7 +33,7 @@ namespace Crane
         m_Particle.SizeVariation = 0.7f;
         m_Particle.Velocity = { 0.420f, 0.370f };
         m_Particle.VelocityVariation = { 1.0f, 0.4f };
-        m_Particle.Texture = Texture2D::Create("Sparrow/assets/textures/white-smoke.png");
+        m_Particle.Texture = Texture2D::Create("assets/textures/white-smoke.png");
 
         m_ActiveScene = CreateRef<Scene>();
 

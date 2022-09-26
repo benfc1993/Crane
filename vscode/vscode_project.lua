@@ -31,7 +31,7 @@ cpp_standard["gnu++14"] = 14
 cpp_standard["gnu++17"] = 17
 cpp_standard["gnu++20"] = 20
 
-local build_task_name = "C/C++: build"
+local build_task_name = "build debug"
 
 function m.getcompiler(cfg)
 	local toolset = p.tools[_OPTIONS.cc or cfg.toolset or p.CLANG]
