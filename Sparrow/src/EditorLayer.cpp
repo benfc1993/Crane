@@ -40,7 +40,10 @@ namespace Crane {
         m_QuadEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f));
+        m_CameraEntity.AddComponent<CameraComponent>();
+
+        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera");
+        m_SecondCameraEntity.AddComponent<CameraComponent>().Primary = false;
     }
     void EditorLayer::OnDetach()
     {
@@ -50,6 +53,17 @@ namespace Crane {
     void EditorLayer::OnUpdate(Time time)
     {
         CR_PROFILE_FUNCTION();
+
+        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+            m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        {
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        }
+
         if (m_ViewportFocused)
             m_CameraController.OnUpdate(time);
 
@@ -65,21 +79,26 @@ namespace Crane {
             RenderCommand::Clear();
         }
 
-
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
-        {
-            CR_PROFILE_SCOPE("Renderer Draw");
-
-            for (int i = 0; i < m_Particle.BurstSize; i++)
-            {
-                m_ParticleSystem.Emit(m_Particle);
-            }
-
-            m_ParticleSystem.OnUpdate(time);
-            m_ParticleSystem.OnRender(m_CameraController.GetCamera());
-        }
         m_ActiveScene->OnUpdate(time);
-        Renderer2D::EndScene();
+
+        auto transform = m_CameraEntity.GetComponent<TransformComponent>();
+        auto camera = m_CameraEntity.GetComponent<CameraComponent>();
+        if (camera.Primary)
+        {
+            Renderer2D::BeginScene(camera.Camera, transform);
+            {
+                CR_PROFILE_SCOPE("Renderer Draw");
+
+                for (int i = 0; i < m_Particle.BurstSize; i++)
+                {
+                    m_ParticleSystem.Emit(m_Particle);
+                }
+
+                m_ParticleSystem.OnUpdate(time);
+                m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+            }
+            Renderer2D::EndScene();
+        }
 
         m_Framebuffer->Unbind();
 
@@ -162,6 +181,21 @@ namespace Crane {
 
         ImGui::Separator();
 
+        if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+        {
+            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+        }
+
+        {
+            auto& camera = m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+            float orthoSize = camera.GetOrthographicSize();
+            if (ImGui::DragFloat("Second Camera size", &orthoSize))
+                camera.SetOrthographicSize(orthoSize);
+        }
+
+        ImGui::Separator();
+
         ImGui::End();
 
         {
@@ -174,15 +208,12 @@ namespace Crane {
             Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || !m_ViewportFocused);
 
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-            if (m_ViewportSize != *((glm::vec2*)&viewportSize))
-            {
-                m_ViewportSize = { (float)viewportSize.x, (float)viewportSize.y };
-                m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
-                m_CameraController.OnResize(viewportSize.x, viewportSize.y);
-            }
+            m_ViewportSize = { viewportSize.x, viewportSize.y };
+
             uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
             ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
             ImGui::End();
             ImGui::PopStyleVar();
         }

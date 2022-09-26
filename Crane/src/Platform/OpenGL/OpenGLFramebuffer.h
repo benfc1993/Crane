@@ -22,6 +22,7 @@ namespace Crane
 
         virtual void Bind() override;
         virtual void Unbind() override;
+
     private:
         uint32_t m_RendererId = 0;
         uint32_t m_ColorAttachment = 0, m_DepthAttachment = 0;

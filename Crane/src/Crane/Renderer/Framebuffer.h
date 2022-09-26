@@ -9,6 +9,7 @@ namespace Crane
         uint32_t Samples = 1;
 
         bool IsSwapChainTarget = false;
+        // bool operator==(const FramebufferSpecification& other) { return *this == other; }
     };
 
     class Framebuffer
