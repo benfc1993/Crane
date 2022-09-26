@@ -9,13 +9,14 @@
 #include "Panels/ParticleSystemPropertiesPanel.h"
 #include "Panels/RenderStatsPanel.h"
 
-namespace Crane {
+namespace Crane
+{
 
     EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1.6f / 0.9f), m_ParticleSystem(10000) {}
 
     void EditorLayer::OnAttach()
     {
-        m_Texture = Texture2D::Create("assets/textures/logo.png");
+        m_Texture = Texture2D::Create("Sparrow/assets/textures/logo.png");
 
         FramebufferSpecification spec;
         spec.Width = 1280;
@@ -32,7 +33,7 @@ namespace Crane {
         m_Particle.SizeVariation = 0.7f;
         m_Particle.Velocity = { 0.420f, 0.370f };
         m_Particle.VelocityVariation = { 1.0f, 0.4f };
-        m_Particle.Texture = Texture2D::Create("assets/textures/white-smoke.png");
+        m_Particle.Texture = Texture2D::Create("Sparrow/assets/textures/white-smoke.png");
 
         m_ActiveScene = CreateRef<Scene>();
 
@@ -47,7 +48,6 @@ namespace Crane {
     }
     void EditorLayer::OnDetach()
     {
-
     }
 
     void EditorLayer::OnUpdate(Time time)
@@ -66,7 +66,6 @@ namespace Crane {
 
         if (m_ViewportFocused)
             m_CameraController.OnUpdate(time);
-
 
         Renderer2D::ResetStats();
 
@@ -101,12 +100,10 @@ namespace Crane {
         }
 
         m_Framebuffer->Unbind();
-
     }
     void EditorLayer::OnImGuiRender()
     {
         CR_PROFILE_FUNCTION();
-
 
         static bool opt_fullscreen = true;
         static bool opt_padding = false;
@@ -150,12 +147,12 @@ namespace Crane {
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Options"))
             {
-                if (ImGui::MenuItem("Exit")) Application::Get().Close();
+                if (ImGui::MenuItem("Exit"))
+                    Application::Get().Close();
                 ImGui::Separator();
                 ImGui::EndMenu();
             }
@@ -226,6 +223,5 @@ namespace Crane {
     void EditorLayer::OnEvent(Event& event)
     {
         m_CameraController.OnEvent(event);
-
     }
 }

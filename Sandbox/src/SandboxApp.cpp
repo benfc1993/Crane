@@ -73,11 +73,11 @@ public:
 
         m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
-        m_FlatShader = Crane::Shader::Create("assets/shaders/FlatShader.glsl");
-        auto textureShader = m_ShaderLibrary.Load("assets/shaders/TextureShader.glsl");
+        m_FlatShader = Crane::Shader::Create("Sparrow/assets/shaders/FlatShader.glsl");
+        auto textureShader = m_ShaderLibrary.Load("Sparrow/assets/shaders/TextureShader.glsl");
 
-        m_GridTexture = Crane::Texture2D::Create("assets/textures/test.png");
-        m_LogoTexture = Crane::Texture2D::Create("assets/textures/logo.png");
+        m_GridTexture = Crane::Texture2D::Create("Sparrow/assets/textures/test.png");
+        m_LogoTexture = Crane::Texture2D::Create("Sparrow/assets/textures/logo.png");
 
         std::dynamic_pointer_cast<Crane::OpenGLShader>(textureShader)->Bind();
         std::dynamic_pointer_cast<Crane::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);

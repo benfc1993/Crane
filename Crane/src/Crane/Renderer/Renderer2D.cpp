@@ -7,9 +7,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-
-
-namespace Crane {
+namespace Crane
+{
 
     struct QuadVertex
     {
@@ -51,18 +50,15 @@ namespace Crane {
     {
         CR_PROFILE_FUNCTION();
 
-
         s_Data.QuadVertexArray = VertexArray::Create();
 
         s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 
-        s_Data.QuadVertexBuffer->SetLayout({
-            {ShaderDataType::Float3, "a_Position"},
-            {ShaderDataType::Float4, "a_Color"},
-            {ShaderDataType::Float2, "a_TextureCoord"},
-            {ShaderDataType::Float, "a_TextureIndex"},
-            {ShaderDataType::Float, "a_TillingFactor"}
-            });
+        s_Data.QuadVertexBuffer->SetLayout({ {ShaderDataType::Float3, "a_Position"},
+                                            {ShaderDataType::Float4, "a_Color"},
+                                            {ShaderDataType::Float2, "a_TextureCoord"},
+                                            {ShaderDataType::Float, "a_TextureIndex"},
+                                            {ShaderDataType::Float, "a_TillingFactor"} });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -81,7 +77,6 @@ namespace Crane {
             quadIndices[i + 4] = offset + 3;
             quadIndices[i + 5] = offset + 0;
 
-
             offset += 4;
         }
 
@@ -98,7 +93,7 @@ namespace Crane {
         for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader = Shader::Create("assets/shaders/TextureShader.glsl");
+        s_Data.TextureShader = Shader::Create("Crane/assets/shaders/TextureShader.glsl");
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -113,7 +108,6 @@ namespace Crane {
         s_Data.QuadTextureCoords[1] = { 1.0f, 0.0f };
         s_Data.QuadTextureCoords[2] = { 1.0f, 1.0f };
         s_Data.QuadTextureCoords[3] = { 0.0f, 1.0f };
-
     }
     void Renderer2D::Shutdown()
     {
@@ -187,8 +181,7 @@ namespace Crane {
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, color);
     }
@@ -202,8 +195,7 @@ namespace Crane {
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, textureParameters);
     }
@@ -216,9 +208,7 @@ namespace Crane {
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), degrees, { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), degrees, { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, color);
     }
@@ -231,13 +221,10 @@ namespace Crane {
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), glm::radians(degrees), { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(degrees), { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, textureParameters);
     }
-
 
     static void AddQuadToVertexBuffer(const glm::vec4 color, const glm::mat4& transform, float textureIndex, float tilingFactor)
     {
@@ -255,7 +242,6 @@ namespace Crane {
         s_Data.QuadIndexCount += 6;
 
         s_Data.Stats.QuadsDrawn++;
-
     }
 
     void Renderer2D::DrawQuad(glm::mat4& transform, const glm::vec4& color)
@@ -295,9 +281,7 @@ namespace Crane {
         }
 
         AddQuadToVertexBuffer(textureParameters.Color, transform, textureIndex, tilingFactor);
-
     }
-
 
     void Renderer2D::ResetStats()
     {
@@ -309,4 +293,3 @@ namespace Crane {
         return s_Data.Stats;
     }
 }
-

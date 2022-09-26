@@ -2,3 +2,4 @@ Makefile
 /bin/
 /bin-int/
 CraneProfile*.json
+.vscode

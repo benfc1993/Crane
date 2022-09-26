@@ -4,14 +4,14 @@
     "name": "Crane Debug",
     "includePath": [
       "${workspaceFolder}/**"
-      ,"/home/ben/Projects/CraneEngine/Crane/src"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/glm"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/stb_image"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/entt/include"
+      ,"/home/ben/projects/crane/Crane/src"
+      ,"/home/ben/projects/crane/Crane/vendor/spdlog/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLFW/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLAD/include"
+      ,"/home/ben/projects/crane/Crane/vendor/imgui"
+      ,"/home/ben/projects/crane/Crane/vendor/glm"
+      ,"/home/ben/projects/crane/Crane/vendor/stb_image"
+      ,"/home/ben/projects/crane/Crane/vendor/entt/include"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"
@@ -30,14 +30,14 @@
     "name": "Crane Release",
     "includePath": [
       "${workspaceFolder}/**"
-      ,"/home/ben/Projects/CraneEngine/Crane/src"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/glm"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/stb_image"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/entt/include"
+      ,"/home/ben/projects/crane/Crane/src"
+      ,"/home/ben/projects/crane/Crane/vendor/spdlog/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLFW/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLAD/include"
+      ,"/home/ben/projects/crane/Crane/vendor/imgui"
+      ,"/home/ben/projects/crane/Crane/vendor/glm"
+      ,"/home/ben/projects/crane/Crane/vendor/stb_image"
+      ,"/home/ben/projects/crane/Crane/vendor/entt/include"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"
@@ -55,14 +55,14 @@
     "name": "Crane Dist",
     "includePath": [
       "${workspaceFolder}/**"
-      ,"/home/ben/Projects/CraneEngine/Crane/src"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/spdlog/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLFW/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/GLAD/include"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/imgui"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/glm"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/stb_image"
-      ,"/home/ben/Projects/CraneEngine/Crane/vendor/entt/include"
+      ,"/home/ben/projects/crane/Crane/src"
+      ,"/home/ben/projects/crane/Crane/vendor/spdlog/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLFW/include"
+      ,"/home/ben/projects/crane/Crane/vendor/GLAD/include"
+      ,"/home/ben/projects/crane/Crane/vendor/imgui"
+      ,"/home/ben/projects/crane/Crane/vendor/glm"
+      ,"/home/ben/projects/crane/Crane/vendor/stb_image"
+      ,"/home/ben/projects/crane/Crane/vendor/entt/include"
     ],
     "defines": [
       "GLFW_INCLUDE_NONE"

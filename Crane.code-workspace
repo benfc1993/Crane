@@ -3,13 +3,13 @@
 "path": "Crane"
 },
 {
-"path": "GLAD"
+"path": "Crane/vendor/GLAD"
 },
 {
-"path": "GLFW"
+"path": "Crane/vendor/GLFW"
 },
 {
-"path": "ImGui"
+"path": "Crane/vendor/imgui"
 },
 {
 "path": "Sandbox"
@@ -17,4 +17,74 @@
 {
 "path": "Sparrow"
 },
-]}
+],
+"tasks": {
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Premake",
+			"command": "cd ${workspaceFolder}/../scripts && ./setup.sh",
+			"args": [],
+			"group": "none",
+			"detail": "Premake: Create build files",
+			"problemMatcher": []
+		},
+		{
+			"type": "cppbuild",
+			"label": "build debug",
+			"command": "/usr/bin/make",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in debug config"
+		},
+		{
+			"type": "cppbuild",
+			"label": "build release",
+			"command": "/usr/bin/make",
+			"args": [
+				"config=release"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in release config"
+		},
+		{
+			"type": "cppbuild",
+			"label": "build dist",
+			"command": "/usr/bin/make",
+			"args": [
+				"config=dist",
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in distribution config"
+		}
+	]
+},
+"settings": {
+	"editor.defaultFormatter": "ms-vscode.cpptools",
+	"editor.formatOnSave": true,
+	"C_Cpp.formatting": "vcFormat",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "newLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "newLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+	"githubPullRequests.fileListLayout": "tree"
+}
+}
