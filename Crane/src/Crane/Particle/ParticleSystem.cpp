@@ -37,7 +37,7 @@ namespace Crane {
         }
     }
 
-    void ParticleSystem::OnRender(OrthographicCamera& camera)
+    void ParticleSystem::OnRender()
     {
         CR_PROFILE_FUNCTION();
 

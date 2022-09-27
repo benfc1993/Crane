@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "ScriptableEntity.h"
+
 namespace Crane {
     struct TagComponent
     {
@@ -63,5 +65,20 @@ namespace Crane {
         CameraComponent() = default;
         CameraComponent(const CameraComponent&) = default;
 
+    };
+
+    struct NativeScriptComponent
+    {
+        ScriptableEntity* Instance = nullptr;
+
+        ScriptableEntity* (*InstatiateScript)();
+        void (*DestroyScript)(NativeScriptComponent*);
+
+        template<typename T>
+        void Bind()
+        {
+            InstatiateScript = []() { return static_cast<ScriptableEntity*>(new T());};
+            DestroyScript = [](NativeScriptComponent* nativeScriptComponent) { delete nativeScriptComponent->Instance; nativeScriptComponent->Instance = nullptr; };
+        }
     };
 }

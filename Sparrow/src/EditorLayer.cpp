@@ -9,6 +9,8 @@
 #include "Panels/ParticleSystemPropertiesPanel.h"
 #include "Panels/RenderStatsPanel.h"
 
+#include "Crane/Scene/ScriptableEntity.h"
+
 namespace Crane
 {
 
@@ -45,6 +47,42 @@ namespace Crane
 
         m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera");
         m_SecondCameraEntity.AddComponent<CameraComponent>().Primary = false;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            virtual void OnCreate()
+            {
+
+            }
+
+            void OnDestroy()
+            {
+
+            }
+
+            void OnUpdate(Time time)
+            {
+                auto& transform = GetComponent<TransformComponent>();
+                float moveSpeed = 5.0f;
+                float rotationSpeed = 50.0f;
+
+                if (Input::IsKeyPressed(KeyCode::A))
+                    transform.Position.x -= moveSpeed * time.DeltaTime();
+                if (Input::IsKeyPressed(KeyCode::D))
+                    transform.Position.x += moveSpeed * time.DeltaTime();
+                if (Input::IsKeyPressed(KeyCode::S))
+                    transform.Position.y -= moveSpeed * time.DeltaTime();
+                if (Input::IsKeyPressed(KeyCode::W))
+                    transform.Position.y += moveSpeed * time.DeltaTime();
+                if (Input::IsKeyPressed(KeyCode::Q))
+                    transform.Rotation -= rotationSpeed * time.DeltaTime();
+                if (Input::IsKeyPressed(KeyCode::E))
+                    transform.Rotation += rotationSpeed * time.DeltaTime();
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
     void EditorLayer::OnDetach()
     {
@@ -94,7 +132,7 @@ namespace Crane
                 }
 
                 m_ParticleSystem.OnUpdate(time);
-                m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+                m_ParticleSystem.OnRender();
             }
             Renderer2D::EndScene();
         }
@@ -172,7 +210,7 @@ namespace Crane
         ImGui::Text("%s", squareTag.c_str());
         ImGui::ColorEdit4("Triangle color", glm::value_ptr(squareSprite));
         ImGui::DragFloat3("Position", glm::value_ptr(squareTransform.Position), 0.1f);
-        ImGui::SliderAngle("Rotation", &squareTransform.Rotation);
+        ImGui::DragFloat("Rotation", &squareTransform.Rotation, 1.0f, 0.0f, 360.f);
         ImGui::DragFloat2("Scale", glm::value_ptr(squareTransform.Scale), 0.1f);
         ImGui::PopID();
 

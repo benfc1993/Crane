@@ -20,19 +20,19 @@ namespace Crane {
 
         m_CameraTranslationSpeed = std::max(m_CameraTranslationSpeed, 0.5f);
 
-        if (Input::IsKeyPressed(CR_KEY_A))
+        if (Input::IsKeyPressed(KeyCode::A))
         {
             m_CameraPosition.x -= m_CameraTranslationSpeed * time.DeltaTime();
         }
-        if (Input::IsKeyPressed(CR_KEY_D))
+        if (Input::IsKeyPressed(KeyCode::D))
         {
             m_CameraPosition.x += m_CameraTranslationSpeed * time.DeltaTime();
         }
-        if (Input::IsKeyPressed(CR_KEY_W))
+        if (Input::IsKeyPressed(KeyCode::W))
         {
             m_CameraPosition.y += m_CameraTranslationSpeed * time.DeltaTime();
         }
-        if (Input::IsKeyPressed(CR_KEY_S))
+        if (Input::IsKeyPressed(KeyCode::S))
         {
             m_CameraPosition.y -= m_CameraTranslationSpeed * time.DeltaTime();
         }
@@ -42,18 +42,18 @@ namespace Crane {
 
         if (!m_Rotation) return;
 
-        if (Input::IsKeyPressed(CR_KEY_R))
+        if (Input::IsKeyPressed(KeyCode::R))
         {
             m_CameraRotation = 0;
             m_Camera.SetRotation(m_CameraRotation);
             return;
         }
 
-        if (Input::IsKeyPressed(CR_KEY_Q))
+        if (Input::IsKeyPressed(KeyCode::Q))
         {
             m_CameraRotation -= m_CameraRotationSpeed * time.DeltaTime();
         }
-        if (Input::IsKeyPressed(CR_KEY_E))
+        if (Input::IsKeyPressed(KeyCode::E))
         {
             m_CameraRotation += m_CameraRotationSpeed * time.DeltaTime();
         }

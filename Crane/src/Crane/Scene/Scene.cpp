@@ -29,6 +29,21 @@ namespace Crane {
 
     void Scene::OnUpdate(Time time)
     {
+
+        //Update script
+        //TODO: Move to Scene on play
+        m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+            {
+                if (!nsc.Instance)
+                {
+                    nsc.Instance = nsc.InstatiateScript();
+                    nsc.Instance->m_Entity = Entity{ entity, this };
+                    nsc.Instance->OnCreate();
+                }
+
+                nsc.Instance->OnUpdate(time);
+            });
+
         Camera* mainCamera = nullptr;
         glm::mat4* cameraTransform = nullptr;
 
@@ -36,7 +51,7 @@ namespace Crane {
             auto view = m_Registry.view <TransformComponent, CameraComponent>();
             for (auto entity : view)
             {
-                const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+                auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
@@ -52,7 +67,7 @@ namespace Crane {
             auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
             for (auto entity : spriteGroup)
             {
-                const auto& [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+                auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
                 Renderer2D::DrawQuad(transform, sprite.Color);
             }

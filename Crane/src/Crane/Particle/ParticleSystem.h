@@ -28,7 +28,7 @@ namespace Crane {
         ~ParticleSystem() {}
 
         void OnUpdate(Time time);
-        void OnRender(OrthographicCamera& camera);
+        void OnRender();
 
         void Emit(const ParticleData& particleData);
     private:
