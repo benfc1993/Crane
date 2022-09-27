@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Crane.h>
+#include "Panels/RenderStatsPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ParticleSystemPropertiesPanel.h"
 
 namespace Crane {
 
@@ -45,5 +48,10 @@ namespace Crane {
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 
         bool m_ViewportFocused = false, m_ViewportHovered = false;
+
+        //Panels
+        ParticleSystemPropertiesPanel m_ParticlePropertiesPanel;
+        RenderStatsPanel m_RenderStatsPanel;
+        SceneHierarchyPanel m_HierarchyPanel;
     };
 }

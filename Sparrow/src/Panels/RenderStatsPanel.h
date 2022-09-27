@@ -1,4 +1,10 @@
 #pragma once
+
 namespace Crane {
-    void RenderStatsPanel();
+    class RenderStatsPanel
+    {
+    public:
+        RenderStatsPanel() = default;
+        void OnImGuiRender();
+    };
 }

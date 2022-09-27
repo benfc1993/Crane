@@ -37,6 +37,8 @@ namespace Crane
         m_Particle.VelocityVariation = { 1.0f, 0.4f };
         m_Particle.Texture = Texture2D::Create("assets/textures/white-smoke.png");
 
+        m_ParticlePropertiesPanel.SetParticleData(&m_Particle);
+
         m_ActiveScene = CreateRef<Scene>();
 
         m_QuadEntity = m_ActiveScene->CreateEntity("Square");
@@ -83,6 +85,8 @@ namespace Crane
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_HierarchyPanel.SetContext(m_ActiveScene);
     }
     void EditorLayer::OnDetach()
     {
@@ -206,16 +210,6 @@ namespace Crane
 
         ImGui::Separator();
 
-        ImGui::PushID((uint32_t)m_QuadEntity);
-        ImGui::Text("%s", squareTag.c_str());
-        ImGui::ColorEdit4("Triangle color", glm::value_ptr(squareSprite));
-        ImGui::DragFloat3("Position", glm::value_ptr(squareTransform.Position), 0.1f);
-        ImGui::DragFloat("Rotation", &squareTransform.Rotation, 1.0f, 0.0f, 360.f);
-        ImGui::DragFloat2("Scale", glm::value_ptr(squareTransform.Scale), 0.1f);
-        ImGui::PopID();
-
-        ImGui::Separator();
-
         if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
         {
             m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
@@ -253,9 +247,11 @@ namespace Crane
             ImGui::PopStyleVar();
         }
 
-        ParticleSystemPropertiesPanel(m_Particle);
+        m_ParticlePropertiesPanel.OnImGuiRender();
 
-        RenderStatsPanel();
+        m_RenderStatsPanel.OnImGuiRender();
+
+        m_HierarchyPanel.OnImGuiRender();
         ImGui::End();
     }
     void EditorLayer::OnEvent(Event& event)

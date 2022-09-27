@@ -2,7 +2,21 @@
 
 #include "Crane.h"
 
-#include "imgui/imgui.h"
 namespace Crane {
-    void ParticleSystemPropertiesPanel(ParticleData& particleData);
+    class ParticleSystemPropertiesPanel
+    {
+    public:
+        ParticleSystemPropertiesPanel() = default;
+        ParticleSystemPropertiesPanel(ParticleData* particleData)
+            : m_ParticleData(particleData)
+        {
+        }
+
+        void SetParticleData(ParticleData* particleData) { m_ParticleData = particleData; }
+
+        void OnImGuiRender();
+
+    private:
+        ParticleData* m_ParticleData;
+    };
 }

@@ -68,14 +68,15 @@ namespace Crane
     {
         while (m_Running)
         {
-            float time = (float)glfwGetTime();
-            Time timestep((float)time, (float)time - m_LastFrameTime);
-            m_LastFrameTime = time;
+            float frameTime = (float)glfwGetTime();
+            Time time((float)frameTime, (float)frameTime - m_LastFrameTime);
+            m_LastFrameDuration = (float)frameTime - m_LastFrameTime;
+            m_LastFrameTime = frameTime;
 
             if (!m_Minimised)
             {
                 for (Layer* layer : m_LayerStack)
-                    layer->OnUpdate(timestep);
+                    layer->OnUpdate(time);
 
                 m_ImGuiLayer->Begin();
                 for (Layer* layer : m_LayerStack)

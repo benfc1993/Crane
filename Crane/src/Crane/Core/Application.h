@@ -28,6 +28,8 @@ namespace Crane
         static inline Application& Get() { return *s_Instance; }
         inline Window& GetWindow() { return *m_Window; }
 
+        float GetLastFrameDuration() { return m_LastFrameDuration; }
+
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
@@ -40,6 +42,7 @@ namespace Crane
         bool m_Minimised = false;
         LayerStack m_LayerStack;
         float m_LastFrameTime = 0.0f;
+        float m_LastFrameDuration = 0.0f;
 
     private:
         static Application* s_Instance;
