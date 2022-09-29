@@ -1,4 +1,4 @@
-﻿{"folders": [
+{"folders": [
 {
 "path": "Crane"
 },
@@ -240,6 +240,7 @@
 	"C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "newLine",
 	"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "newLine",
 	"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+	"C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
 	"githubPullRequests.fileListLayout": "tree"
 }
 }

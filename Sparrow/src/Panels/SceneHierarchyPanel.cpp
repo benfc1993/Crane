@@ -4,7 +4,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ValueDrawers/ValueDrawers.h"
+#include "ValueDrawers/Vector.h"
 
 
 namespace Crane {
@@ -23,11 +23,11 @@ namespace Crane {
         ImGui::Begin("Hierarchy");
 
         m_Context->Reg().each([&](auto entityId)
-            {
-                Entity entity{ entityId, m_Context.get() };
+        {
+            Entity entity{ entityId, m_Context.get() };
 
-                DrawEntityNode(entity);
-            });
+            DrawEntityNode(entity);
+        });
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
@@ -81,10 +81,12 @@ namespace Crane {
         ComponentDrawer<TransformComponent>(entity, "Transform", [&]() {
             auto& transform = entity.GetComponent<TransformComponent>();
 
-            Drawers::Vector3("Position", transform.Position);
-            ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation));
-            ImGui::DragFloat3("Scale", glm::value_ptr(transform.Scale));
-            });
+            glm::vec2 test = { 1.0f, 0.0f };
+            Drawers::Vector("Position", transform.Position);
+            Drawers::Vector("Rotation", transform.Rotation);
+            Drawers::Vector("Scale", transform.Scale);
+
+        });
 
         ComponentDrawer<CameraComponent>(entity, "Camera", [&]() {
             auto& camera = entity.GetComponent<CameraComponent>().Camera;
@@ -140,12 +142,12 @@ namespace Crane {
                     camera.SetOrthographicFarClip(far);
 
             }
-            });
+        });
 
         ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]() {
             auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
             ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor));
-            });
+        });
 
         ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]() {
             ParticleSystemComponent& particleComponent = entity.GetComponent<ParticleSystemComponent>();
@@ -167,7 +169,7 @@ namespace Crane {
             ImGui::DragFloat("Size Variation", &particleData.SizeVariation, 0.1f, 0.0f, 1.0f);
 
             ImGui::InputFloat3("Initial Velocity", glm::value_ptr(particleData.Velocity));
-            ImGui::DragFloat3("Velocity Variation", glm::value_ptr(particleData.VelocityVariation), 0.1f, 0.0f, 1.0f);
+            Drawers::Vector("Velocity Variation", particleData.VelocityVariation, Drawers::VectorOptions{ step: 0.1f, min : 0.0f, max : 1.0f });
 
             ImGui::InputInt("Burst Size", &particleData.BurstSize);
             if (ImGui::InputInt("Max Particles", &particleCount))
@@ -179,6 +181,6 @@ namespace Crane {
             }
             if (ImGui::Checkbox("Emit", &isEmmitting))
                 particleSystem.SetActive(isEmmitting);
-            });
+        });
     }
 }

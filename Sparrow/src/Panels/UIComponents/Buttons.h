@@ -20,8 +20,6 @@ namespace Crane {
         button();
 
 
-        ImGui::PopStyleColor();
-        ImGui::PopStyleColor();
-        ImGui::PopStyleColor();
+        ImGui::PopStyleColor(3);
     }
 }

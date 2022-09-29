@@ -33,16 +33,16 @@ namespace Crane {
         //Update script
         //TODO: Move to Scene on play
         m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+        {
+            if (!nsc.Instance)
             {
-                if (!nsc.Instance)
-                {
-                    nsc.Instance = nsc.InstatiateScript();
-                    nsc.Instance->m_Entity = Entity{ entity, this };
-                    nsc.Instance->OnCreate();
-                }
+                nsc.Instance = nsc.InstatiateScript();
+                nsc.Instance->m_Entity = Entity{ entity, this };
+                nsc.Instance->OnCreate();
+            }
 
-                nsc.Instance->OnUpdate(time);
-            });
+            nsc.Instance->OnUpdate(time);
+        });
 
 
 
