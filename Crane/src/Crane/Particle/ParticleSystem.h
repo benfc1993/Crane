@@ -10,22 +10,35 @@
 namespace Crane {
     struct ParticleData
     {
-        glm::vec2 Position;
-        glm::vec2 Velocity, VelocityVariation = { 0.5f, 0.5f };
-        glm::vec4 ColorBegin, ColorEnd;
-        float SizeBegin, SizeEnd;
+        glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
+        glm::vec3 Velocity = { 0.420f, 0.370f, 0.0f }, VelocityVariation = { 0.5f, 0.5f, 0.0f };
+        glm::vec4 ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
+        glm::vec4 ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
+        float SizeBegin = 0.2f, SizeEnd = 0.75f;
         float Lifetime = 1.0f;
         float LifetimeVariation = 0.1f, SizeVariation = 0.3f;
-        Ref<Texture2D> Texture;
-
+        Ref<Texture2D> Texture = Texture2D::Create("assets/textures/white-smoke.png");
         int BurstSize = 5;
     };
 
     class ParticleSystem
     {
     public:
-        ParticleSystem(u_int32_t particleCount);
+        ParticleSystem();
+        ParticleSystem(uint32_t particleCount);
         ~ParticleSystem() {}
+
+        void SetParticleCount(uint32_t particleCount)
+        {
+            m_ParticleCount = particleCount;
+            m_ParticlePool.resize(particleCount);
+            m_PoolIndex = particleCount - 1;
+        }
+
+        uint32_t GetParticleCount() const { return m_ParticleCount; }
+
+        void SetActive(bool isActive) { m_Active = isActive; }
+        bool GetState() const { return m_Active; }
 
         void OnUpdate(Time time);
         void OnRender();
@@ -48,7 +61,9 @@ namespace Crane {
             bool Active = false;
         };
 
+        uint32_t m_ParticleCount = 10000;
         std::vector<Particle> m_ParticlePool;
         uint32_t m_PoolIndex;
+        bool m_Active = false;
     };
 }

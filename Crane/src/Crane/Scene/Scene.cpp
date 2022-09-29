@@ -44,8 +44,10 @@ namespace Crane {
                 nsc.Instance->OnUpdate(time);
             });
 
+
+
         Camera* mainCamera = nullptr;
-        glm::mat4* cameraTransform = nullptr;
+        TransformComponent* cameraTransform = nullptr;
 
         {
             auto view = m_Registry.view <TransformComponent, CameraComponent>();
@@ -55,7 +57,7 @@ namespace Crane {
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
-                    cameraTransform = &transform.Transform;
+                    cameraTransform = &transform;
                     break;
                 }
             }
@@ -71,6 +73,26 @@ namespace Crane {
 
                 Renderer2D::DrawQuad(transform, sprite.Color);
             }
+
+            {
+                auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();
+                for (auto entity : view)
+                {
+                    auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
+
+                    particleSystem.Data.Position = transform.Position;
+
+                    for (int i = 0; i < particleSystem.Data.BurstSize; i++)
+                    {
+                        particleSystem.System.Emit(particleSystem.Data);
+                    }
+
+                    particleSystem.System.OnUpdate(time);
+                    particleSystem.System.OnRender();
+                }
+
+            }
+
             Renderer2D::EndScene();
         }
 

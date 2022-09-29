@@ -2,7 +2,7 @@
 
 #include "Crane/Scene/Components.h"
 
-#include <imgui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Crane {
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
@@ -25,9 +25,15 @@ namespace Crane {
 
                 DrawEntityNode(entity);
             });
-        if (m_SelectionContext)
-            ImGui::Text("%s is  selected", m_SelectionContext.GetComponent<TagComponent>().Tag.c_str());
 
+        if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
+            m_SelectionContext = {};
+
+        ImGui::End();
+
+        ImGui::Begin("Properties");
+        if (m_SelectionContext)
+            DrawComponents(m_SelectionContext);
         ImGui::End();
     }
 
@@ -49,5 +55,71 @@ namespace Crane {
             ImGui::TreePop();
         }
 
+    }
+
+    void SceneHierarchyPanel::DrawComponents(Entity entity)
+    {
+
+        if (entity.HasComponent<TagComponent>())
+        {
+            auto& tag = entity.GetComponent<TagComponent>().Tag;
+
+            char buffer[256];
+            memset(buffer, 0, sizeof(buffer));
+            strcpy(buffer, tag.c_str());
+            ImGui::Text("Tag");
+            if (ImGui::InputText("##", buffer, sizeof(buffer)))
+            {
+                tag = std::string(buffer, sizeof(buffer));
+            }
+            ImGui::Separator();
+        }
+
+        ComponentWrapper<TransformComponent>(entity, "Transform", [&]() {
+            auto& transform = entity.GetComponent<TransformComponent>();
+
+            ImGui::DragFloat3("Position", glm::value_ptr(transform.Position));
+            ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation));
+            ImGui::DragFloat3("Scale", glm::value_ptr(transform.Scale));
+            });
+
+        ComponentWrapper<SpriteRendererComponent>(entity, "Sprite", [&]() {
+            auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
+            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor));
+            });
+
+        ComponentWrapper<ParticleSystemComponent>(entity, "Particle System", [&]() {
+            ParticleSystemComponent& particleComponent = entity.GetComponent<ParticleSystemComponent>();
+
+
+            auto& particleData = particleComponent.Data;
+            auto& particleSystem = particleComponent.System;
+            int particleCount = particleSystem.GetParticleCount();
+            bool isEmmitting = particleSystem.GetState();
+
+            ImGui::ColorEdit4("Start Color", glm::value_ptr(particleData.ColorBegin));
+            ImGui::ColorEdit4("End Color", glm::value_ptr(particleData.ColorEnd));
+
+            ImGui::DragFloat("Life Time", &particleData.Lifetime, 0.1f, 0.0f, 1000.0f);
+            ImGui::DragFloat("Life Time Variation", &particleData.LifetimeVariation, 0.1f, 0.0f, 1.0f);
+
+            ImGui::InputFloat("Initial Size", &particleData.SizeBegin);
+            ImGui::InputFloat("End Size", &particleData.SizeEnd);
+            ImGui::DragFloat("Size Variation", &particleData.SizeVariation, 0.1f, 0.0f, 1.0f);
+
+            ImGui::InputFloat3("Initial Velocity", glm::value_ptr(particleData.Velocity));
+            ImGui::DragFloat3("Velocity Variation", glm::value_ptr(particleData.VelocityVariation), 0.1f, 0.0f, 1.0f);
+
+            ImGui::InputInt("Burst Size", &particleData.BurstSize);
+            if (ImGui::InputInt("Max Particles", &particleCount))
+            {
+                if (particleCount > 0)
+                {
+                    particleSystem.SetParticleCount(particleCount);
+                }
+            }
+            if (ImGui::Checkbox("Emit", &isEmmitting))
+                particleSystem.SetActive(isEmmitting);
+            });
     }
 }

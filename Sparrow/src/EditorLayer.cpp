@@ -14,7 +14,7 @@
 namespace Crane
 {
 
-    EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1.6f / 0.9f), m_ParticleSystem(10000) {}
+    EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1.6f / 0.9f) {}
 
     void EditorLayer::OnAttach()
     {
@@ -25,24 +25,13 @@ namespace Crane
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
 
-        m_Particle.ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
-        m_Particle.ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
-        m_Particle.Lifetime = 9.5f;
-        m_Particle.LifetimeVariation = 0.6f;
-        m_Particle.Position = { 0.0f, 0.0f };
-        m_Particle.SizeBegin = 0.2f;
-        m_Particle.SizeEnd = 0.75f;
-        m_Particle.SizeVariation = 0.7f;
-        m_Particle.Velocity = { 0.420f, 0.370f };
-        m_Particle.VelocityVariation = { 1.0f, 0.4f };
-        m_Particle.Texture = Texture2D::Create("assets/textures/white-smoke.png");
-
-        m_ParticlePropertiesPanel.SetParticleData(&m_Particle);
-
         m_ActiveScene = CreateRef<Scene>();
 
         m_QuadEntity = m_ActiveScene->CreateEntity("Square");
         m_QuadEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
+
+        auto entity = m_ActiveScene->CreateEntity("Particles");
+        entity.AddComponent<ParticleSystemComponent>(5000);
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
         m_CameraEntity.AddComponent<CameraComponent>();
@@ -78,9 +67,9 @@ namespace Crane
                 if (Input::IsKeyPressed(KeyCode::W))
                     transform.Position.y += moveSpeed * time.DeltaTime();
                 if (Input::IsKeyPressed(KeyCode::Q))
-                    transform.Rotation -= rotationSpeed * time.DeltaTime();
+                    transform.Rotation.z -= rotationSpeed * time.DeltaTime();
                 if (Input::IsKeyPressed(KeyCode::E))
-                    transform.Rotation += rotationSpeed * time.DeltaTime();
+                    transform.Rotation.z += rotationSpeed * time.DeltaTime();
             }
         };
 
@@ -121,25 +110,6 @@ namespace Crane
         }
 
         m_ActiveScene->OnUpdate(time);
-
-        auto transform = m_CameraEntity.GetComponent<TransformComponent>();
-        auto camera = m_CameraEntity.GetComponent<CameraComponent>();
-        if (camera.Primary)
-        {
-            Renderer2D::BeginScene(camera.Camera, transform);
-            {
-                CR_PROFILE_SCOPE("Renderer Draw");
-
-                for (int i = 0; i < m_Particle.BurstSize; i++)
-                {
-                    m_ParticleSystem.Emit(m_Particle);
-                }
-
-                m_ParticleSystem.OnUpdate(time);
-                m_ParticleSystem.OnRender();
-            }
-            Renderer2D::EndScene();
-        }
 
         m_Framebuffer->Unbind();
     }
@@ -246,8 +216,6 @@ namespace Crane
             ImGui::End();
             ImGui::PopStyleVar();
         }
-
-        m_ParticlePropertiesPanel.OnImGuiRender();
 
         m_RenderStatsPanel.OnImGuiRender();
 

@@ -27,7 +27,4 @@ private:
     float m_Angle = 0.0f;
     Crane::Ref<Crane::VertexArray> m_SquareVertexArray;
     Crane::Ref<Crane::VertexArray> m_TriangleVertexArray;
-
-    Crane::ParticleData m_Particle;
-    Crane::ParticleSystem m_ParticleSystem;
 };

@@ -7,8 +7,15 @@
 #include <glm/gtx/compatibility.hpp>
 
 namespace Crane {
-    ParticleSystem::ParticleSystem(u_int32_t particleCount)
+    ParticleSystem::ParticleSystem()
     {
+        m_ParticlePool.resize(m_ParticleCount);
+        m_PoolIndex = m_ParticleCount - 1;
+    }
+
+    ParticleSystem::ParticleSystem(uint32_t particleCount)
+    {
+        m_ParticleCount = particleCount;
         m_ParticlePool.resize(particleCount);
         m_PoolIndex = particleCount - 1;
     }
@@ -16,6 +23,8 @@ namespace Crane {
     void ParticleSystem::OnUpdate(Time time)
     {
         CR_PROFILE_FUNCTION();
+
+        if (!m_Active) return;
 
         if (time.DeltaTime() > 1)
             return;
@@ -40,6 +49,8 @@ namespace Crane {
     void ParticleSystem::OnRender()
     {
         CR_PROFILE_FUNCTION();
+
+        if (!m_Active) return;
 
         for (auto& particle : m_ParticlePool)
         {

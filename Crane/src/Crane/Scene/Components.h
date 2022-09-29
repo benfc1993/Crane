@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "ScriptableEntity.h"
+#include "Crane/Particle/ParticleSystem.h"
 
 namespace Crane {
     struct TagComponent
@@ -23,8 +24,8 @@ namespace Crane {
     struct TransformComponent
     {
         glm::vec3 Position{ 0.0f };
-        float Rotation = 0.0f;
-        glm::vec2 Scale{ 1.0f };
+        glm::vec3 Rotation{ 0.0f };
+        glm::vec3 Scale{ 1.0f };
         glm::mat4 Transform{ 1.0f };
 
         TransformComponent() = default;
@@ -37,8 +38,10 @@ namespace Crane {
         operator glm::mat4& ()
         {
             Transform = glm::translate(glm::mat4(1.0f), Position)
-                * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), { 0.0f, 0.0f, 1.0f })
-                * glm::scale(glm::mat4(1.0f), { Scale.x, Scale.y, 1.0f });
+                * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.x), { 1, 0, 0 })
+                * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.y), { 0, 1, 0 })
+                * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), { 0, 0, 1 })
+                * glm::scale(glm::mat4(1.0f), Scale);
 
             return Transform;
         }
@@ -79,6 +82,23 @@ namespace Crane {
         {
             InstatiateScript = []() { return static_cast<ScriptableEntity*>(new T());};
             DestroyScript = [](NativeScriptComponent* nativeScriptComponent) { delete nativeScriptComponent->Instance; nativeScriptComponent->Instance = nullptr; };
+        }
+    };
+
+    struct ParticleSystemComponent
+    {
+        ParticleSystem System;
+        ParticleData Data;
+
+        ParticleSystemComponent()
+        {
+            System.SetActive(true);
+        };
+        ParticleSystemComponent(const ParticleSystemComponent&) = default;
+        ParticleSystemComponent(const u_int32_t particleCount)
+        {
+            System.SetParticleCount(particleCount);
+            System.SetActive(true);
         }
     };
 }
