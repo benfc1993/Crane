@@ -24,7 +24,7 @@ namespace Crane {
 
     private:
         template<typename T, typename F>
-        void ComponentWrapper(Entity& entity, std::string title, const F& content)
+        void ComponentDrawer(Entity& entity, std::string title, const F& content)
         {
             if (entity.HasComponent<T>())
             {

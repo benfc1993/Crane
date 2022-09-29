@@ -4,6 +4,9 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "ValueDrawers/ValueDrawers.h"
+
+
 namespace Crane {
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
     {
@@ -75,20 +78,76 @@ namespace Crane {
             ImGui::Separator();
         }
 
-        ComponentWrapper<TransformComponent>(entity, "Transform", [&]() {
+        ComponentDrawer<TransformComponent>(entity, "Transform", [&]() {
             auto& transform = entity.GetComponent<TransformComponent>();
 
-            ImGui::DragFloat3("Position", glm::value_ptr(transform.Position));
+            Drawers::Vector3("Position", transform.Position);
             ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation));
             ImGui::DragFloat3("Scale", glm::value_ptr(transform.Scale));
             });
 
-        ComponentWrapper<SpriteRendererComponent>(entity, "Sprite", [&]() {
+        ComponentDrawer<CameraComponent>(entity, "Camera", [&]() {
+            auto& camera = entity.GetComponent<CameraComponent>().Camera;
+
+            const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+            const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+
+            if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+                    if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+                    {
+                        currentProjectionTypeString = projectionTypeStrings[i];
+                        camera.SetProjectionType((SceneCamera::ProjectionType)i);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+
+                ImGui::EndCombo();
+            }
+
+            if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+            {
+                float fov = camera.GetPerspectiveVerticalFov();
+                float near = camera.GetPerspectiveNearClip();
+                float far = camera.GetPerspectiveFarClip();
+                if (ImGui::DragFloat("Vectical FOV", &fov))
+                    camera.SetPerspectiveVerticalFov(fov);
+
+                if (ImGui::DragFloat("Near clip", &near))
+                    camera.SetPerspectiveNearClip(near);
+
+                if (ImGui::DragFloat("Far clip", &far))
+                    camera.SetPerspectiveFarClip(far);
+            }
+
+            if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+            {
+                float size = camera.GetOrthographicSize();
+                float near = camera.GetOrthographicNearClip();
+                float far = camera.GetOrthographicFarClip();
+                if (ImGui::DragFloat("Size", &size))
+                    camera.SetOrthographicSize(size);
+
+                if (ImGui::DragFloat("Near clip", &near))
+                    camera.SetOrthographicNearClip(near);
+
+                if (ImGui::DragFloat("Far clip", &far))
+                    camera.SetOrthographicFarClip(far);
+
+            }
+            });
+
+        ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]() {
             auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
             ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor));
             });
 
-        ComponentWrapper<ParticleSystemComponent>(entity, "Particle System", [&]() {
+        ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]() {
             ParticleSystemComponent& particleComponent = entity.GetComponent<ParticleSystemComponent>();
 
 
