@@ -43,9 +43,10 @@ namespace Crane {
         void RemoveComponent()
         {
             CR_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
-            return m_Scene->m_Registry.remove<T>(m_EntityHandle);
+            m_Scene->m_Registry.remove<T>(m_EntityHandle);
         };
 
+        operator bool() const { return m_EntityHandle != entt::null; }
         operator entt::entity() const { return m_EntityHandle; }
         operator uint32_t() const { return (uint32_t)m_EntityHandle; }
 
@@ -58,7 +59,6 @@ namespace Crane {
         {
             return (m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene);
         }
-        operator bool() const { return m_EntityHandle != entt::null; }
 
     private:
         entt::entity m_EntityHandle{ entt::null };

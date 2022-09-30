@@ -74,7 +74,7 @@ namespace Crane
         std::unordered_map<GLenum, std::string> shaderSources;
         CR_CORE_ASSERT(shaderSources.size() <= 2, "Too many shader sources only 2 are supported");
 
-        const char* typeToken = "#type";
+        const char* typeToken = "//#type";
         size_t typeTokenLength = strlen(typeToken);
         size_t pos = source.find(typeToken, 0);
 

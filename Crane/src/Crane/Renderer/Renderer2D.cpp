@@ -32,8 +32,8 @@ namespace Crane
         Ref<Texture2D> WhiteTexture;
 
         uint32_t QuadIndexCount = 0;
-        QuadVertex *QuadVertexBufferBase = nullptr;
-        QuadVertex *QuadVertexBufferPtr = nullptr;
+        QuadVertex* QuadVertexBufferBase = nullptr;
+        QuadVertex* QuadVertexBufferPtr = nullptr;
 
         glm::vec4 QuadVertexPositions[4];
         glm::vec2 QuadTextureCoords[4];
@@ -54,17 +54,17 @@ namespace Crane
 
         s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 
-        s_Data.QuadVertexBuffer->SetLayout({{ShaderDataType::Float3, "a_Position"},
+        s_Data.QuadVertexBuffer->SetLayout({ {ShaderDataType::Float3, "a_Position"},
                                             {ShaderDataType::Float4, "a_Color"},
                                             {ShaderDataType::Float2, "a_TextureCoord"},
                                             {ShaderDataType::Float, "a_TextureIndex"},
-                                            {ShaderDataType::Float, "a_TillingFactor"}});
+                                            {ShaderDataType::Float, "a_TilingFactor"} });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
         s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
-        uint32_t *quadIndices = new uint32_t[s_Data.MaxIndices];
+        uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
         uint32_t offset = 0;
         for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
@@ -99,15 +99,15 @@ namespace Crane
 
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
-        s_Data.QuadVertexPositions[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
-        s_Data.QuadVertexPositions[1] = {0.5f, -0.5f, 0.0f, 1.0f};
-        s_Data.QuadVertexPositions[2] = {0.5f, 0.5f, 0.0f, 1.0f};
-        s_Data.QuadVertexPositions[3] = {-0.5f, 0.5f, 0.0f, 1.0f};
+        s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
 
-        s_Data.QuadTextureCoords[0] = {0.0f, 0.0f};
-        s_Data.QuadTextureCoords[1] = {1.0f, 0.0f};
-        s_Data.QuadTextureCoords[2] = {1.0f, 1.0f};
-        s_Data.QuadTextureCoords[3] = {0.0f, 1.0f};
+        s_Data.QuadTextureCoords[0] = { 0.0f, 0.0f };
+        s_Data.QuadTextureCoords[1] = { 1.0f, 0.0f };
+        s_Data.QuadTextureCoords[2] = { 1.0f, 1.0f };
+        s_Data.QuadTextureCoords[3] = { 0.0f, 1.0f };
     }
     void Renderer2D::Shutdown()
     {
@@ -126,11 +126,10 @@ namespace Crane
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
         {
             Renderer2D::EndScene();
-            ResetRenderData();
         }
     }
 
-    void Renderer2D::BeginScene(const Camera &camera, const glm::mat4 &transform)
+    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
     {
         CR_PROFILE_FUNCTION();
 
@@ -142,7 +141,7 @@ namespace Crane
         ResetRenderData();
     }
 
-    void Renderer2D::BeginScene(const OrthographicCamera &camera)
+    void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
         CR_PROFILE_FUNCTION();
 
@@ -155,7 +154,7 @@ namespace Crane
     {
         CR_PROFILE_FUNCTION();
 
-        uint32_t dataSize = (uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *)s_Data.QuadVertexBufferBase;
+        uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
         s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
         Flush();
@@ -163,70 +162,72 @@ namespace Crane
 
     void Renderer2D::Flush()
     {
+        if (s_Data.QuadIndexCount == 0) return;
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
         {
             s_Data.TextureSlots[i]->Bind(i);
         }
 
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+        ResetRenderData();
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawQuad({position.x, position.y, 0.0f}, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, TextureParameters &textureParameters)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters)
     {
-        DrawQuad({position.x, position.y, 0.0f}, size, textureParameters);
+        DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, TextureParameters &textureParameters)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters)
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, textureParameters);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const float degrees, const glm::vec2 &size, const glm::vec4 &color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawRotatedQuad({position.x, position.y, 0.0f}, degrees, size, color);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, color);
     }
-    void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const float degrees, const glm::vec2 &size, const glm::vec4 &color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color)
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), degrees, {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), degrees, { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, color);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2 &position, const float degrees, const glm::vec2 &size, TextureParameters &textureParameters)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters)
     {
-        DrawRotatedQuad({position.x, position.y, 0.0f}, degrees, size, textureParameters);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, textureParameters);
     }
-    void Renderer2D::DrawRotatedQuad(const glm::vec3 &position, const float degrees, const glm::vec2 &size, TextureParameters &textureParameters)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters)
     {
         CR_PROFILE_FUNCTION();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(degrees), {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(degrees), { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawQuad(transform, textureParameters);
     }
 
-    static void AddQuadToVertexBuffer(const glm::vec4 color, const glm::mat4 &transform, float textureIndex, float tilingFactor)
+    static void AddQuadToVertexBuffer(const glm::vec4 color, const glm::mat4& transform, float textureIndex, float tilingFactor)
     {
 
         for (uint32_t i = 0; i < 4; i++)
@@ -244,7 +245,7 @@ namespace Crane
         s_Data.Stats.QuadsDrawn++;
     }
 
-    void Renderer2D::DrawQuad(glm::mat4 &transform, const glm::vec4 &color)
+    void Renderer2D::DrawQuad(glm::mat4& transform, const glm::vec4& color)
     {
         CheckDrawCall();
 
@@ -255,7 +256,7 @@ namespace Crane
 
         AddQuadToVertexBuffer(color, transform, textureIndex, tilingFactor);
     }
-    void Renderer2D::DrawQuad(glm::mat4 &transform, TextureParameters &textureParameters)
+    void Renderer2D::DrawQuad(glm::mat4& transform, TextureParameters& textureParameters)
     {
         CheckDrawCall();
 

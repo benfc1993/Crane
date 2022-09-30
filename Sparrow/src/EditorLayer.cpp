@@ -18,20 +18,12 @@ namespace Crane
 
     void EditorLayer::OnAttach()
     {
-        m_Texture = Texture2D::Create("assets/textures/logo.png");
-
         FramebufferSpecification spec;
         spec.Width = 1280;
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
-
-        m_QuadEntity = m_ActiveScene->CreateEntity("Square");
-        m_QuadEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.3f, 0.8f, 1.0f });
-
-        auto entity = m_ActiveScene->CreateEntity("Particles");
-        entity.AddComponent<ParticleSystemComponent>(5000);
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
         m_CameraEntity.AddComponent<CameraComponent>();
@@ -172,10 +164,6 @@ namespace Crane
             ImGui::EndMenuBar();
         }
 
-        auto& squareTag = m_QuadEntity.GetComponent<TagComponent>().Tag;
-        auto& squareTransform = m_QuadEntity.GetComponent<TransformComponent>();
-        auto& squareSprite = m_QuadEntity.GetComponent<SpriteRendererComponent>().Color;
-
         ImGui::Begin("Settings");
 
         ImGui::Separator();
@@ -184,13 +172,6 @@ namespace Crane
         {
             m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
             m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-        }
-
-        {
-            auto& camera = m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
-            float orthoSize = camera.GetOrthographicSize();
-            if (ImGui::DragFloat("Second Camera size", &orthoSize))
-                camera.SetOrthographicSize(orthoSize);
         }
 
         ImGui::Separator();

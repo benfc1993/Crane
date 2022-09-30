@@ -32,19 +32,60 @@ namespace Crane {
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
 
+        if (ImGui::BeginPopupContextWindow(0, 1, false))
+        {
+            if (ImGui::MenuItem("Create Entity"))
+                m_Context->CreateEntity("Entity");
+
+            ImGui::EndPopup();
+        }
+
         ImGui::End();
 
         ImGui::Begin("Properties");
         if (m_SelectionContext)
+        {
             DrawComponents(m_SelectionContext);
+            ImVec4 color = ImVec4{ 0.2f, 0.8f, 0.3f, 1.0f };
+            StyledButton(color, [&]() {
+                if (ImGui::Button("Add Component"))
+                    ImGui::OpenPopup("AddComponent");
+
+                if (ImGui::BeginPopup("AddComponent"))
+                {
+
+                    if (ImGui::MenuItem("Sprite"))
+                    {
+                        m_SelectionContext.AddComponent<SpriteRendererComponent>();
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    if (ImGui::MenuItem("Particle System"))
+                    {
+                        m_SelectionContext.AddComponent<ParticleSystemComponent>();
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    if (ImGui::MenuItem("Camera"))
+                    {
+                        m_SelectionContext.AddComponent<CameraComponent>();
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
+                }
+            });
+
+        }
         ImGui::End();
     }
+
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
         auto tag = entity.GetComponent<TagComponent>().Tag;
 
-        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
 
@@ -53,9 +94,27 @@ namespace Crane {
             m_SelectionContext = entity;
         }
 
+        bool entityShouldBeDelete = false;
+        if (ImGui::BeginPopupContextItem())
+        {
+            if (ImGui::MenuItem("Delete Entity"))
+            {
+                entityShouldBeDelete = true;
+            }
+
+            ImGui::EndPopup();
+        }
+
+
         if (opened)
         {
             ImGui::TreePop();
+        }
+        if (entityShouldBeDelete)
+        {
+            m_Context->DestroyEntity(entity);
+            if (entity == m_SelectionContext)
+                m_SelectionContext = {};
         }
 
     }
@@ -86,20 +145,24 @@ namespace Crane {
             Drawers::Vector("Rotation", transform.Rotation);
             Drawers::Vector("Scale", transform.Scale);
 
-        });
+        }, false);
 
         ComponentDrawer<CameraComponent>(entity, "Camera", [&]() {
-            auto& camera = entity.GetComponent<CameraComponent>().Camera;
+            auto& cameraComponent = entity.GetComponent<CameraComponent>();
+            auto& camera = cameraComponent.Camera;
+
+            ImGui::Checkbox("Primary Camera", &cameraComponent.Primary);
 
             const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
             const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+
 
             if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
             {
                 for (int i = 0; i < 2; i++)
                 {
                     bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-                    if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+                    if (ImGui::Selectable(projectionTypeStrings[i], isSelected, ImGuiSelectableFlags_SpanAvailWidth | ImGuiSelectableFlags_AllowItemOverlap))
                     {
                         currentProjectionTypeString = projectionTypeStrings[i];
                         camera.SetProjectionType((SceneCamera::ProjectionType)i);
@@ -142,6 +205,8 @@ namespace Crane {
                     camera.SetOrthographicFarClip(far);
 
             }
+
+
         });
 
         ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]() {

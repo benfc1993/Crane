@@ -13,6 +13,7 @@ namespace Crane {
         ~Scene();
 
         Entity CreateEntity(const std::string& name = std::string());
+        void DestroyEntity(Entity entity);
 
         entt::registry& Reg() { return m_Registry; }
 
