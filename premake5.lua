@@ -135,6 +135,7 @@ project "Sandbox"
 		"Crane/vendor/spdlog/include",
 		"Crane/src",
 		"Crane/vendor",
+		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}"
 	}
@@ -205,6 +206,7 @@ project "Sparrow"
 		"Crane/src",
 		"Crane/vendor",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}"
 	}
 	

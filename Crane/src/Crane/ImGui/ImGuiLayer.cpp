@@ -1,8 +1,8 @@
 #include "crpch.h"
 
 #include "ImGuiLayer.h"
-
 #include "imgui.h"
+
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -115,39 +115,46 @@ namespace Crane
     void ImGuiLayer::SetDarkThemeColors()
     {
         auto& colors = ImGui::GetStyle().Colors;
-        ImVec4 darkGrey = { 0.3f, 0.3f, 0.31f, 1.0f };
-        ImVec4 midGrey = { 0.38f, 0.38f, 0.381f, 1.0f };
-        ImVec4 grey = { 0.2f, 0.2f, 0.21f, 1.0f };
-        ImVec4 lightgrey = { 0.2f, 0.2f, 0.21f, 1.0f };
-        ImVec4 brightGrey = { 0.15f, 0.15f, 0.16f, 1.0f };
+        // ImVec4 darkGrey = { 0.3f, 0.3f, 0.31f, 1.0f };
+        // ImVec4 midGrey = { 0.38f, 0.38f, 0.381f, 1.0f };
+        // ImVec4 grey = { 0.2f, 0.2f, 0.21f, 1.0f };
+        // ImVec4 lightgrey = { 0.2f, 0.2f, 0.21f, 1.0f };
+        // ImVec4 brightGrey = { 0.15f, 0.15f, 0.16f, 1.0f };
 
-        colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+        // ImVec4 primary = { 0.23f, 0.95f, 1.0f, 1.0f }; //#3BF3FF
+        // ImVec4 white = { 0.98, 1.0f, 1.0f, 1.0f }; //#F9FFFF
+        // ImVec4 darkGrey = { 0.22f, 0.28f, 0.36f, 1.0f }; //#38475C
+        // ImVec4 grey = { 0.25f, 0.31f, 0.39f, 1.0f }; //#414F63
+        // ImVec4 lightGrey = { 0.36f, 0.45f, 0.55f, 1.0f }; //#5C738D
+
+        colors[ImGuiCol_WindowBg] = m_Theme.WindowBg;
 
         // Headers
-        colors[ImGuiCol_Header] = grey;
-        colors[ImGuiCol_HeaderHovered] = darkGrey;
-        colors[ImGuiCol_HeaderActive] = brightGrey;
+        colors[ImGuiCol_Header] = m_Theme.Medium;
+        colors[ImGuiCol_HeaderHovered] = m_Theme.Dark;
+        colors[ImGuiCol_HeaderActive] = m_Theme.Primary;
 
         // Buttons
-        colors[ImGuiCol_Button] = grey;
-        colors[ImGuiCol_ButtonHovered] = darkGrey;
-        colors[ImGuiCol_ButtonActive] = brightGrey;
+        colors[ImGuiCol_Button] = m_Theme.Medium;
+        colors[ImGuiCol_ButtonHovered] = m_Theme.Dark;
+        colors[ImGuiCol_ButtonActive] = m_Theme.Light;
 
         // Frame BG
-        colors[ImGuiCol_FrameBg] = grey;
-        colors[ImGuiCol_FrameBgHovered] = darkGrey;
-        colors[ImGuiCol_FrameBgActive] = brightGrey;
+        colors[ImGuiCol_FrameBg] = m_Theme.Medium;
+        colors[ImGuiCol_FrameBgHovered] = m_Theme.Dark;
+        colors[ImGuiCol_FrameBgActive] = m_Theme.Primary;
 
         // Tabs
-        colors[ImGuiCol_Tab] = brightGrey;
-        colors[ImGuiCol_TabHovered] = midGrey;
-        colors[ImGuiCol_TabActive] = lightgrey;
-        colors[ImGuiCol_TabUnfocused] = brightGrey;
-        colors[ImGuiCol_TabUnfocusedActive] = grey;
+        colors[ImGuiCol_Tab] = m_Theme.Light;
+        colors[ImGuiCol_TabHovered] = m_Theme.Medium;
+        colors[ImGuiCol_TabActive] = m_Theme.Medium;
+        colors[ImGuiCol_TabUnfocused] = m_Theme.Light;
+        colors[ImGuiCol_TabUnfocusedActive] = m_Theme.Medium;
 
         // Title
-        colors[ImGuiCol_TitleBg] = brightGrey;
-        colors[ImGuiCol_TitleBgActive] = brightGrey;
-        colors[ImGuiCol_TitleBgCollapsed] = brightGrey;
+        colors[ImGuiCol_TitleBg] = m_Theme.Light;
+        colors[ImGuiCol_TitleBgActive] = m_Theme.Light;
+        colors[ImGuiCol_TitleBgCollapsed] = m_Theme.Light;
+
     }
 }

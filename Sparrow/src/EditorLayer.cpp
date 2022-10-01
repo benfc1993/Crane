@@ -1,5 +1,5 @@
 #include "EditorLayer.h"
-#include "imgui/imgui.h"
+// #include "imgui/imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -209,6 +209,19 @@ namespace Crane
         m_RenderStatsPanel.OnImGuiRender();
 
         m_HierarchyPanel.OnImGuiRender();
+
+        ImGui::Begin("Theme editor");
+        ImGuiLayer::ThemeColors& theme = Application::Get().GetImGuiLayer()->m_Theme;
+        if (ImGui::ColorEdit4("Primary", (float*)&theme.Primary) ||
+            ImGui::ColorEdit4("Sceondary", (float*)&theme.Secondary) ||
+            ImGui::ColorEdit4("White", (float*)&theme.White) ||
+            ImGui::ColorEdit4("Dark", (float*)&theme.Dark) ||
+            ImGui::ColorEdit4("Medium", (float*)&theme.Medium) ||
+            ImGui::ColorEdit4("Light", (float*)&theme.Light) ||
+            ImGui::ColorEdit4("WindowBg", (float*)&theme.WindowBg))
+            Application::Get().GetImGuiLayer()->SetDarkThemeColors();
+        ImGui::End(); // Theme Editor
+
         ImGui::End();
     }
     void EditorLayer::OnEvent(Event& event)
