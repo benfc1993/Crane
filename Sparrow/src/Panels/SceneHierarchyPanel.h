@@ -6,6 +6,7 @@
 #include "Crane/Scene/Entity.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 namespace Crane {
     class SceneHierarchyPanel
@@ -23,21 +24,29 @@ namespace Crane {
         void DrawComponents(Entity entity);
 
     private:
-        template<typename T, typename F>
-        void ComponentDrawer(Entity& entity, std::string title, const F& content, bool canDelete = true)
+        template<typename T, typename ContentFn>
+        void ComponentDrawer(Entity& entity, std::string title, const ContentFn& contentFn, bool canDelete = true)
         {
+            const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap;
             if (entity.HasComponent<T>())
             {
-                bool opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap, "%s", title.c_str());
-                ImGui::SameLine();
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+                ImGui::Separator();
+                bool opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", title.c_str());
 
                 bool removeComponent = false;
                 if (canDelete)
                 {
-                    if (ImGui::Button("..."))
+                    ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
+                    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+                    ImGui::SameLine(contentRegionAvail.x - lineHeight * 0.5f);
+
+                    if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
                     {
                         ImGui::OpenPopup("ComponentSettings");
                     }
+
 
                     if (ImGui::BeginPopup("ComponentSettings"))
                     {
@@ -46,10 +55,11 @@ namespace Crane {
                         ImGui::EndPopup();
                     }
                 }
+                ImGui::PopStyleVar(2);
 
                 if (opened)
                 {
-                    content();
+                    contentFn();
                     ImGui::TreePop();
                 }
 

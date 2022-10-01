@@ -23,6 +23,10 @@ namespace Crane {
         template<typename T>
         void Vector(const std::string& label, T& vector, VectorOptions options = VectorOptions())
         {
+            ImGuiIO& io = ImGui::GetIO();
+            int fontCount = io.Fonts->Fonts.Size;
+            auto boldFont = io.Fonts->Fonts[fontCount - 1];
+
             ImGui::PushID(label.c_str());
 
             ImGui::Text("%s", label.c_str());
@@ -48,11 +52,12 @@ namespace Crane {
 
             for (int i = 0; i < dimensions; i++)
             {
-
+                ImGui::PushFont(boldFont);
                 StyledButton(colors[i], [&]() {
                     if (ImGui::Button(labels[i].c_str(), buttonSize))
                         vector[i] = options.resetValue;
                 });
+                ImGui::PopFont();
 
                 std::string label = "##" + labels[i];
 

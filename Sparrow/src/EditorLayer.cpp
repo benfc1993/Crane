@@ -147,6 +147,10 @@ namespace Crane
 
         // Submit the DockSpace
         ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        float minWindowSize = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
 
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -155,6 +159,8 @@ namespace Crane
         {
             if (ImGui::BeginMenu("Options"))
             {
+                if (ImGui::MenuItem("DarkMode"))
+                    Application::Get().GetImGuiLayer()->SetDarkThemeColors();
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::Separator();
@@ -163,6 +169,8 @@ namespace Crane
 
             ImGui::EndMenuBar();
         }
+
+        style.WindowMinSize.x = minWindowSize;
 
         ImGui::Begin("Settings");
 

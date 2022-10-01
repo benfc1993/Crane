@@ -162,15 +162,17 @@ namespace Crane
 
     void Renderer2D::Flush()
     {
-        if (s_Data.QuadIndexCount == 0) return;
-        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+        if (s_Data.QuadIndexCount)
         {
-            s_Data.TextureSlots[i]->Bind(i);
-        }
+            for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+            {
+                s_Data.TextureSlots[i]->Bind(i);
+            }
 
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-        ResetRenderData();
-        s_Data.Stats.DrawCalls++;
+            RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+            // ResetRenderData();
+            s_Data.Stats.DrawCalls++;
+        }
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)

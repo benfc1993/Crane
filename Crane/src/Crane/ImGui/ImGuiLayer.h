@@ -24,6 +24,7 @@ namespace Crane
 
         void ShouldBlockEvents(bool shouldHandleEvents) { m_ShouldBlockEvents = shouldHandleEvents; }
 
+        void SetDarkThemeColors();
     private:
         bool m_ShouldBlockEvents = true;
         float m_Time = 0.0f;

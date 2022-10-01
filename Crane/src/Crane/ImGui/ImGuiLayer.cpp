@@ -38,6 +38,10 @@ namespace Crane
         // io.ConfigViewportsNoAutoMerge = true;
         // io.ConfigViewportsNoTaskBarIcon = true;
 
+        io.Fonts->AddFontFromFileTTF("assets/fonts/Poppins/Poppins-Light.ttf", 16.0f);
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Poppins/Poppins-Regular.ttf", 16.0f);
+        io.Fonts->AddFontFromFileTTF("assets/fonts/Poppins/Poppins-SemiBold.ttf", 16.0f);
+
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
         // ImGui::StyleColorsLight();
@@ -106,5 +110,44 @@ namespace Crane
     {
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
+    }
+
+    void ImGuiLayer::SetDarkThemeColors()
+    {
+        auto& colors = ImGui::GetStyle().Colors;
+        ImVec4 darkGrey = { 0.3f, 0.3f, 0.31f, 1.0f };
+        ImVec4 midGrey = { 0.38f, 0.38f, 0.381f, 1.0f };
+        ImVec4 grey = { 0.2f, 0.2f, 0.21f, 1.0f };
+        ImVec4 lightgrey = { 0.2f, 0.2f, 0.21f, 1.0f };
+        ImVec4 brightGrey = { 0.15f, 0.15f, 0.16f, 1.0f };
+
+        colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+
+        // Headers
+        colors[ImGuiCol_Header] = grey;
+        colors[ImGuiCol_HeaderHovered] = darkGrey;
+        colors[ImGuiCol_HeaderActive] = brightGrey;
+
+        // Buttons
+        colors[ImGuiCol_Button] = grey;
+        colors[ImGuiCol_ButtonHovered] = darkGrey;
+        colors[ImGuiCol_ButtonActive] = brightGrey;
+
+        // Frame BG
+        colors[ImGuiCol_FrameBg] = grey;
+        colors[ImGuiCol_FrameBgHovered] = darkGrey;
+        colors[ImGuiCol_FrameBgActive] = brightGrey;
+
+        // Tabs
+        colors[ImGuiCol_Tab] = brightGrey;
+        colors[ImGuiCol_TabHovered] = midGrey;
+        colors[ImGuiCol_TabActive] = lightgrey;
+        colors[ImGuiCol_TabUnfocused] = brightGrey;
+        colors[ImGuiCol_TabUnfocusedActive] = grey;
+
+        // Title
+        colors[ImGuiCol_TitleBg] = brightGrey;
+        colors[ImGuiCol_TitleBgActive] = brightGrey;
+        colors[ImGuiCol_TitleBgCollapsed] = brightGrey;
     }
 }
