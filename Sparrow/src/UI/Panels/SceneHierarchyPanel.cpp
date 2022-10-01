@@ -4,7 +4,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ValueDrawers/Vector.h"
+#include "UI/ValueDrawers/Vector.h"
 
 
 namespace Crane {
@@ -234,7 +234,7 @@ namespace Crane {
             ImGui::DragFloat("Size Variation", &particleData.SizeVariation, 0.1f, 0.0f, 1.0f);
 
             ImGui::InputFloat3("Initial Velocity", glm::value_ptr(particleData.Velocity));
-            Drawers::Vector("Velocity Variation", particleData.VelocityVariation, Drawers::VectorOptions{ step: 0.1f, min : 0.0f, max : 1.0f });
+            Drawers::Range("Velocity Variation", particleData.VelocityVariation, 0.0f, 1.0f);
 
             ImGui::InputInt("Burst Size", &particleData.BurstSize);
             if (ImGui::InputInt("Max Particles", &particleCount))

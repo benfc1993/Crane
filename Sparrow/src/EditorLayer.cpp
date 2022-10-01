@@ -6,9 +6,6 @@
 
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
 
-#include "Panels/ParticleSystemPropertiesPanel.h"
-#include "Panels/RenderStatsPanel.h"
-
 #include "Crane/Scene/ScriptableEntity.h"
 
 namespace Crane
@@ -68,6 +65,9 @@ namespace Crane
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_HierarchyPanel.SetContext(m_ActiveScene);
+        m_SettingsPanel.SetTheme(&m_Theme);
+        Application::Get().GetImGuiLayer()->SetDarkThemeColors(m_Theme);
+
     }
     void EditorLayer::OnDetach()
     {
@@ -159,8 +159,8 @@ namespace Crane
         {
             if (ImGui::BeginMenu("Options"))
             {
-                if (ImGui::MenuItem("DarkMode"))
-                    Application::Get().GetImGuiLayer()->SetDarkThemeColors();
+                if (ImGui::MenuItem("Preferences"))
+                    m_SettingsPanel.OpenPanel();
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::Separator();
@@ -172,19 +172,6 @@ namespace Crane
 
         style.WindowMinSize.x = minWindowSize;
 
-        ImGui::Begin("Settings");
-
-        ImGui::Separator();
-
-        if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
-        {
-            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-        }
-
-        ImGui::Separator();
-
-        ImGui::End();
 
         {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -209,18 +196,7 @@ namespace Crane
         m_RenderStatsPanel.OnImGuiRender();
 
         m_HierarchyPanel.OnImGuiRender();
-
-        ImGui::Begin("Theme editor");
-        ImGuiLayer::ThemeColors& theme = Application::Get().GetImGuiLayer()->m_Theme;
-        if (ImGui::ColorEdit4("Primary", (float*)&theme.Primary) ||
-            ImGui::ColorEdit4("Sceondary", (float*)&theme.Secondary) ||
-            ImGui::ColorEdit4("White", (float*)&theme.White) ||
-            ImGui::ColorEdit4("Dark", (float*)&theme.Dark) ||
-            ImGui::ColorEdit4("Medium", (float*)&theme.Medium) ||
-            ImGui::ColorEdit4("Light", (float*)&theme.Light) ||
-            ImGui::ColorEdit4("WindowBg", (float*)&theme.WindowBg))
-            Application::Get().GetImGuiLayer()->SetDarkThemeColors();
-        ImGui::End(); // Theme Editor
+        m_SettingsPanel.OnImGuiRender();
 
         ImGui::End();
     }

@@ -32,7 +32,7 @@ namespace Crane {
             {
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-                ImGui::Separator();
+
                 bool opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", title.c_str());
 
                 bool removeComponent = false;
@@ -60,6 +60,7 @@ namespace Crane {
                 if (opened)
                 {
                     contentFn();
+                    ImGui::Separator();
                     ImGui::TreePop();
                 }
 

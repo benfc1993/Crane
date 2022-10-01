@@ -127,15 +127,15 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
 	}
 	
 	includedirs
 	{
+		"%{prj.name}/src",
 		"Crane/vendor/spdlog/include",
 		"Crane/src",
 		"Crane/vendor",
-		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}"
 	}
@@ -197,16 +197,16 @@ project "Sparrow"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
 	}
 	
 	includedirs
 	{
+		"%{prj.name}/src",
 		"Crane/vendor/spdlog/include",
 		"Crane/src",
 		"Crane/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.entt}"
 	}
 	
