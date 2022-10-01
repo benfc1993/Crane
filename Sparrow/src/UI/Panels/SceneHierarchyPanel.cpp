@@ -4,7 +4,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ValueDrawers/Vector.h"
+#include "UI/ValueDrawers/Vector.h"
 
 
 namespace Crane {
@@ -227,14 +227,14 @@ namespace Crane {
             ImGui::ColorEdit4("End Color", glm::value_ptr(particleData.ColorEnd));
 
             ImGui::DragFloat("Life Time", &particleData.Lifetime, 0.1f, 0.0f, 1000.0f);
-            ImGui::DragFloat("Life Time Variation", &particleData.LifetimeVariation, 0.1f, 0.0f, 1.0f);
+            Drawers::Range("Life Time Variation", particleData.LifetimeVariation, 0.0f, 1.0f);
 
             ImGui::InputFloat("Initial Size", &particleData.SizeBegin);
             ImGui::InputFloat("End Size", &particleData.SizeEnd);
-            ImGui::DragFloat("Size Variation", &particleData.SizeVariation, 0.1f, 0.0f, 1.0f);
+            Drawers::Range("Size Variation", particleData.SizeVariation, 0.0f, 1.0f);
 
-            ImGui::InputFloat3("Initial Velocity", glm::value_ptr(particleData.Velocity));
-            Drawers::Vector("Velocity Variation", particleData.VelocityVariation, Drawers::VectorOptions{ step: 0.1f, min : 0.0f, max : 1.0f });
+            Drawers::Vector("Initial Velocity", particleData.Velocity);
+            Drawers::Range("Velocity Variation", particleData.VelocityVariation, 0.0f, 1.0f);
 
             ImGui::InputInt("Burst Size", &particleData.BurstSize);
             if (ImGui::InputInt("Max Particles", &particleCount))

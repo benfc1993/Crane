@@ -5,7 +5,7 @@
 #include <string>
 #include <imgui/imgui_internal.h>
 
-#include "../UIComponents/Buttons.h"  
+#include "UI/UIComponents/Buttons.h"  
 
 namespace Crane {
     namespace Drawers
@@ -63,6 +63,71 @@ namespace Crane {
 
                 ImGui::SameLine();
                 ImGui::DragFloat(label.c_str(), &vector[i], options.step, options.min, options.max, options.fmt.c_str());
+                ImGui::PopItemWidth();
+                if (i != dimensions - 1)
+                    ImGui::SameLine();
+            }
+
+            ImGui::PopStyleVar();
+            ImGui::Spacing();
+            ImGui::PopID();
+        }
+
+        template <typename T>
+        void Range(const std::string& label, T& value, float min, float max, std::string fmt = "%.2f");
+
+        template <>
+        void Range<float>(const std::string& label, float& value, float min, float max, std::string fmt)
+        {
+            ImGui::PushID(label.c_str());
+
+            ImGui::Text("%s", label.c_str());
+            ImGui::SliderFloat("##", &value, min, max, fmt.c_str());
+            ImGui::PopID();
+        }
+
+        template <typename T>
+        void Range(const std::string& label, T& value, float min, float max, std::string fmt)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            int fontCount = io.Fonts->Fonts.Size;
+            auto boldFont = io.Fonts->Fonts[fontCount - 1];
+
+            ImGui::PushID(label.c_str());
+
+            ImGui::Text("%s", label.c_str());
+
+
+            int dimensions = value.length();
+            std::string labels[] = { "X", "Y", "Z", "W" };
+            ImVec4 colors[] = {
+                {0.86f, 0.29f, 0.15f, 1.0f},
+                {0.63f, 0.86f, 0.18f, 1.0f},
+                {0.11f, 0.7f, 0.86f, 1.0f},
+                {0.11f, 0.7f, 0.86f, 1.0f}
+            };
+
+            ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+            ImVec4 color = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+
+            float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+            ImVec2 buttonSize = { lineHeight + 0.5f, lineHeight };
+
+            for (int i = 0; i < dimensions; i++)
+            {
+                ImGui::PushFont(boldFont);
+                StyledButton(colors[i], [&]() {
+                    ImGui::Button(labels[i].c_str(), buttonSize);
+                });
+                ImGui::PopFont();
+
+                std::string label = "##" + labels[i];
+
+                ImGui::SameLine();
+                ImGui::SliderFloat(label.c_str(), &value[i], min, max, fmt.c_str());
                 ImGui::PopItemWidth();
                 if (i != dimensions - 1)
                     ImGui::SameLine();

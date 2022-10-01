@@ -9,6 +9,7 @@
 #include "Crane/Input/Input.h"
 
 #include "Crane/ImGui/ImGuiLayer.h"
+#include "Crane/ImGui/ImGuiTheme.h"
 
 #include "Crane/Input/Input.h"
 #include "Crane/Input/KeyCodes.h"
