@@ -1,7 +1,5 @@
 Makefile
-/**/bin/
-/**/bin-int/
+bin
+bin-int
 CraneProfile*.json
-Crane/.vscode
-Sparrow/.vscode
-Sandbox/.vscode
+.vscode
