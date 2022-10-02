@@ -26,5 +26,12 @@ namespace Crane {
     public:
         static Ref<Texture2D> Create(uint32_t width, uint32_t height);
         static Ref<Texture2D> Create(const std::string& path);
+
+        virtual operator std::string() const
+        {
+            return m_Path;
+        }
+    protected:
+        std::string m_Path;
     };
 }

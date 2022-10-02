@@ -1,48 +1,20 @@
 #include "crpch.h"
 
-#include "SceneSerializer.h"
+#include "ComponentSerializer.h"
 
-#include "Components.h"
+#include "Crane/Scene/Components.h"
 
-#include <yaml-cpp/yaml.h>
+#include "Crane/Serialization/YamlOperators.h"
 
 namespace Crane {
 
-    YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+    template <>
+    void ComponentSerializer::SerializeComponent<TagComponent>(YAML::Emitter& out, Entity entity)
     {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
-    {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
-    {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-        return out;
-    }
-
-    SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
-        : m_scene(scene)
-    {
-
-    }
-
-    static void SerializeEntity(YAML::Emitter& out, Entity entity)
-    {
-        out << YAML::BeginMap; // Entity
-        out << YAML::Key << "Entity" << YAML::Value << "123523563245";
-
         if (entity.HasComponent<TagComponent>())
         {
-            out << YAML::Key << "Tag Component";
+
+            out << YAML::Key << "TagComponent";
             out << YAML::BeginMap; // TagComponent
 
             auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -51,9 +23,14 @@ namespace Crane {
             out << YAML::EndMap; // TagComponent
         }
 
+    }
+
+    template <>
+    void ComponentSerializer::SerializeComponent<TransformComponent>(YAML::Emitter& out, Entity entity)
+    {
         if (entity.HasComponent<TransformComponent>())
         {
-            out << YAML::Key << "Transform Component";
+            out << YAML::Key << "TransformComponent";
             out << YAML::BeginMap; // TransformComponent
 
             auto& tc = entity.GetComponent<TransformComponent>();
@@ -64,9 +41,14 @@ namespace Crane {
             out << YAML::EndMap; // TransformComponent
         }
 
+    }
+
+    template <>
+    void ComponentSerializer::SerializeComponent<CameraComponent>(YAML::Emitter& out, Entity entity)
+    {
         if (entity.HasComponent<CameraComponent>())
         {
-            out << YAML::Key << "Camera Component";
+            out << YAML::Key << "CameraComponent";
             out << YAML::BeginMap; // CameraComponent
 
             auto& cameraComponent = entity.GetComponent<CameraComponent>();
@@ -89,9 +71,14 @@ namespace Crane {
             out << YAML::EndMap; // CameraComponent
         }
 
+    }
+
+    template <>
+    void ComponentSerializer::SerializeComponent<SpriteRendererComponent>(YAML::Emitter& out, Entity entity)
+    {
         if (entity.HasComponent<SpriteRendererComponent>())
         {
-            out << YAML::Key << "Sprite Renderer Component";
+            out << YAML::Key << "SpriteRendererComponent";
             out << YAML::BeginMap; // SpriteRendererComponent
 
             auto& sprite = entity.GetComponent<SpriteRendererComponent>();
@@ -100,43 +87,37 @@ namespace Crane {
             out << YAML::EndMap; // SpriteRendererComponent
         }
 
-        out << YAML::EndMap; // Entity
     }
 
-    void SceneSerializer::Serialize(const std::string& filePath)
+    template <>
+    void ComponentSerializer::SerializeComponent<ParticleSystemComponent>(YAML::Emitter& out, Entity entity)
     {
-        YAML::Emitter out;
-        out << YAML::BeginMap;
-        out << YAML::Key << "Scene" << YAML::Value << "Untitled";
-        out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+        if (entity.HasComponent<ParticleSystemComponent>())
+        {
+            out << YAML::Key << "ParticleSystemComponent";
+            out << YAML::BeginMap; // ParticleSystemComponent
 
-        m_scene->m_Registry.each([&](auto entityId) {
-            Entity entity = { entityId , m_scene.get() };
+            auto& particles = entity.GetComponent<ParticleSystemComponent>();
+            auto& data = particles.Data;
+            auto& system = particles.System;
 
-            if (!entity)
-                return;
+            out << YAML::Key << "ParticleCount" << YAML::Value << system.GetParticleCount();
+            out << YAML::Key << "BurstSize" << YAML::Value << data.BurstSize;
+            out << YAML::Key << "ColorBegin" << YAML::Value << data.ColorBegin;
+            out << YAML::Key << "ColorEnd" << YAML::Value << data.ColorEnd;
+            out << YAML::Key << "Lifetime" << YAML::Value << data.Lifetime;
+            out << YAML::Key << "LifetimeVariation" << YAML::Value << data.LifetimeVariation;
+            out << YAML::Key << "Position" << YAML::Value << data.Position;
+            out << YAML::Key << "SizeBegin" << YAML::Value << data.SizeBegin;
+            out << YAML::Key << "SizeEnd" << YAML::Value << data.SizeEnd;
+            out << YAML::Key << "SizeVariation" << YAML::Value << data.SizeVariation;
+            std::string texturePath = (*data.Texture.get());
+            out << YAML::Key << "TexturePath" << YAML::Value << texturePath;
+            out << YAML::Key << "Velocity" << YAML::Value << data.Velocity;
+            out << YAML::Key << "VelocityVariation" << YAML::Value << data.VelocityVariation;
 
-            SerializeEntity(out, entity);
-        });
+            out << YAML::EndMap; // ParticleSystemComponent
+        }
 
-        out << YAML::EndSeq;
-        out << YAML::EndMap;
-
-        std::ofstream fout(filePath);
-        fout << out.c_str();
     }
-    void SceneSerializer::SerializeRuntime(const std::string& filePath)
-    {
-        CR_CORE_ASSERT(false, "Not implemented");
-    }
-
-    bool SceneSerializer::Deserialize(const std::string& filePath)
-    {
-        return false;
-    }
-    bool SceneSerializer::DeserializeRuntime(const std::string& filePath)
-    {
-        CR_CORE_ASSERT(false, "Not implemented");
-        return false;
-    }
-}
+};

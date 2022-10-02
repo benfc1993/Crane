@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Crane/Core/Base.h"
-#include "Scene.h"
+#include "Crane/Scene/Scene.h"
 
 namespace Crane {
     class SceneSerializer

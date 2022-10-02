@@ -1,13 +1,13 @@
 Scene: Untitled
 Entities:
   - Entity: 123523563245
-    Tag Component:
+    TagComponent:
       Tag: Second Camera
-    Transform Component:
+    TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Camera Component:
+    CameraComponent:
       Camera:
         ProjectionType: 1
         PerspectiveVerticalFov: 0.785398185
@@ -19,13 +19,13 @@ Entities:
       Primary: false
       FixedAspectRatio: false
   - Entity: 123523563245
-    Tag Component:
+    TagComponent:
       Tag: Camera
-    Transform Component:
+    TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    Camera Component:
+    CameraComponent:
       Camera:
         ProjectionType: 1
         PerspectiveVerticalFov: 0.785398185
@@ -36,3 +36,45 @@ Entities:
         OrthographicFarClip: 1
       Primary: true
       FixedAspectRatio: false
+  - Entity: 123523563245
+    TagComponent:
+      Tag: Particles texture
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ParticleSystemComponent:
+      ParticleCount: 10000
+      BurstSize: 5
+      ColorBegin: [0.800000012, 0.200000003, 0.300000012, 1]
+      ColorEnd: [0.0359999985, 0.0439999998, 0.0540000014, 0.0590000004]
+      Lifetime: 1
+      LifetimeVariation: 0.100000001
+      Position: [0, 0, 0]
+      SizeBegin: 0.200000003
+      SizeEnd: 0.75
+      SizeVariation: 0.300000012
+      TexturePath: assets/textures/white-smoke.png
+      Velocity: [0.419999987, 0.370000005, 0]
+      VelocityVariation: [0.5, 0.5, 0]
+  - Entity: 123523563245
+    TagComponent:
+      Tag: Particles default
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ParticleSystemComponent:
+      ParticleCount: 10000
+      BurstSize: 5
+      ColorBegin: [0.800000012, 0.200000003, 0.300000012, 1]
+      ColorEnd: [0.0359999985, 0.0439999998, 0.0540000014, 0.0590000004]
+      Lifetime: 1
+      LifetimeVariation: 0.100000001
+      Position: [0, 0, 0]
+      SizeBegin: 0.200000003
+      SizeEnd: 0.75
+      SizeVariation: 0.300000012
+      TexturePath: ""
+      Velocity: [0.419999987, 0.370000005, 0]
+      VelocityVariation: [0.5, 0.5, 0]

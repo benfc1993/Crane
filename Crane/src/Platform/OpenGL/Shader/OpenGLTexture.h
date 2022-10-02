@@ -23,9 +23,12 @@ namespace Crane {
             return m_RendererId == ((OpenGLTexture2D&)other).m_RendererId;
         }
 
+        operator std::string() const
+        {
+            return m_Path;
+        }
 
     private:
-        std::string m_Path;
         uint32_t m_Width, m_Height;
         uint32_t m_RendererId;
         GLenum m_InternalFormat, m_DataFormat;

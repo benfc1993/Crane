@@ -2,7 +2,7 @@
 
 #include <Crane.h>
 
-#include "Crane/Scene/SceneSerializer.h"
+#include "Crane/Scene/Serialization/SceneSerializer.h"
 
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"

@@ -22,6 +22,14 @@ namespace Crane
 
         m_ActiveScene = CreateRef<Scene>();
 
+        Entity particlesDefault = m_ActiveScene->CreateEntity("Particles default");
+        particlesDefault.AddComponent<ParticleSystemComponent>();
+
+        Entity particlesTexture = m_ActiveScene->CreateEntity("Particles texture");
+        particlesTexture.AddComponent<ParticleSystemComponent>(10000, "assets/textures/white-smoke.png");
+
+
+
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
         m_CameraEntity.AddComponent<CameraComponent>();
 
@@ -162,8 +170,11 @@ namespace Crane
             {
                 if (ImGui::MenuItem("Preferences"))
                     m_SettingsPanel.OpenPanel();
-                // if (ImGui::MenuItem("Save Scene"))
-                //     m_SceneSerializer.Serialize("assets/scenes/Example.scene");
+                if (ImGui::MenuItem("Load Scene"))
+                {
+                    SceneSerializer serializer = SceneSerializer(m_ActiveScene);
+                    serializer.Deserialize("assets/scenes/Example.scene");
+                }
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::EndMenu();

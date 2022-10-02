@@ -17,8 +17,14 @@ namespace Crane {
         float SizeBegin = 0.2f, SizeEnd = 0.75f;
         float Lifetime = 1.0f;
         float LifetimeVariation = 0.1f, SizeVariation = 0.3f;
-        Ref<Texture2D> Texture = Texture2D::Create("assets/textures/white-smoke.png");
+        Ref<Texture2D> Texture = Texture2D::Create(1,1);
         int BurstSize = 5;
+
+        ParticleData() = default;
+        ParticleData(std::string path)
+        {
+            Texture = Texture2D::Create(path);
+        }
     };
 
     class ParticleSystem
