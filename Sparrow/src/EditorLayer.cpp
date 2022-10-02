@@ -21,6 +21,7 @@ namespace Crane
         m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
+        m_SceneSerializer = CreateRef<SceneSerializer>(m_ActiveScene);
 
         Entity particlesDefault = m_ActiveScene->CreateEntity("Particles default");
         particlesDefault.AddComponent<ParticleSystemComponent>();
@@ -170,11 +171,10 @@ namespace Crane
             {
                 if (ImGui::MenuItem("Preferences"))
                     m_SettingsPanel.OpenPanel();
+                if (ImGui::MenuItem("Save Scene"))
+                    m_SceneSerializer->Serialize("assets/scenes/Example.scene");
                 if (ImGui::MenuItem("Load Scene"))
-                {
-                    SceneSerializer serializer = SceneSerializer(m_ActiveScene);
-                    serializer.Deserialize("assets/scenes/Example.scene");
-                }
+                    m_SceneSerializer->Deserialize("assets/scenes/Example.scene");
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::EndMenu();

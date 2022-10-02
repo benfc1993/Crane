@@ -29,7 +29,7 @@ namespace Crane {
         if (!node) return;
 
         auto& cameraComponent = entity.AddComponent<CameraComponent>();
-        cameraComponent.Camera.SetProjectionType(cameraNode["ProjectionType"].as<int>());
+        cameraComponent.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraNode["ProjectionType"].as<int>());
         cameraComponent.Camera.SetPerspectiveVerticalFov(cameraNode["PerspectiveVerticalFov"].as<float>());
         cameraComponent.Camera.SetPerspectiveNearClip(cameraNode["PerspectiveNearClip"].as<float>());
         cameraComponent.Camera.SetPerspectiveFarClip(cameraNode["PerspectiveFarClip"].as<float>());
