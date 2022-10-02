@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Crane.h>
+
+#include "Crane/Scene/SceneSerializer.h"
+
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
 #include "UI/Panels/SettingsPanel.h"
@@ -47,5 +50,7 @@ namespace Crane {
 
         //Global State
         bool m_ShowSettings = false;
+
+        // SceneSerializer m_SceneSerializer;
     };
 }

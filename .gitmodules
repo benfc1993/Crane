@@ -10,3 +10,6 @@
 [submodule "Crane/vendor/glm"]
 	path = Crane/vendor/glm
 	url = git@github.com:g-truc/glm.git
+[submodule "Crane/vendor/yaml-cpp"]
+	path = Crane/vendor/yaml-cpp
+	url = git@github.com:benfc1993/yaml-cpp.git

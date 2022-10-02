@@ -67,7 +67,8 @@ namespace Crane
         m_HierarchyPanel.SetContext(m_ActiveScene);
         m_SettingsPanel.SetTheme(&m_Theme);
         Application::Get().GetImGuiLayer()->SetDarkThemeColors(m_Theme);
-
+        SceneSerializer serializer(m_ActiveScene);
+        serializer.Serialize("assets/scenes/Example.scene");
     }
     void EditorLayer::OnDetach()
     {
@@ -161,6 +162,8 @@ namespace Crane
             {
                 if (ImGui::MenuItem("Preferences"))
                     m_SettingsPanel.OpenPanel();
+                // if (ImGui::MenuItem("Save Scene"))
+                //     m_SceneSerializer.Serialize("assets/scenes/Example.scene");
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::EndMenu();

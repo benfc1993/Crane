@@ -12,6 +12,9 @@
 "path": "Crane/vendor/imgui"
 },
 {
+"path": "Crane/vendor/yaml-cpp"
+},
+{
 "path": "Sandbox"
 },
 {

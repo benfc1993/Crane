@@ -21,11 +21,13 @@ IncludeDir["ImGui"] = "Crane/vendor/imgui"
 IncludeDir["glm"] = "Crane/vendor/glm"
 IncludeDir["stb_image"] = "Crane/vendor/stb_image"
 IncludeDir["entt"] = "Crane/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Crane/vendor/yaml-cpp/include"
 
 group "Dependencies"
 	include "Crane/vendor/GLFW"
 	include "Crane/vendor/GLAD"
 	include "Crane/vendor/imgui"
+	include "Crane/vendor/yaml-cpp"
 
 group ""
 
@@ -60,14 +62,16 @@ project "Crane"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links 
 	{ 
 		"GLFW",
 		"GLAD",
-		"ImGui",
+    	"ImGui",
+		"yaml-cpp"
 	}
 
 	
