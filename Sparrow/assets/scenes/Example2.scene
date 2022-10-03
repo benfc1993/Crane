@@ -1,0 +1,38 @@
+Scene: Untitled
+Entities:
+  - Entity: 123523563245
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 123523563245
+    TagComponent:
+      Tag: Second Camera
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: false
+      FixedAspectRatio: false

@@ -7,6 +7,7 @@
 #include "Crane/Scene/Components.h"
 
 #include <yaml-cpp/yaml.h>
+#include <filesystem>
 
 namespace Crane {
     SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
@@ -34,7 +35,7 @@ namespace Crane {
         out << YAML::EndMap; // Entity
     }
 
-    void SceneSerializer::Serialize(const std::string& filePath)
+    void SceneSerializer::Serialize(const std::string filePath)
     {
         YAML::Emitter out;
         out << YAML::BeginMap;
@@ -53,7 +54,8 @@ namespace Crane {
         out << YAML::EndSeq;
         out << YAML::EndMap;
 
-        std::ofstream fout(filePath);
+        CR_CORE_INFO("Filepath: {0}", filePath);
+        std::ofstream fout(filePath.c_str());
         fout << out.c_str();
     }
     void SceneSerializer::SerializeRuntime(const std::string& filePath)
@@ -61,15 +63,18 @@ namespace Crane {
         CR_CORE_ASSERT(false, "Not implemented");
     }
 
-    bool SceneSerializer::Deserialize(const std::string& filePath)
+    bool SceneSerializer::Deserialize(const std::string filePath)
     {
-        std::ifstream stream(filePath);
+        std::ifstream stream(filePath.c_str());
         std::stringstream strStream;
         strStream << stream.rdbuf();
 
         YAML::Node data = YAML::Load(strStream.str());
         if (!data["Scene"])
+        {
+            CR_CORE_INFO("No scene");
             return false;
+        }
 
         std::string sceneName = data["Scene"].as<std::string>();
         CR_CORE_TRACE("Deserializing scene {0}", sceneName);

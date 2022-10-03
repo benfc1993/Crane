@@ -1,12 +1,13 @@
 #include "EditorLayer.h"
 // #include "imgui/imgui.h"
+#include "Crane/Scene/ScriptableEntity.h"
+#include "Crane/Utils/PlatformUtils.h"
+#include "Platform/OpenGL/Shader/OpenGLShader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Platform/OpenGL/Shader/OpenGLShader.h"
 
-#include "Crane/Scene/ScriptableEntity.h"
 
 namespace Crane
 {
@@ -21,7 +22,6 @@ namespace Crane
         m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
-        m_SceneSerializer = CreateRef<SceneSerializer>(m_ActiveScene);
 
         Entity particlesDefault = m_ActiveScene->CreateEntity("Particles default");
         particlesDefault.AddComponent<ParticleSystemComponent>();
@@ -78,6 +78,9 @@ namespace Crane
         Application::Get().GetImGuiLayer()->SetDarkThemeColors(m_Theme);
         SceneSerializer serializer(m_ActiveScene);
         serializer.Serialize("assets/scenes/Example.scene");
+
+
+
     }
     void EditorLayer::OnDetach()
     {
@@ -171,10 +174,39 @@ namespace Crane
             {
                 if (ImGui::MenuItem("Preferences"))
                     m_SettingsPanel.OpenPanel();
-                if (ImGui::MenuItem("Save Scene"))
-                    m_SceneSerializer->Serialize("assets/scenes/Example.scene");
-                if (ImGui::MenuItem("Load Scene"))
-                    m_SceneSerializer->Deserialize("assets/scenes/Example.scene");
+                if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+                {
+                    std::string file = FileDialogs::SaveFile();
+                    if (!file.empty())
+                    {
+                        SceneSerializer serializer(m_ActiveScene);
+                        serializer.Serialize(file);
+                    }
+                }
+
+                if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
+                {
+                    std::string file = FileDialogs::SaveFile();
+                    if (!file.empty())
+                    {
+                        SceneSerializer serializer(m_ActiveScene);
+                        serializer.Serialize(file);
+                    }
+                }
+
+                if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+                {
+                    std::string file = FileDialogs::OpenFile();
+                    if (!file.empty())
+                    {
+                        m_ActiveScene = CreateRef<Scene>();
+                        m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+                        m_HierarchyPanel.SetContext(m_ActiveScene);
+
+                        SceneSerializer serializer(m_ActiveScene);
+                        serializer.Deserialize(file);
+                    }
+                }
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::EndMenu();

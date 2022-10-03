@@ -50,7 +50,5 @@ namespace Crane {
 
         //Global State
         bool m_ShowSettings = false;
-
-        Ref<SceneSerializer> m_SceneSerializer;
     };
 }
