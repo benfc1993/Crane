@@ -9,7 +9,6 @@ int main(int argc, char** argv)
 {
     Crane::Log::Init();
     CR_CORE_WARN("Initialised log");
-    CR_INFO("Hello! ");
 
     CR_BEGIN_PROFILE_SESSION("Startup", "CraneProfile-Startup.json");
     auto app = Crane::CreateApplication();

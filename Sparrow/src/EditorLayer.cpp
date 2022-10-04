@@ -74,8 +74,6 @@ namespace Crane
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_HierarchyPanel.SetContext(m_ActiveScene);
-        m_SettingsPanel.SetTheme(&m_Theme);
-        Application::Get().GetImGuiLayer()->SetDarkThemeColors(m_Theme);
     }
     void EditorLayer::OnDetach()
     {
@@ -279,15 +277,15 @@ namespace Crane
     }
     void EditorLayer::OpenScene()
     {
-        std::string file = FileDialogs::OpenFile();
-        if (!file.empty())
+        std::string filePath = FileDialogs::OpenFile();
+        if (!filePath.empty())
         {
             m_ActiveScene = CreateRef<Scene>();
             m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_HierarchyPanel.SetContext(m_ActiveScene);
 
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(file);
+            serializer.Deserialize(filePath);
         }
     }
     void EditorLayer::SaveScene()

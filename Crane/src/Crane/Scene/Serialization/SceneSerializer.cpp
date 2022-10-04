@@ -57,7 +57,6 @@ namespace Crane {
         out << YAML::EndSeq; // Entities
         out << YAML::EndMap;
 
-        CR_CORE_INFO("Filepath: {0}", filePath);
         std::ofstream fout(filePath.c_str());
         fout << out.c_str();
     }

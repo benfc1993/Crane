@@ -27,7 +27,7 @@ namespace Crane
 
         void ShouldBlockEvents(bool shouldHandleEvents) { m_ShouldBlockEvents = shouldHandleEvents; }
 
-        void SetDarkThemeColors(ImGuiTheme& theme);
+        void SetThemeColors(ImGuiTheme& theme);
 
     private:
         bool m_ShouldBlockEvents = true;

@@ -6,7 +6,7 @@
 
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
-#include "UI/Panels/SettingsPanel.h"
+#include "UI/Panels/SettingsPanel/SettingsPanel.h"
 
 namespace Crane {
 
@@ -50,9 +50,6 @@ namespace Crane {
         RenderStatsPanel m_RenderStatsPanel;
         SceneHierarchyPanel m_HierarchyPanel;
         SettingsPanel m_SettingsPanel;
-
-        // Settings
-        ImGuiTheme m_Theme;
 
         //Global State
         bool m_ShowSettings = false;

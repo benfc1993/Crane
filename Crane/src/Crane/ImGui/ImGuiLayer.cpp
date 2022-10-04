@@ -110,23 +110,23 @@ namespace Crane
         {
         }
 
-        ImVec4 Float4ToImVec4(float value[4])
+        ImVec4 glmVec4ToImVec4(glm::vec4 value)
         {
-                return ImVec4(value[0], value[1], value[2], value[3]);
+                return ImVec4(value.x, value.y, value.z, value.w);
         }
 
-        void ImGuiLayer::SetDarkThemeColors(ImGuiTheme& theme)
+        void ImGuiLayer::SetThemeColors(ImGuiTheme& theme)
         {
                 auto& colors = ImGui::GetStyle().Colors;
-                ImVec4 Primary = Float4ToImVec4(theme.Primary);
-                ImVec4 PrimaryLight = Float4ToImVec4(theme.PrimaryLight);
-                ImVec4 PrimaryDark = Float4ToImVec4(theme.PrimaryDark);
-                ImVec4 Secondary = Float4ToImVec4(theme.Secondary);
-                ImVec4 White = Float4ToImVec4(theme.White);
-                ImVec4 Dark = Float4ToImVec4(theme.Dark);
-                ImVec4 Medium = Float4ToImVec4(theme.Medium);
-                ImVec4 Light = Float4ToImVec4(theme.Light);
-                ImVec4 WindowBg = Float4ToImVec4(theme.WindowBg);
+                ImVec4 Primary = glmVec4ToImVec4(theme.Primary);
+                ImVec4 PrimaryLight = glmVec4ToImVec4(theme.PrimaryLight);
+                ImVec4 PrimaryDark = glmVec4ToImVec4(theme.PrimaryDark);
+                ImVec4 Secondary = glmVec4ToImVec4(theme.Secondary);
+                ImVec4 White = glmVec4ToImVec4(theme.White);
+                ImVec4 Dark = glmVec4ToImVec4(theme.Dark);
+                ImVec4 Medium = glmVec4ToImVec4(theme.Medium);
+                ImVec4 Light = glmVec4ToImVec4(theme.Light);
+                ImVec4 WindowBg = glmVec4ToImVec4(theme.WindowBg);
 
 #pragma region Text
                 colors[ImGuiCol_Text] = White;
@@ -172,7 +172,7 @@ namespace Crane
                 colors[ImGuiCol_CheckMark] = Primary;
 
                 // Sliders
-                colors[ImGuiCol_SliderGrab] = Primary;
+                colors[ImGuiCol_SliderGrab] = Light;
                 colors[ImGuiCol_SliderGrabActive] = PrimaryDark;
 
                 // Buttons
