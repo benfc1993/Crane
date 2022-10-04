@@ -21,7 +21,13 @@ namespace Crane {
         virtual void OnUpdate(Time time) override;
         virtual void OnImGuiRender() override;
         virtual void OnEvent(Event& event) override;
+    private:
+        bool OnKeyPressed(KeyPressedEvent& e);
 
+        void NewScene();
+        void OpenScene();
+        void SaveScene();
+        void SaveSceneAs();
     private:
         OrthographicCameraController m_CameraController;
 

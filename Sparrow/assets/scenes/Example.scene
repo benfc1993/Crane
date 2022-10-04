@@ -1,4 +1,6 @@
-Scene: Untitled
+Scene:
+  Name: Untitled
+  FilePath: assets/scenes/Example.scene
 Entities:
   - Entity: 123523563245
     TagComponent:

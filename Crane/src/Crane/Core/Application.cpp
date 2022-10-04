@@ -56,11 +56,11 @@ namespace Crane
         dispatcher.Dispatch<WindowResizeEvent>(CR_BIND_EVENT_FN(Application::OnWindowResize));
         dispatcher.Dispatch<WindowMinimizeEvent>(CR_BIND_EVENT_FN(Application::OnWindowMinimize));
 
-        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+        for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
-            (*--it)->OnEvent(e);
             if (e.Handled)
                 break;
+            (*it)->OnEvent(e);
         }
     }
 

@@ -39,8 +39,11 @@ namespace Crane {
     {
         YAML::Emitter out;
         out << YAML::BeginMap;
-        out << YAML::Key << "Scene" << YAML::Value << "Untitled";
-        out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+        out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap; // Scene
+        out << YAML::Key << "Name" << YAML::Value << "Untitled";
+        out << YAML::Key << "FilePath" << YAML::Value << filePath;
+        out << YAML::EndMap; // Scene
+        out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // Entities
 
         m_scene->m_Registry.each([&](auto entityId) {
             Entity entity = { entityId , m_scene.get() };
@@ -51,7 +54,7 @@ namespace Crane {
             SerializeEntity(out, entity);
         });
 
-        out << YAML::EndSeq;
+        out << YAML::EndSeq; // Entities
         out << YAML::EndMap;
 
         CR_CORE_INFO("Filepath: {0}", filePath);
@@ -76,7 +79,8 @@ namespace Crane {
             return false;
         }
 
-        std::string sceneName = data["Scene"].as<std::string>();
+        std::string sceneName = data["Scene"]["Name"].as<std::string>();
+        m_scene->SetFilePath(data["Scene"]["FilePath"].as<std::string>());
         CR_CORE_TRACE("Deserializing scene {0}", sceneName);
 
         auto entities = data["Entities"];

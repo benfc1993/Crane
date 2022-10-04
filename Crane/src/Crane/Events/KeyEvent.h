@@ -1,26 +1,29 @@
 #pragma once
 
 #include "Event.h"
+#include "Crane/Input/KeyCodes.h"
 
 namespace Crane
 {
     class KeyEvent : public Event
     {
     public:
-        inline int GetKeyCode() const { return m_keyCode; }
+        inline KeyCode GetKeyCode() const { return m_keyCode; }
         EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
     protected:
-        KeyEvent(int keyCode) : m_keyCode(keyCode) {}
+        KeyEvent(KeyCode keyCode) : m_keyCode(keyCode) {}
 
-        int m_keyCode;
+        KeyCode m_keyCode;
     };
 
     class KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(int keycode, bool isRepeat = false)
-            : KeyEvent(keycode), m_IsRepeat(isRepeat) {}
+        KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+            : KeyEvent(keycode), m_IsRepeat(isRepeat)
+        {
+        }
 
         bool IsRepeat() const { return m_IsRepeat; }
 
@@ -39,7 +42,7 @@ namespace Crane
     class KeyReleasedEvent : public KeyEvent
     {
     public:
-        KeyReleasedEvent(int keyCode) : KeyEvent(keyCode) {}
+        KeyReleasedEvent(KeyCode keyCode) : KeyEvent(keyCode) {}
 
         std::string ToString() const override
         {
@@ -54,8 +57,10 @@ namespace Crane
     class KeyTypedEvent : public KeyEvent
     {
     public:
-        KeyTypedEvent(int keycode)
-            : KeyEvent(keycode) {}
+        KeyTypedEvent(KeyCode keycode)
+            : KeyEvent(keycode)
+        {
+        }
 
         std::string ToString() const override
         {

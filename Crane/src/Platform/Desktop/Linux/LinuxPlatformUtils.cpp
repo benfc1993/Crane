@@ -7,14 +7,17 @@ namespace Crane {
     std::string FileDialogs::OpenFile()
     {
         char filename[1024];
-        FILE* f = popen("zenity --file-selection ", "r");
+        FILE* f = popen("zenity --file-selection --modal --title=\"Open Scene\"", "r");
         while (fgets(filename, 1024, f) != NULL)
         {
-
         }
 
         pclose(f);
-
+        std::string str(filename);
+        if (str.find('/') == std::string::npos)
+        {
+            return std::string();
+        }
         strtok(filename, "\n");
         std::string result(filename);
         return result;
@@ -23,14 +26,18 @@ namespace Crane {
     std::string FileDialogs::SaveFile()
     {
         char filename[1024];
-        FILE* f = popen("zenity --file-selection --save", "r");
+        FILE* f = popen("zenity --file-selection --save --modal --title=\"Save Scene\"", "r");
         while (fgets(filename, 1024, f) != NULL)
         {
 
         }
-
         pclose(f);
-        CR_CORE_INFO(filename);
+        std::string str(filename);
+        if (str.find('/') == std::string::npos)
+        {
+            return std::string();
+        }
+
         strtok(filename, "\n");
         std::string result(filename);
         return result;
@@ -38,3 +45,4 @@ namespace Crane {
 }
 
 #endif
+

@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
+#include <sys/stat.h>
 
 namespace Crane
 {
@@ -56,17 +56,17 @@ namespace Crane
                 float moveSpeed = 5.0f;
                 float rotationSpeed = 50.0f;
 
-                if (Input::IsKeyPressed(KeyCode::A))
+                if (Input::IsKeyPressed(Key::A))
                     transform.Position.x -= moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(KeyCode::D))
+                if (Input::IsKeyPressed(Key::D))
                     transform.Position.x += moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(KeyCode::S))
+                if (Input::IsKeyPressed(Key::S))
                     transform.Position.y -= moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(KeyCode::W))
+                if (Input::IsKeyPressed(Key::W))
                     transform.Position.y += moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(KeyCode::Q))
+                if (Input::IsKeyPressed(Key::Q))
                     transform.Rotation.z -= rotationSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(KeyCode::E))
+                if (Input::IsKeyPressed(Key::E))
                     transform.Rotation.z += rotationSpeed * time.DeltaTime();
             }
         };
@@ -76,11 +76,6 @@ namespace Crane
         m_HierarchyPanel.SetContext(m_ActiveScene);
         m_SettingsPanel.SetTheme(&m_Theme);
         Application::Get().GetImGuiLayer()->SetDarkThemeColors(m_Theme);
-        SceneSerializer serializer(m_ActiveScene);
-        serializer.Serialize("assets/scenes/Example.scene");
-
-
-
     }
     void EditorLayer::OnDetach()
     {
@@ -174,38 +169,25 @@ namespace Crane
             {
                 if (ImGui::MenuItem("Preferences"))
                     m_SettingsPanel.OpenPanel();
+
+                if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+                {
+                    NewScene();
+                }
+
                 if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
                 {
-                    std::string file = FileDialogs::SaveFile();
-                    if (!file.empty())
-                    {
-                        SceneSerializer serializer(m_ActiveScene);
-                        serializer.Serialize(file);
-                    }
+                    SaveScene();
                 }
 
                 if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
                 {
-                    std::string file = FileDialogs::SaveFile();
-                    if (!file.empty())
-                    {
-                        SceneSerializer serializer(m_ActiveScene);
-                        serializer.Serialize(file);
-                    }
+                    SaveSceneAs();
                 }
 
                 if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
                 {
-                    std::string file = FileDialogs::OpenFile();
-                    if (!file.empty())
-                    {
-                        m_ActiveScene = CreateRef<Scene>();
-                        m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-                        m_HierarchyPanel.SetContext(m_ActiveScene);
-
-                        SceneSerializer serializer(m_ActiveScene);
-                        serializer.Deserialize(file);
-                    }
+                    OpenScene();
                 }
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
@@ -224,8 +206,7 @@ namespace Crane
 
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
-
-            Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || !m_ViewportFocused);
+            Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
@@ -247,6 +228,91 @@ namespace Crane
     }
     void EditorLayer::OnEvent(Event& event)
     {
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(CR_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
         m_CameraController.OnEvent(event);
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        if (e.IsRepeat())
+            return false;
+
+        bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+        bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+
+        switch (e.GetKeyCode())
+        {
+        case Key::N:
+            if (control)
+            {
+                NewScene();
+                return true;
+            }
+        case Key::O:
+            if (control)
+            {
+                OpenScene();
+                return true;
+            }
+        case Key::S:
+            if (control)
+            {
+                SaveScene();
+                return true;
+            }
+            if (control && shift)
+            {
+                SaveSceneAs();
+                return true;
+            }
+        default:
+            return false;
+        }
+    }
+
+    void EditorLayer::NewScene()
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_HierarchyPanel.SetContext(m_ActiveScene);
+    }
+    void EditorLayer::OpenScene()
+    {
+        std::string file = FileDialogs::OpenFile();
+        if (!file.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>();
+            m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_HierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(file);
+        }
+    }
+    void EditorLayer::SaveScene()
+    {
+        struct stat buffer;
+        int fileExists = stat(m_ActiveScene->GetFilePath().c_str(), &buffer);
+
+        if (fileExists == 0)
+        {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(m_ActiveScene->GetFilePath());
+        }
+        else
+        {
+            SaveSceneAs();
+        }
+    }
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filePath = FileDialogs::SaveFile();
+        if (!filePath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(filePath);
+            m_ActiveScene->SetFilePath(filePath);
+        }
     }
 }
