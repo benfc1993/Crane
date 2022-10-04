@@ -22,6 +22,7 @@ IncludeDir["glm"] = "Crane/vendor/glm"
 IncludeDir["stb_image"] = "Crane/vendor/stb_image"
 IncludeDir["entt"] = "Crane/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Crane/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Crane/vendor/ImGuizmo"
 
 group "Dependencies"
 	include "Crane/vendor/GLFW"
@@ -50,6 +51,8 @@ project "Crane"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
 		"%{prj.name}/vendor/entt/include/**.hpp",
 	}
 
@@ -63,7 +66,8 @@ project "Crane"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links 
@@ -80,6 +84,9 @@ project "Crane"
 		"GLFW_INCLUDE_NONE",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
+
+	filter "files:vendor/ImGuizmo/**.cpp"
+		flags { "NoPCH"}
 
 	filter "system:linux"
 		kind "SharedLib"

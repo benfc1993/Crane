@@ -13,3 +13,6 @@
 [submodule "Crane/vendor/yaml-cpp"]
 	path = Crane/vendor/yaml-cpp
 	url = git@github.com:benfc1993/yaml-cpp.git
+[submodule "Crane/vendor/ImGuizmo"]
+	path = Crane/vendor/ImGuizmo
+	url = git@github.com:benfc1993/ImGuizmo.git
