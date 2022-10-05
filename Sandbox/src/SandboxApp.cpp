@@ -10,8 +10,6 @@
 
 #include "Sandbox2D.h"
 
-
-
 // class ExampleLayer : public Crane::Layer
 // {
 // public:
@@ -42,7 +40,7 @@
 
 //         uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
 //         Crane::Ref<Crane::IndexBuffer> indexBuffer;
-//         indexBuffer = Crane::IndexBuffer::Create(indices, sizeof(indices) / sizeof(u_int32_t));
+//         indexBuffer = Crane::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 
 //         m_SquareVertexArray->SetIndexBuffer(indexBuffer);
 
@@ -69,7 +67,7 @@
 
 //         uint32_t triangleIndices[6] = { 0, 1, 2 };
 //         Crane::Ref<Crane::IndexBuffer> triangleIndexBuffer;
-//         triangleIndexBuffer = Crane::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(u_int32_t));
+//         triangleIndexBuffer = Crane::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t));
 
 //         m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
@@ -155,7 +153,7 @@ public:
     ~Sandbox() {}
 };
 
-Crane::Application* Crane::CreateApplication()
+Crane::Application *Crane::CreateApplication()
 {
     return new Sandbox();
 }

@@ -6,14 +6,14 @@
 
 #include "UI/ValueDrawers/Vector.h"
 
-
-namespace Crane {
-    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
+namespace Crane
+{
+    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene)
     {
         m_Context = scene;
     }
 
-    void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
+    void SceneHierarchyPanel::SetContext(const Ref<Scene> &scene)
     {
         m_Context = scene;
     }
@@ -23,11 +23,10 @@ namespace Crane {
         ImGui::Begin("Hierarchy");
 
         m_Context->Reg().each([&](auto entityId)
-        {
+                              {
             Entity entity{ entityId, m_Context.get() };
 
-            DrawEntityNode(entity);
-        });
+            DrawEntityNode(entity); });
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
             m_SelectionContext = {};
@@ -46,8 +45,9 @@ namespace Crane {
         if (m_SelectionContext)
         {
             DrawComponents(m_SelectionContext);
-            ImVec4 color = ImVec4{ 0.2f, 0.8f, 0.3f, 1.0f };
-            StyledButton(color, [&]() {
+            ImVec4 color = ImVec4{0.2f, 0.8f, 0.3f, 1.0f};
+            StyledButton(color, [&]()
+                         {
                 if (ImGui::Button("Add Component"))
                     ImGui::OpenPopup("AddComponent");
 
@@ -73,13 +73,10 @@ namespace Crane {
                     }
 
                     ImGui::EndPopup();
-                }
-            });
-
+                } });
         }
         ImGui::End();
     }
-
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
@@ -87,7 +84,7 @@ namespace Crane {
 
         ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
+        bool opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
 
         if (ImGui::IsItemClicked())
         {
@@ -105,7 +102,6 @@ namespace Crane {
             ImGui::EndPopup();
         }
 
-
         if (opened)
         {
             ImGui::TreePop();
@@ -116,7 +112,6 @@ namespace Crane {
             if (entity == m_SelectionContext)
                 m_SelectionContext = {};
         }
-
     }
 
     void SceneHierarchyPanel::DrawComponents(Entity entity)
@@ -124,7 +119,7 @@ namespace Crane {
 
         if (entity.HasComponent<TagComponent>())
         {
-            auto& tag = entity.GetComponent<TagComponent>().Tag;
+            auto &tag = entity.GetComponent<TagComponent>().Tag;
 
             char buffer[256];
             memset(buffer, 0, sizeof(buffer));
@@ -137,17 +132,20 @@ namespace Crane {
             ImGui::Separator();
         }
 
-        ComponentDrawer<TransformComponent>(entity, "Transform", [&]() {
-            auto& transform = entity.GetComponent<TransformComponent>();
+        ComponentDrawer<TransformComponent>(
+            entity, "Transform", [&]()
+            {
+                auto &transform = entity.GetComponent<TransformComponent>();
 
-            glm::vec2 test = { 1.0f, 0.0f };
-            Drawers::Vector("Position", transform.Position);
-            Drawers::Vector("Rotation", transform.Rotation);
-            Drawers::Vector("Scale", transform.Scale);
+                glm::vec2 test = {1.0f, 0.0f};
+                Drawers::Vector("Position", transform.Position);
+                Drawers::Vector("Rotation", transform.Rotation);
+                Drawers::Vector("Scale", transform.Scale);
+            },
+            false);
 
-        }, false);
-
-        ComponentDrawer<CameraComponent>(entity, "Camera", [&]() {
+        ComponentDrawer<CameraComponent>(entity, "Camera", [&]()
+                                         {
             auto& cameraComponent = entity.GetComponent<CameraComponent>();
             auto& camera = cameraComponent.Camera;
 
@@ -178,43 +176,41 @@ namespace Crane {
             if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
             {
                 float fov = camera.GetPerspectiveVerticalFov();
-                float near = camera.GetPerspectiveNearClip();
-                float far = camera.GetPerspectiveFarClip();
+                float nearClip = camera.GetPerspectiveNearClip();
+                float farClip = camera.GetPerspectiveFarClip();
                 if (ImGui::DragFloat("Vectical FOV", &fov))
                     camera.SetPerspectiveVerticalFov(fov);
 
-                if (ImGui::DragFloat("Near clip", &near))
-                    camera.SetPerspectiveNearClip(near);
+                if (ImGui::DragFloat("Near clip", &nearClip))
+                    camera.SetPerspectiveNearClip(nearClip);
 
-                if (ImGui::DragFloat("Far clip", &far))
-                    camera.SetPerspectiveFarClip(far);
+                if (ImGui::DragFloat("Far clip", &farClip))
+                    camera.SetPerspectiveFarClip(farClip);
             }
 
             if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
             {
                 float size = camera.GetOrthographicSize();
-                float near = camera.GetOrthographicNearClip();
-                float far = camera.GetOrthographicFarClip();
+                float nearClip = camera.GetOrthographicNearClip();
+                float farClip = camera.GetOrthographicFarClip();
                 if (ImGui::DragFloat("Size", &size))
                     camera.SetOrthographicSize(size);
 
-                if (ImGui::DragFloat("Near clip", &near))
-                    camera.SetOrthographicNearClip(near);
+                if (ImGui::DragFloat("Near clip", &nearClip))
+                    camera.SetOrthographicNearClip(nearClip);
 
-                if (ImGui::DragFloat("Far clip", &far))
-                    camera.SetOrthographicFarClip(far);
+                if (ImGui::DragFloat("Far clip", &farClip))
+                    camera.SetOrthographicFarClip(farClip);
 
-            }
+            } });
 
-
-        });
-
-        ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]() {
+        ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]()
+                                                 {
             auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
-            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor));
-        });
+            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor)); });
 
-        ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]() {
+        ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]()
+                                                 {
             ParticleSystemComponent& particleComponent = entity.GetComponent<ParticleSystemComponent>();
 
 
@@ -245,7 +241,6 @@ namespace Crane {
                 }
             }
             if (ImGui::Checkbox("Emit", &isEmmitting))
-                particleSystem.SetActive(isEmmitting);
-        });
+                particleSystem.SetActive(isEmmitting); });
     }
 }
