@@ -1,9 +1,9 @@
-#ifdef __linux__
 #include "crpch.h"
 
 #include "Crane/Utils/PlatformUtils.h"
 
 namespace Crane {
+#ifdef __linux__
     std::string FileDialogs::OpenFile()
     {
         char filename[1024];
@@ -42,7 +42,7 @@ namespace Crane {
         std::string result(filename);
         return result;
     }
+#endif
 }
 
-#endif
 

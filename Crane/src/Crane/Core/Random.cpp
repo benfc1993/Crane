@@ -1,3 +1,5 @@
+#include "crpch.h"
+
 #include "Random.h"
 
 namespace Crane {

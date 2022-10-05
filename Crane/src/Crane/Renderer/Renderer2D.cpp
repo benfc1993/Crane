@@ -39,7 +39,7 @@ namespace Crane
         glm::vec2 QuadTextureCoords[4];
 
         std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
-        u_int32_t TextureSlotIndex = 1; // 0 = white texture
+        uint32_t TextureSlotIndex = 1; // 0 = white texture
 
         Renderer2D::Statistics Stats;
     };

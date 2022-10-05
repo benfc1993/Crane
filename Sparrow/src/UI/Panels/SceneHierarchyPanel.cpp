@@ -178,31 +178,31 @@ namespace Crane {
             if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
             {
                 float fov = camera.GetPerspectiveVerticalFov();
-                float near = camera.GetPerspectiveNearClip();
-                float far = camera.GetPerspectiveFarClip();
+                float nearClip = camera.GetPerspectiveNearClip();
+                float farClip = camera.GetPerspectiveFarClip();
                 if (ImGui::DragFloat("Vectical FOV", &fov))
                     camera.SetPerspectiveVerticalFov(fov);
 
-                if (ImGui::DragFloat("Near clip", &near))
-                    camera.SetPerspectiveNearClip(near);
+                if (ImGui::DragFloat("Near clip", &nearClip))
+                    camera.SetPerspectiveNearClip(nearClip);
 
-                if (ImGui::DragFloat("Far clip", &far))
-                    camera.SetPerspectiveFarClip(far);
+                if (ImGui::DragFloat("Far clip", &farClip))
+                    camera.SetPerspectiveFarClip(farClip);
             }
 
             if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
             {
                 float size = camera.GetOrthographicSize();
-                float near = camera.GetOrthographicNearClip();
-                float far = camera.GetOrthographicFarClip();
+                float nearClip = camera.GetOrthographicNearClip();
+                float farClip = camera.GetOrthographicFarClip();
                 if (ImGui::DragFloat("Size", &size))
                     camera.SetOrthographicSize(size);
 
-                if (ImGui::DragFloat("Near clip", &near))
-                    camera.SetOrthographicNearClip(near);
+                if (ImGui::DragFloat("Near clip", &nearClip))
+                    camera.SetOrthographicNearClip(nearClip);
 
-                if (ImGui::DragFloat("Far clip", &far))
-                    camera.SetOrthographicFarClip(far);
+                if (ImGui::DragFloat("Far clip", &farClip))
+                    camera.SetOrthographicFarClip(farClip);
 
             }
 

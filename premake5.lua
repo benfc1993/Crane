@@ -85,8 +85,8 @@ project "Crane"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 
-	filter "files:vendor/ImGuizmo/**.cpp"
-		flags { "NoPCH"}
+	filter "files:vendor/ImGuizmo/ImGuizmo.cpp"
+		flags { "NoPCH" }
 
 	filter "system:linux"
 		kind "SharedLib"
@@ -98,7 +98,7 @@ project "Crane"
 	filter "system:windows"
 		systemversion "latest"
 		kind "StaticLib"
-		staticruntime "on"
+		staticruntime "off"
 
 		defines
 		{
@@ -169,6 +169,7 @@ project "Sandbox"
 	
 	filter "system:windows"
 		systemversion "latest"
+		kind "StaticLib"
 		staticruntime "on"
 	
 	defines

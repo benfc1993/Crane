@@ -95,12 +95,12 @@ namespace Crane {
             System.SetActive(true);
         };
         ParticleSystemComponent(const ParticleSystemComponent&) = default;
-        ParticleSystemComponent(const u_int32_t particleCount)
+        ParticleSystemComponent(const uint32_t particleCount)
         {
             System.SetParticleCount(particleCount);
             System.SetActive(true);
         }
-        ParticleSystemComponent(const u_int32_t particleCount, std::string path)
+        ParticleSystemComponent(const uint32_t particleCount, std::string path)
         {
             System.SetParticleCount(particleCount);
             System.SetActive(true);

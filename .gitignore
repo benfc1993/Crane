@@ -1,3 +1,9 @@
 Makefile
 CraneProfile*.json
 .vscode
+
+.vs
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user

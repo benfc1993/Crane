@@ -124,6 +124,9 @@ namespace Crane {
 
 #define CR_PROFILE 1
 #if CR_PROFILE
+#if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
 #define CR_BEGIN_PROFILE_SESSION(name, filepath) ::Crane::Instrumentor::Get().BeginSession(name, filepath)
 #define CR_END_PROFILE_SESSION() ::Crane::Instrumentor::Get().EndSession()
 #define CR_PROFILE_SCOPE(name) ::Crane::InstrumentationTimer timer##__LINE__(name);
