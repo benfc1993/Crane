@@ -31,7 +31,40 @@ namespace Crane {
         m_Registry.destroy(entity);
     }
 
-    void Scene::OnUpdate(Time time)
+    void Scene::OnUpdateEditor(Time time, EditorCamera& camera)
+    {
+        Renderer2D::BeginScene(camera);
+        auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : spriteGroup)
+        {
+            auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+
+            Renderer2D::DrawQuad(transform, sprite.Color);
+        }
+
+        {
+            auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();
+            for (auto entity : view)
+            {
+                auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
+
+                particleSystem.Data.Position = transform.Position;
+
+                for (int i = 0; i < particleSystem.Data.BurstSize; i++)
+                {
+                    particleSystem.System.Emit(particleSystem.Data);
+                }
+
+                particleSystem.System.OnUpdate(time);
+                particleSystem.System.OnRender();
+            }
+
+        }
+
+        Renderer2D::EndScene();
+    }
+
+    void Scene::OnUpdateRuntime(Time time)
     {
 
         //Update script

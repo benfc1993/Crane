@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Crane/Camera/EditorCamera.h"
+
 #include <glm/glm.hpp>
 #include "entt.hpp"
 
@@ -17,7 +19,9 @@ namespace Crane {
 
         entt::registry& Reg() { return m_Registry; }
 
-        void OnUpdate(Time time);
+        void OnUpdateEditor(Time time, EditorCamera& camera);
+
+        void OnUpdateRuntime(Time time);
 
         void OnViewportResized(uint32_t width, uint32_t height);
 

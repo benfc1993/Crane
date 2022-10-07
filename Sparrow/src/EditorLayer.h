@@ -3,6 +3,7 @@
 #include <Crane.h>
 
 #include "Crane/Scene/Serialization/SceneSerializer.h"
+#include "Crane/Camera/EditorCamera.h"
 
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
@@ -29,8 +30,6 @@ namespace Crane {
         void SaveScene();
         void SaveSceneAs();
     private:
-        OrthographicCameraController m_CameraController;
-
         Ref<VertexArray> m_SquareVertexArray;
         Ref<VertexArray> m_TriangleVertexArray;
         Ref<Framebuffer> m_Framebuffer;
@@ -40,6 +39,8 @@ namespace Crane {
         Entity m_SecondCameraEntity;
 
         bool m_PrimaryCamera = true;
+
+        EditorCamera m_EditorCamera;
 
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 

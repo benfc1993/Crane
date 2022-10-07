@@ -14,7 +14,7 @@
 namespace Crane
 {
 
-    EditorLayer::EditorLayer() : Layer("EditorLayer"), m_CameraController(1.6f / 0.9f) {}
+    EditorLayer::EditorLayer() : Layer("EditorLayer") {}
 
     void EditorLayer::OnAttach()
     {
@@ -24,6 +24,8 @@ namespace Crane
         m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
+
+        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
         Entity particlesDefault = m_ActiveScene->CreateEntity("Particles default");
         particlesDefault.AddComponent<ParticleSystemComponent>();
@@ -89,13 +91,13 @@ namespace Crane
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 
             m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
         if (m_ViewportFocused)
-            m_CameraController.OnUpdate(time);
+            m_EditorCamera.OnUpdate(time);
 
         Renderer2D::ResetStats();
 
@@ -108,7 +110,7 @@ namespace Crane
             RenderCommand::Clear();
         }
 
-        m_ActiveScene->OnUpdate(time);
+        m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
 
         m_Framebuffer->Unbind();
     }
@@ -226,11 +228,16 @@ namespace Crane
                 float windowHeight = ImGui::GetWindowHeight();
                 ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-                //Camera
-                auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-                const auto& camera = cameraEntity.GetComponent<CameraComponent>();
-                const glm::mat4& cameraProjection = camera.Camera.GetProjection();
-                glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().Transform);
+                // Runtime Camera
+                // auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+                // const auto& camera = cameraEntity.GetComponent<CameraComponent>();
+                // const glm::mat4& cameraProjection = camera.Camera.GetProjection();
+                // glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().Transform);
+
+                // Edit Camera
+                const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+                const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+
 
                 //Entity transform
                 auto& tc = selectedEntity.GetComponent<TransformComponent>();
@@ -274,7 +281,7 @@ namespace Crane
     {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(CR_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
-        m_CameraController.OnEvent(event);
+        m_EditorCamera.OnEvent(event);
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -314,16 +321,16 @@ namespace Crane
 
         case Key::Q:
             m_GizmoType = -1;
-            break;
+            return true;
         case Key::W:
             m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-            break;
+            return true;
         case Key::E:
             m_GizmoType = ImGuizmo::OPERATION::SCALE;
-            break;
+            return true;
         case Key::R:
             m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-            break;
+            return true;
         default:
             return false;
         }
