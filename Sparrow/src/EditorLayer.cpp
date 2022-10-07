@@ -3,11 +3,13 @@
 #include "Crane/Scene/ScriptableEntity.h"
 #include "Crane/Utils/PlatformUtils.h"
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
+#include "Crane/Math/Math.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <sys/stat.h>
+#include <ImGuizmo.h>
 
 namespace Crane
 {
@@ -28,8 +30,6 @@ namespace Crane
 
         Entity particlesTexture = m_ActiveScene->CreateEntity("Particles texture");
         particlesTexture.AddComponent<ParticleSystemComponent>(10000, "assets/textures/white-smoke.png");
-
-
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
         m_CameraEntity.AddComponent<CameraComponent>();
@@ -74,6 +74,7 @@ namespace Crane
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_HierarchyPanel.SetContext(m_ActiveScene);
+
     }
     void EditorLayer::OnDetach()
     {
@@ -204,7 +205,9 @@ namespace Crane
 
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
-            Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+            bool imGuiInteracting = ImGui::IsAnyItemActive() || ImGui::IsAnyItemFocused();
+
+            Application::Get().GetImGuiLayer()->ShouldBlockEvents((!m_ViewportFocused || !m_ViewportHovered) && imGuiInteracting);
 
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
@@ -212,6 +215,49 @@ namespace Crane
 
             uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
             ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+            //Gizmos
+            Entity selectedEntity = m_HierarchyPanel.GetSelectedEntity();
+            if (selectedEntity && m_GizmoType != -1)
+            {
+                ImGuizmo::SetOrthographic(false);
+                ImGuizmo::SetDrawlist();
+                float windowWidth = ImGui::GetWindowWidth();
+                float windowHeight = ImGui::GetWindowHeight();
+                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+                //Camera
+                auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+                const auto& camera = cameraEntity.GetComponent<CameraComponent>();
+                const glm::mat4& cameraProjection = camera.Camera.GetProjection();
+                glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().Transform);
+
+                //Entity transform
+                auto& tc = selectedEntity.GetComponent<TransformComponent>();
+                glm::mat4 transform = tc.Transform;
+
+                // Snapping
+                bool snap = Input::IsKeyPressed(Key::LeftControl);
+                float translationSnapValue = 0.1f;
+                float rotationSnapValue = 45.0f;
+                float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? rotationSnapValue : translationSnapValue;
+
+                float snapValues[3] = { snapValue, snapValue, snapValue };
+
+                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                    (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+
+                if (ImGuizmo::IsUsing())
+                {
+                    glm::vec3 position, rotation, scale;
+                    Math::DecomposeTransform(transform, position, rotation, scale);
+
+                    glm::vec3 deltaRotation = rotation - tc.Rotation;
+                    tc.Position = position;
+                    tc.Rotation += deltaRotation;
+                    tc.Scale = scale;
+                }
+            }
 
             ImGui::End();
             ImGui::PopStyleVar();
@@ -238,7 +284,7 @@ namespace Crane
 
         bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
         bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
-
+        CR_INFO("Press");
         switch (e.GetKeyCode())
         {
         case Key::N:
@@ -264,9 +310,24 @@ namespace Crane
                 SaveSceneAs();
                 return true;
             }
+            //Gizmo shortcuts
+
+        case Key::Q:
+            m_GizmoType = -1;
+            break;
+        case Key::W:
+            m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        case Key::E:
+            m_GizmoType = ImGuizmo::OPERATION::SCALE;
+            break;
+        case Key::R:
+            m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+            break;
         default:
             return false;
         }
+
     }
 
     void EditorLayer::NewScene()

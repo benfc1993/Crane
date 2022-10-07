@@ -53,5 +53,8 @@ namespace Crane {
 
         //Global State
         bool m_ShowSettings = false;
+
+        //Gizmos
+        int m_GizmoType = -1;
     };
 }

@@ -8,14 +8,15 @@
 
 namespace Crane
 {
-    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene)
+    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
     {
         m_Context = scene;
     }
 
-    void SceneHierarchyPanel::SetContext(const Ref<Scene> &scene)
+    void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
     {
         m_Context = scene;
+        m_SelectionContext = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender()
@@ -23,7 +24,7 @@ namespace Crane
         ImGui::Begin("Hierarchy");
 
         m_Context->Reg().each([&](auto entityId)
-                              {
+        {
             Entity entity{ entityId, m_Context.get() };
 
             DrawEntityNode(entity); });
@@ -45,9 +46,9 @@ namespace Crane
         if (m_SelectionContext)
         {
             DrawComponents(m_SelectionContext);
-            ImVec4 color = ImVec4{0.2f, 0.8f, 0.3f, 1.0f};
+            ImVec4 color = ImVec4{ 0.2f, 0.8f, 0.3f, 1.0f };
             StyledButton(color, [&]()
-                         {
+            {
                 if (ImGui::Button("Add Component"))
                     ImGui::OpenPopup("AddComponent");
 
@@ -84,7 +85,7 @@ namespace Crane
 
         ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        bool opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
+        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
 
         if (ImGui::IsItemClicked())
         {
@@ -119,7 +120,7 @@ namespace Crane
 
         if (entity.HasComponent<TagComponent>())
         {
-            auto &tag = entity.GetComponent<TagComponent>().Tag;
+            auto& tag = entity.GetComponent<TagComponent>().Tag;
 
             char buffer[256];
             memset(buffer, 0, sizeof(buffer));
@@ -127,25 +128,29 @@ namespace Crane
             ImGui::Text("Tag");
             if (ImGui::InputText("##", buffer, sizeof(buffer)))
             {
-                tag = std::string(buffer, sizeof(buffer));
+                auto input = std::string(buffer, sizeof(buffer));
+                input.erase(input.find('\0'));
+                tag = input;
             }
             ImGui::Separator();
         }
 
         ComponentDrawer<TransformComponent>(
             entity, "Transform", [&]()
-            {
-                auto &transform = entity.GetComponent<TransformComponent>();
+        {
+            auto& transform = entity.GetComponent<TransformComponent>();
 
-                glm::vec2 test = {1.0f, 0.0f};
-                Drawers::Vector("Position", transform.Position);
-                Drawers::Vector("Rotation", transform.Rotation);
-                Drawers::Vector("Scale", transform.Scale);
-            },
+            glm::vec2 test = { 1.0f, 0.0f };
+            Drawers::Vector("Position", transform.Position);
+            glm::vec3 rotation = glm::degrees(transform.Rotation);
+            Drawers::Vector("Rotation", rotation);
+            transform.Rotation = glm::radians(rotation);
+            Drawers::Vector("Scale", transform.Scale);
+        },
             false);
 
         ComponentDrawer<CameraComponent>(entity, "Camera", [&]()
-                                         {
+        {
             auto& cameraComponent = entity.GetComponent<CameraComponent>();
             auto& camera = cameraComponent.Camera;
 
@@ -205,12 +210,12 @@ namespace Crane
             } });
 
         ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]()
-                                                 {
+        {
             auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
             ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor)); });
 
         ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]()
-                                                 {
+        {
             ParticleSystemComponent& particleComponent = entity.GetComponent<ParticleSystemComponent>();
 
 

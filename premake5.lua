@@ -218,7 +218,8 @@ project "Sparrow"
 		"Crane/src",
 		"Crane/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 	
 	links

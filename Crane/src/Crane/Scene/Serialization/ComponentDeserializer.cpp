@@ -11,7 +11,7 @@ namespace Crane {
     template <>
     void ComponentDeserializer::DeserializeComponent<TransformComponent>(YAML::Node& data, Entity& entity)
     {
-        YAML::Node node = data["TransfromComponent"];
+        YAML::Node node = data["TransformComponent"];
         if (!node) return;
 
         auto& transformComponent = entity.AddOrReplaceComponent<TransformComponent>();

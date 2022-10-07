@@ -23,6 +23,8 @@ namespace Crane {
 
         void SetFilePath(const std::string& filePath) { m_FilePath = filePath; }
         std::string GetFilePath() { return m_FilePath; }
+
+        Entity GetPrimaryCameraEntity();
     private:
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
