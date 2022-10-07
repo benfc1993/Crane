@@ -11,7 +11,7 @@ namespace Crane
         OpenGLFramebuffer(const FramebufferSpecification& specification);
         virtual ~OpenGLFramebuffer();
 
-        virtual uint32_t GetColorAttachmentRendererId() const override { return m_ColorAttachment; };
+        virtual uint32_t GetColorAttachmentRendererId(u_int32_t index = 0) const override { CR_CORE_ASSERT(index < m_ColorAttachments.size(), "Color Attachment index not valid"); return m_ColorAttachments[index]; };
         virtual uint32_t GetDepthAttatchment() const override { return m_DepthAttachment; };
 
         virtual void Resize(uint32_t width, uint32_t height) override;
@@ -25,7 +25,12 @@ namespace Crane
 
     private:
         uint32_t m_RendererId = 0;
-        uint32_t m_ColorAttachment = 0, m_DepthAttachment = 0;
         FramebufferSpecification m_Specification;
+
+        std::vector<FrameBufferTextureSpecification> m_ColorAttachmentSpecs;
+        FrameBufferTextureSpecification m_DepthAttachmentSpec = FrameBufferTextureFormat::None;
+
+        std::vector<uint32_t> m_ColorAttachments;
+        uint32_t m_DepthAttachment = 0;
     };
 }

@@ -86,7 +86,6 @@ namespace Crane {
 
     bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
     {
-        CR_INFO("OnMouseScroll");
         float delta = e.GetYOffset() * 0.1f;
         MouseZoom(delta);
         UpdateView();

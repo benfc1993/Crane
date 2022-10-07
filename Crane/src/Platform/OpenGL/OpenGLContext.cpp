@@ -23,6 +23,8 @@ namespace Crane
         CR_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
         CR_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
         CR_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glEnable(GL_MULTISAMPLE);
     }
 
     void OpenGLContext::SwapBuffers()

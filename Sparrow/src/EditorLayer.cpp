@@ -19,6 +19,7 @@ namespace Crane
     void EditorLayer::OnAttach()
     {
         FramebufferSpecification spec;
+        spec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::Depth };
         spec.Width = 1280;
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
@@ -118,8 +119,8 @@ namespace Crane
     {
         CR_PROFILE_FUNCTION();
 
+        static bool dockspaceOpen = true;
         static bool opt_fullscreen = true;
-        static bool opt_padding = false;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -142,14 +143,11 @@ namespace Crane
         if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
             window_flags |= ImGuiWindowFlags_NoBackground;
 
-        if (!opt_padding)
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        bool p_open = true;
 
-        ImGui::Begin("DockSpace Demo", &p_open, window_flags);
-        if (!opt_padding)
-            ImGui::PopStyleVar();
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+        ImGui::PopStyleVar();
 
         if (opt_fullscreen)
             ImGui::PopStyleVar(2);
@@ -164,6 +162,8 @@ namespace Crane
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
+        style.WindowMinSize.x = minWindowSize;
+        
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Options"))
@@ -198,12 +198,12 @@ namespace Crane
             ImGui::EndMenuBar();
         }
 
-        style.WindowMinSize.x = minWindowSize;
 
-
+        for (int i = 0; i < 2; i++)
         {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-            ImGui::Begin("Viewport");
+            std::string name = "Viewport - " + i;
+            ImGui::Begin(name.c_str());
 
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
@@ -215,7 +215,7 @@ namespace Crane
 
             m_ViewportSize = { viewportSize.x, viewportSize.y };
 
-            uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
+            uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId(i);
             ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
             //Gizmos
@@ -291,7 +291,7 @@ namespace Crane
 
         bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
         bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
-        CR_INFO("Press");
+
         switch (e.GetKeyCode())
         {
         case Key::N:
@@ -331,6 +331,8 @@ namespace Crane
         case Key::R:
             m_GizmoType = ImGuizmo::OPERATION::ROTATE;
             return true;
+        case Key::LeftAlt || Key::RightAlt:
+            ImGui::GetCurrentContext()->NavWindowingToggleLayer = true;
         default:
             return false;
         }
