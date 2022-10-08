@@ -25,16 +25,16 @@ namespace Crane
             glBindTexture(TextureTarget(multisampled), id);
         }
 
-        static void AttachColorTexture(uint32_t id, int samples, GLenum format, uint32_t width, uint32_t height, int index)
+        static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
         {
             bool multisampled = samples > 1;
             if (multisampled)
             {
-                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
             }
             else
             {
-                glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -77,6 +77,15 @@ namespace Crane
             return false;
         }
 
+        static GLenum CraneTextureFormatToGLenum(FrameBufferTextureFormat format)
+        {
+            switch (format)
+            {
+            case FrameBufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
+            case FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
+            case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+            }
+        }
     }
 
     OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
@@ -129,7 +138,10 @@ namespace Crane
                 switch (m_ColorAttachmentSpecs[i].TextureFormat)
                 {
                 case FrameBufferTextureFormat::RGBA8:
-                    Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, m_Specification.Width, m_Specification.Height, i);
+                    Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+                    break;
+                case FrameBufferTextureFormat::RED_INTEGER:
+                    Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
                     break;
                 }
             }
@@ -187,5 +199,27 @@ namespace Crane
 
         Invalidate();
     }
+
+    int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+    {
+        CR_CORE_ASSERT(m_ColorAttachments.size() <= 4, "A maximum of 4 color attachments supported");
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+        int pixelData;
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+        return pixelData;
+    }
+
+    void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+    {
+        CR_CORE_ASSERT(m_ColorAttachments.size() <= 4, "A maximum of 4 color attachments supported");
+
+        auto& spec = m_ColorAttachmentSpecs[attachmentIndex];
+
+        glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+            Utils::CraneTextureFormatToGLenum(spec.TextureFormat),
+            GL_INT, &value);
+    }
+
 
 }
