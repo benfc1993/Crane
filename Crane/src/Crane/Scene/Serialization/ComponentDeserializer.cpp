@@ -61,7 +61,7 @@ namespace Crane {
         float particleCount = node["ParticleCount"].as<uint32_t>();
         std::string texturePath = node["TexturePath"].as<std::string>();
 
-        ParticleSystemComponent& particleSystemComponent = texturePath == "" ? entity.AddComponent<ParticleSystemComponent>(particleCount) : entity.AddComponent<ParticleSystemComponent>(particleCount, texturePath);
+        ParticleSystemComponent& particleSystemComponent = texturePath == "" ? entity.AddComponent<ParticleSystemComponent>(particleCount, (int)entity) : entity.AddComponent<ParticleSystemComponent>(particleCount, texturePath, (int)entity);
 
         particleSystemComponent.Data.BurstSize = node["BurstSize"].as<int>();
         particleSystemComponent.Data.ColorBegin = node["ColorBegin"].as<glm::vec4>();

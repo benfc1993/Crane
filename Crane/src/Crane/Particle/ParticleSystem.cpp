@@ -64,7 +64,7 @@ namespace Crane {
             TextureParameters textureParameters = TextureParameters(particle.Texture);
             textureParameters.Color = color;
 
-            Renderer2D::DrawRotatedQuad(particle.Position, particle.Rotation, { size, size }, textureParameters);
+            Renderer2D::DrawRotatedQuad(particle.Position, particle.Rotation, { size, size }, textureParameters, particle.EntityId);
         }
     }
 
@@ -91,6 +91,8 @@ namespace Crane {
         particle.Velocity = particleData.Velocity;
         particle.Velocity.x += (particle.Velocity.x * particleData.VelocityVariation.x * (((float)Random::Float() * 2.0f) - 1.0f));
         particle.Velocity.y += (particle.Velocity.y * particleData.VelocityVariation.y * (((float)Random::Float() * 2.0f) - 1.0f));
+
+        particle.EntityId = particleData.EntityId;
 
         m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();
     }

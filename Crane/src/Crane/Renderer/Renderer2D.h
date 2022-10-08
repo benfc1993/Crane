@@ -3,6 +3,7 @@
 #include "Crane/Camera/OrthographicCamera.h"
 #include "Crane/Camera/Camera.h"
 #include "Crane/Camera/EditorCamera.h"
+#include "Crane/Scene/Components.h"
 
 #include "Shader/Texture.h"
 
@@ -29,22 +30,22 @@ namespace Crane {
 
         static void Flush();
 
-        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
-        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int entityId = -1);
+        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityId = -1);
 
-        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters);
-        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters);
+        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
+        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
 
-        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), int entityId = -1);
+        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f), int entityId = -1);
 
-        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters);
-        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters);
+        static void DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
+        static void DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
 
-        static void DrawQuad(glm::mat4& transform, const glm::vec4& color);
-        static void DrawQuad(glm::mat4& transform, TextureParameters& textureParameters);
+        static void DrawQuad(glm::mat4& transform, const glm::vec4& color, int entityId = -1);
+        static void DrawQuad(glm::mat4& transform, TextureParameters& textureParameters, int entityId = -1);
 
-
+        static void DrawSprite(glm::mat4& transform, SpriteRendererComponent& src, int entityId);
 
         struct Statistics
         {

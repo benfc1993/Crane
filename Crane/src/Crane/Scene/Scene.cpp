@@ -39,7 +39,7 @@ namespace Crane {
         {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            Renderer2D::DrawQuad(transform, sprite.Color);
+            Renderer2D::DrawSprite(transform, sprite, (int)entity);
         }
 
         {

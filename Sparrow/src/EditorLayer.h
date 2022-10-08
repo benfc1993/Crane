@@ -24,6 +24,7 @@ namespace Crane {
         virtual void OnEvent(Event& event) override;
     private:
         bool OnKeyPressed(KeyPressedEvent& e);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
         void NewScene();
         void OpenScene();
@@ -37,8 +38,11 @@ namespace Crane {
         Ref<Scene> m_ActiveScene = nullptr;
         Entity m_CameraEntity;
         Entity m_SecondCameraEntity;
+        Entity m_HoveredEntity;
 
         bool m_PrimaryCamera = true;
+
+        bool m_CanPick = true;
 
         EditorCamera m_EditorCamera;
 

@@ -17,6 +17,8 @@ namespace Crane
         glm::vec2 TextureCoord;
         float TextureIndex;
         float TilingFactor;
+
+        int EntityId = 0;
     };
 
     struct Renderer2DData
@@ -58,7 +60,9 @@ namespace Crane
                                             {ShaderDataType::Float4, "a_Color"},
                                             {ShaderDataType::Float2, "a_TextureCoord"},
                                             {ShaderDataType::Float, "a_TextureIndex"},
-                                            {ShaderDataType::Float, "a_TilingFactor"} });
+                                            {ShaderDataType::Float, "a_TilingFactor"},
+                                            {ShaderDataType::Int, "a_EntityId"}
+            });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -187,61 +191,61 @@ namespace Crane
         }
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int entityId)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, color, entityId);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
-    {
-        CR_PROFILE_FUNCTION();
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-        DrawQuad(transform, color);
-    }
-
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters)
-    {
-        DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters);
-    }
-
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityId)
     {
         CR_PROFILE_FUNCTION();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-        DrawQuad(transform, textureParameters);
+        DrawQuad(transform, color, entityId);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters, entityId);
     }
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color)
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId)
+    {
+        CR_PROFILE_FUNCTION();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawQuad(transform, textureParameters, entityId);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, const glm::vec4& color, int entityId)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, color, entityId);
+    }
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, const glm::vec4& color, int entityId)
     {
         CR_PROFILE_FUNCTION();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), degrees, { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-        DrawQuad(transform, color);
+        DrawQuad(transform, color, entityId);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters, int entityId)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, textureParameters);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, degrees, size, textureParameters, entityId);
     }
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const float degrees, const glm::vec2& size, TextureParameters& textureParameters, int entityId)
     {
         CR_PROFILE_FUNCTION();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(degrees), { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-        DrawQuad(transform, textureParameters);
+        DrawQuad(transform, textureParameters, entityId);
     }
 
-    static void AddQuadToVertexBuffer(const glm::vec4 color, const glm::mat4& transform, float textureIndex, float tilingFactor)
+    static void AddQuadToVertexBuffer(const glm::vec4 color, const glm::mat4& transform, float textureIndex, float tilingFactor, int entityId)
     {
 
         for (uint32_t i = 0; i < 4; i++)
@@ -251,6 +255,7 @@ namespace Crane
             s_Data.QuadVertexBufferPtr->TextureCoord = s_Data.QuadTextureCoords[i];
             s_Data.QuadVertexBufferPtr->TextureIndex = textureIndex;
             s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->EntityId = entityId;
             s_Data.QuadVertexBufferPtr++;
         }
 
@@ -259,7 +264,7 @@ namespace Crane
         s_Data.Stats.QuadsDrawn++;
     }
 
-    void Renderer2D::DrawQuad(glm::mat4& transform, const glm::vec4& color)
+    void Renderer2D::DrawQuad(glm::mat4& transform, const glm::vec4& color, int entityId)
     {
         CheckDrawCall();
 
@@ -268,9 +273,9 @@ namespace Crane
 
         s_Data.WhiteTexture->Bind();
 
-        AddQuadToVertexBuffer(color, transform, textureIndex, tilingFactor);
+        AddQuadToVertexBuffer(color, transform, textureIndex, tilingFactor, entityId);
     }
-    void Renderer2D::DrawQuad(glm::mat4& transform, TextureParameters& textureParameters)
+    void Renderer2D::DrawQuad(glm::mat4& transform, TextureParameters& textureParameters, int entityId)
     {
         CheckDrawCall();
 
@@ -295,8 +300,14 @@ namespace Crane
             s_Data.TextureSlotIndex++;
         }
 
-        AddQuadToVertexBuffer(textureParameters.Color, transform, textureIndex, tilingFactor);
+        AddQuadToVertexBuffer(textureParameters.Color, transform, textureIndex, tilingFactor, entityId);
     }
+
+    void Renderer2D::DrawSprite(glm::mat4& transform, SpriteRendererComponent& src, int entityId)
+    {
+        DrawQuad(transform, src.Color, entityId);
+    }
+
 
     void Renderer2D::ResetStats()
     {

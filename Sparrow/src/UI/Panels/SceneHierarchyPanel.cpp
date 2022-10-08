@@ -63,7 +63,7 @@ namespace Crane
 
                     if (ImGui::MenuItem("Particle System"))
                     {
-                        m_SelectionContext.AddComponent<ParticleSystemComponent>();
+                        m_SelectionContext.AddComponent<ParticleSystemComponent>((int)m_SelectionContext);
                         ImGui::CloseCurrentPopup();
                     }
 

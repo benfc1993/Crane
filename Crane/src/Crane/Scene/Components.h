@@ -94,21 +94,24 @@ namespace Crane
         ParticleSystem System;
         ParticleData Data;
 
-        ParticleSystemComponent()
+        ParticleSystemComponent(int entityId)
         {
             System.SetActive(true);
+            Data.EntityId = entityId;
         };
         ParticleSystemComponent(const ParticleSystemComponent&) = default;
-        ParticleSystemComponent(const uint32_t particleCount)
+        ParticleSystemComponent(const uint32_t particleCount, int entityId)
         {
             System.SetParticleCount(particleCount);
             System.SetActive(true);
+            Data.EntityId = entityId;
         }
-        ParticleSystemComponent(const uint32_t particleCount, std::string path)
+        ParticleSystemComponent(const uint32_t particleCount, std::string path, int entityId)
         {
             System.SetParticleCount(particleCount);
             System.SetActive(true);
             Data = ParticleData(path);
+            Data.EntityId = entityId;
         }
     };
 }

@@ -26,55 +26,39 @@ namespace Crane
 
         m_ActiveScene = CreateRef<Scene>();
 
-        m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+        // class CameraController : public ScriptableEntity
+        // {
+        // public:
+        //     virtual void OnCreate()
+        //     {
 
-        Entity particlesDefault = m_ActiveScene->CreateEntity("Particles default");
-        particlesDefault.AddComponent<ParticleSystemComponent>();
+        //     }
 
-        Entity particlesTexture = m_ActiveScene->CreateEntity("Particles texture");
-        particlesTexture.AddComponent<ParticleSystemComponent>(10000, "assets/textures/white-smoke.png");
+        //     void OnDestroy()
+        //     {
 
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_CameraEntity.AddComponent<CameraComponent>();
+        //     }
 
-        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera");
-        m_SecondCameraEntity.AddComponent<CameraComponent>().Primary = false;
+        //     void OnUpdate(Time time)
+        //     {
+        //         auto& transform = GetComponent<TransformComponent>();
+        //         float moveSpeed = 5.0f;
+        //         float rotationSpeed = 50.0f;
 
-        class CameraController : public ScriptableEntity
-        {
-        public:
-            virtual void OnCreate()
-            {
-
-            }
-
-            void OnDestroy()
-            {
-
-            }
-
-            void OnUpdate(Time time)
-            {
-                auto& transform = GetComponent<TransformComponent>();
-                float moveSpeed = 5.0f;
-                float rotationSpeed = 50.0f;
-
-                if (Input::IsKeyPressed(Key::A))
-                    transform.Position.x -= moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(Key::D))
-                    transform.Position.x += moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(Key::S))
-                    transform.Position.y -= moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(Key::W))
-                    transform.Position.y += moveSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(Key::Q))
-                    transform.Rotation.z -= rotationSpeed * time.DeltaTime();
-                if (Input::IsKeyPressed(Key::E))
-                    transform.Rotation.z += rotationSpeed * time.DeltaTime();
-            }
-        };
-
-        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+        //         if (Input::IsKeyPressed(Key::A))
+        //             transform.Position.x -= moveSpeed * time.DeltaTime();
+        //         if (Input::IsKeyPressed(Key::D))
+        //             transform.Position.x += moveSpeed * time.DeltaTime();
+        //         if (Input::IsKeyPressed(Key::S))
+        //             transform.Position.y -= moveSpeed * time.DeltaTime();
+        //         if (Input::IsKeyPressed(Key::W))
+        //             transform.Position.y += moveSpeed * time.DeltaTime();
+        //         if (Input::IsKeyPressed(Key::Q))
+        //             transform.Rotation.z -= rotationSpeed * time.DeltaTime();
+        //         if (Input::IsKeyPressed(Key::E))
+        //             transform.Rotation.z += rotationSpeed * time.DeltaTime();
+        //     }
+        // };
 
         m_HierarchyPanel.SetContext(m_ActiveScene);
 
@@ -128,7 +112,7 @@ namespace Crane
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
         {
             int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-            CR_INFO("Pixel Data: {0}", pixelData);
+            m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
 
@@ -137,6 +121,7 @@ namespace Crane
     void EditorLayer::OnImGuiRender()
     {
         CR_PROFILE_FUNCTION();
+
 
         static bool dockspaceOpen = true;
         static bool opt_fullscreen = true;
@@ -222,7 +207,11 @@ namespace Crane
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             ImGui::Begin("Viewport");
 
-            auto viewportOffset = ImGui::GetCursorPos();
+            auto viewportOffset = ImGui::GetWindowPos();
+            auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+            auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+            m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+            m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
             m_ViewportFocused = ImGui::IsWindowFocused();
             m_ViewportHovered = ImGui::IsWindowHovered();
@@ -237,14 +226,6 @@ namespace Crane
             uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
             ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-            auto windowSize = ImGui::GetWindowSize();
-            ImVec2 minBound = ImGui::GetWindowPos();
-            // minBound.x += viewportOffset.x;
-            // minBound.y += viewportOffset.y;
-
-            ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
-            m_ViewportBounds[0] = { minBound.x, minBound.y };
-            m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
             //Gizmos
             Entity selectedEntity = m_HierarchyPanel.GetSelectedEntity();
@@ -254,13 +235,7 @@ namespace Crane
                 ImGuizmo::SetDrawlist();
                 float windowWidth = ImGui::GetWindowWidth();
                 float windowHeight = ImGui::GetWindowHeight();
-                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-                // Runtime Camera
-                // auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-                // const auto& camera = cameraEntity.GetComponent<CameraComponent>();
-                // const glm::mat4& cameraProjection = camera.Camera.GetProjection();
-                // glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().Transform);
+                ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
                 // Edit Camera
                 const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
@@ -284,6 +259,7 @@ namespace Crane
 
                 if (ImGuizmo::IsUsing())
                 {
+                    m_CanPick = false;
                     glm::vec3 position, rotation, scale;
                     Math::DecomposeTransform(transform, position, rotation, scale);
 
@@ -292,6 +268,7 @@ namespace Crane
                     tc.Rotation += deltaRotation;
                     tc.Scale = scale;
                 }
+
             }
 
             ImGui::End();
@@ -304,11 +281,13 @@ namespace Crane
         m_SettingsPanel.OnImGuiRender();
 
         ImGui::End();
+        m_CanPick = !ImGuizmo::IsOver() && m_ViewportHovered;
     }
     void EditorLayer::OnEvent(Event& event)
     {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(CR_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(CR_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
         m_EditorCamera.OnEvent(event);
     }
 
@@ -366,6 +345,17 @@ namespace Crane
         }
 
     }
+
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (!m_CanPick || Input::IsKeyPressed(Key::LeftAlt)) return false;
+        if (e.getMouseButton() == 0)
+        {
+            m_HierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+        }
+        return true;
+    }
+
 
     void EditorLayer::NewScene()
     {

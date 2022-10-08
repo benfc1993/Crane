@@ -7,14 +7,18 @@
 namespace Crane {
     static int frameCount = 1;
     static float frameTime = 0.0f;
+    static float avgFrameTime = 0.0f;
+    static float fps = 0.0f;
+
     void RenderStatsPanel::OnImGuiRender()
     {
         auto stats = Renderer2D::GetStats();
         float lastFrameTime = Application::Get().GetLastFrameDuration();
-        float fps = 1.0f / (float)lastFrameTime;
 
         if (frameCount == 60)
         {
+            avgFrameTime = frameTime / (float)frameCount;
+            fps = 1.0f / (float)avgFrameTime;
             frameCount = 1;
             frameTime = lastFrameTime;
         }
@@ -24,7 +28,6 @@ namespace Crane {
             frameTime += lastFrameTime;
         }
 
-        float avgFrameTime = frameTime / (float)frameCount;
 
         ImGui::Begin("Render Statistics");
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
