@@ -1,14 +1,16 @@
 #pragma once
 
+#include "UI/Panels/Panel.h"
+
 #include "Crane/ImGui/ImGuiTheme.h"
 
 namespace Crane {
-    class ThemeSettingsTab
+    class ThemeSettingsTab : public Panel
     {
     public:
-        ThemeSettingsTab();
+        ThemeSettingsTab(bool isRequired = false);
 
-        void OnImGuiRender();
+        virtual void OnImGuiRender() override;
 
         void SaveTheme();
         void OpenTheme();

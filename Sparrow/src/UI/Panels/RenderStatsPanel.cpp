@@ -28,8 +28,8 @@ namespace Crane {
             frameTime += lastFrameTime;
         }
 
-
-        ImGui::Begin("Render Statistics");
+        std::string name = "Render Statistics###" + std::to_string(m_Index);
+        ImGui::Begin(name.c_str());
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
         ImGui::Text("Quads Drawn: %d", stats.QuadsDrawn);
         ImGui::Text("Frame time Avg: %0.3f", avgFrameTime);

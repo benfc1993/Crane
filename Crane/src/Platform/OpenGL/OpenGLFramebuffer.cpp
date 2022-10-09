@@ -84,6 +84,8 @@ namespace Crane
             case FrameBufferTextureFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
             case FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
             case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+            default:
+                return GL_UNSIGNED_BYTE;
             }
         }
     }

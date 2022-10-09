@@ -1,5 +1,5 @@
 #include "EditorLayer.h"
-// #include "imgui/imgui.h"
+#include "imgui/imgui_demo.cpp"
 #include "Crane/Scene/ScriptableEntity.h"
 #include "Crane/Utils/PlatformUtils.h"
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
@@ -25,42 +25,15 @@ namespace Crane
         m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
+        m_Panels.SetActiveScene(m_ActiveScene);
 
-        // class CameraController : public ScriptableEntity
-        // {
-        // public:
-        //     virtual void OnCreate()
-        //     {
+        m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 
-        //     }
+        m_SettingsPanel = CreateRef<SettingsPanel>(true);
+        m_Panels.AddPanel(m_SettingsPanel);
 
-        //     void OnDestroy()
-        //     {
+        m_Panels.AddPanel<RenderStatsPanel>();
 
-        //     }
-
-        //     void OnUpdate(Time time)
-        //     {
-        //         auto& transform = GetComponent<TransformComponent>();
-        //         float moveSpeed = 5.0f;
-        //         float rotationSpeed = 50.0f;
-
-        //         if (Input::IsKeyPressed(Key::A))
-        //             transform.Position.x -= moveSpeed * time.DeltaTime();
-        //         if (Input::IsKeyPressed(Key::D))
-        //             transform.Position.x += moveSpeed * time.DeltaTime();
-        //         if (Input::IsKeyPressed(Key::S))
-        //             transform.Position.y -= moveSpeed * time.DeltaTime();
-        //         if (Input::IsKeyPressed(Key::W))
-        //             transform.Position.y += moveSpeed * time.DeltaTime();
-        //         if (Input::IsKeyPressed(Key::Q))
-        //             transform.Rotation.z -= rotationSpeed * time.DeltaTime();
-        //         if (Input::IsKeyPressed(Key::E))
-        //             transform.Rotation.z += rotationSpeed * time.DeltaTime();
-        //     }
-        // };
-
-        m_HierarchyPanel.SetContext(m_ActiveScene);
 
     }
     void EditorLayer::OnDetach()
@@ -152,6 +125,7 @@ namespace Crane
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
         ImGui::PopStyleVar();
+        ImGui::ShowDemoWindow();
 
         if (opt_fullscreen)
             ImGui::PopStyleVar(2);
@@ -173,7 +147,7 @@ namespace Crane
             if (ImGui::BeginMenu("Options"))
             {
                 if (ImGui::MenuItem("Preferences"))
-                    m_SettingsPanel.OpenPanel();
+                    m_SettingsPanel->OpenPanel();
 
                 if (ImGui::MenuItem("New Scene", "Ctrl+N"))
                 {
@@ -196,6 +170,17 @@ namespace Crane
                 }
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Panels"))
+            {
+                if (ImGui::MenuItem("Add Hierarchy Panel"))
+                    m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene);
+
+                if (ImGui::MenuItem("Add RenderStats Panel"))
+                    m_Panels.AddPanel<RenderStatsPanel>();
+
                 ImGui::EndMenu();
             }
 
@@ -228,7 +213,7 @@ namespace Crane
 
 
             //Gizmos
-            Entity selectedEntity = m_HierarchyPanel.GetSelectedEntity();
+            Entity selectedEntity = m_Panels.GetSelectedEntity();
             if (selectedEntity && m_GizmoType != -1)
             {
                 ImGuizmo::SetOrthographic(false);
@@ -275,10 +260,9 @@ namespace Crane
             ImGui::PopStyleVar();
         }
 
-        m_RenderStatsPanel.OnImGuiRender();
+        m_Panels.OnImGuiRender();
 
-        m_HierarchyPanel.OnImGuiRender();
-        m_SettingsPanel.OnImGuiRender();
+
 
         ImGui::End();
         m_CanPick = !ImGuizmo::IsOver() && m_ViewportHovered;
@@ -351,7 +335,7 @@ namespace Crane
         if (!m_CanPick || Input::IsKeyPressed(Key::LeftAlt)) return false;
         if (e.getMouseButton() == 0)
         {
-            m_HierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+            m_Panels.SetSelectedEntity(m_HoveredEntity);
         }
         return true;
     }
@@ -361,7 +345,7 @@ namespace Crane
     {
         m_ActiveScene = CreateRef<Scene>();
         m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-        m_HierarchyPanel.SetContext(m_ActiveScene);
+        m_Panels.SetActiveScene(m_ActiveScene);
     }
     void EditorLayer::OpenScene()
     {
@@ -370,7 +354,7 @@ namespace Crane
         {
             m_ActiveScene = CreateRef<Scene>();
             m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_HierarchyPanel.SetContext(m_ActiveScene);
+            m_Panels.SetActiveScene(m_ActiveScene);
 
             SceneSerializer serializer(m_ActiveScene);
             serializer.Deserialize(filePath);

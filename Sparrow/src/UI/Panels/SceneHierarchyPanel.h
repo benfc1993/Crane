@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Panel.h"
+
 #include "Crane/Core/Base.h"
 #include "Crane/Scene/Scene.h"
 
@@ -9,18 +11,18 @@
 #include <imgui/imgui_internal.h>
 
 namespace Crane {
-    class SceneHierarchyPanel
+    class SceneHierarchyPanel : public Panel
     {
     public:
-        SceneHierarchyPanel() = default;
-        SceneHierarchyPanel(const Ref<Scene>& scene);
+        SceneHierarchyPanel(bool isRequired = false) : Panel(isRequired) {}
+        SceneHierarchyPanel(const Ref<Scene>& scene, bool isRequired = false);
 
-        void SetContext(const Ref<Scene>& scene);
+        virtual void SetActiveScene(const Ref<Scene>& scene) override;
 
-        void OnImGuiRender();
+        virtual void OnImGuiRender() override;
 
-        void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
-        Entity GetSelectedEntity() const { return m_SelectionContext; }
+        virtual void SetSelectedEntity(Entity entity) override { m_SelectionContext = entity; }
+        virtual Entity GetSelectedEntity() const override { return m_SelectionContext; }
 
     private:
         void DrawEntityNode(Entity entity);
@@ -73,7 +75,6 @@ namespace Crane {
         }
 
     private:
-        Ref<Scene> m_Context;
         Entity m_SelectionContext;
     };
 }

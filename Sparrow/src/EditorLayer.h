@@ -5,6 +5,7 @@
 #include "Crane/Scene/Serialization/SceneSerializer.h"
 #include "Crane/Camera/EditorCamera.h"
 
+#include "UI/Panels/Panels.h"
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
 #include "UI/Panels/SettingsPanel/SettingsPanel.h"
@@ -53,9 +54,9 @@ namespace Crane {
 
 
         //Panels
-        RenderStatsPanel m_RenderStatsPanel;
-        SceneHierarchyPanel m_HierarchyPanel;
-        SettingsPanel m_SettingsPanel;
+        Panels m_Panels;
+        Ref<SettingsPanel> m_SettingsPanel = nullptr;
+        // RenderStatsPanel m_RenderStatsPanel;
 
         //Global State
         bool m_ShowSettings = false;

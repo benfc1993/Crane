@@ -8,24 +8,28 @@
 
 namespace Crane
 {
-    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
+    SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene, bool isRequired)
+        : Panel(isRequired)
     {
-        m_Context = scene;
+        m_ActiveScene = scene;
     }
 
-    void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
+    void SceneHierarchyPanel::SetActiveScene(const Ref<Scene>& scene)
+
     {
-        m_Context = scene;
+        m_ActiveScene = scene;
         m_SelectionContext = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender()
     {
-        ImGui::Begin("Hierarchy");
 
-        m_Context->Reg().each([&](auto entityId)
+        std::string hName = "Hierarchy###" + std::to_string(m_Index);
+        ImGui::Begin(hName.c_str());
+
+        m_ActiveScene->Reg().each([&](auto entityId)
         {
-            Entity entity{ entityId, m_Context.get() };
+            Entity entity{ entityId, m_ActiveScene.get() };
 
             DrawEntityNode(entity); });
 
@@ -35,14 +39,15 @@ namespace Crane
         if (ImGui::BeginPopupContextWindow(0, 1, false))
         {
             if (ImGui::MenuItem("Create Entity"))
-                m_Context->CreateEntity("Entity");
+                m_ActiveScene->CreateEntity("Entity");
 
             ImGui::EndPopup();
         }
 
         ImGui::End();
 
-        ImGui::Begin("Properties");
+        std::string pName = "Properties###" + std::to_string(m_Index) + "Properties";
+        ImGui::Begin(pName.c_str());
         if (m_SelectionContext)
         {
             DrawComponents(m_SelectionContext);
@@ -109,7 +114,7 @@ namespace Crane
         }
         if (entityShouldBeDelete)
         {
-            m_Context->DestroyEntity(entity);
+            m_ActiveScene->DestroyEntity(entity);
             if (entity == m_SelectionContext)
                 m_SelectionContext = {};
         }

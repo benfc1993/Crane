@@ -6,7 +6,8 @@
 
 namespace Crane {
 
-    SettingsPanel::SettingsPanel()
+    SettingsPanel::SettingsPanel(bool isRequired)
+        : Panel(isRequired)
     {
         m_ThemeSettingsTab = CreateRef<ThemeSettingsTab>();
     }
@@ -15,8 +16,8 @@ namespace Crane {
     {
         static bool p_Open = true;
         if (!m_Open) return;
-
-        if (!ImGui::Begin("Settings", &p_Open, ImGuiWindowFlags_NoCollapse))
+        std::string name = "Settings###" + std::to_string(m_Index);
+        if (!ImGui::Begin(name.c_str(), &p_Open, ImGuiWindowFlags_NoCollapse))
         {
             m_Open = p_Open;
             p_Open = true;

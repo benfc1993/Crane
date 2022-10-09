@@ -10,7 +10,8 @@
 
 
 namespace Crane {
-    ThemeSettingsTab::ThemeSettingsTab()
+    ThemeSettingsTab::ThemeSettingsTab(bool isRequired)
+        : Panel(isRequired)
     {
         Application::Get().GetImGuiLayer()->SetThemeColors(m_Theme);
     }

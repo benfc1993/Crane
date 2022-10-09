@@ -2,18 +2,20 @@
 
 #include "Crane.h"
 
+#include "UI/Panels/Panel.h"
+
 #include "ThemeSettingsTab.h"
 
 #include "Crane/ImGui/ImGuiTheme.h"
 
 namespace Crane {
-    class SettingsPanel
+    class SettingsPanel : public Panel
     {
     public:
 
-        SettingsPanel();
+        SettingsPanel(bool isRequired = false);
 
-        void OnImGuiRender();
+        virtual void OnImGuiRender() override;
 
         void OpenPanel() { m_Open = true; }
         void ClosePanel() { m_Open = false; }
