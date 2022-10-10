@@ -8,11 +8,22 @@
 
 namespace Crane
 {
+    struct ApplicationCommandLineArgs
+    {
+        int Count = 0;
+        char** Args = nullptr;
+
+        const char* operator[](int index) const
+        {
+            CR_CORE_ASSERT(index < Count, "");
+            return Args[index];
+        }
+    };
+
     class Application
     {
     public:
-        Application(const std::string& name = "Crane App");
-
+        Application(const std::string& name = "Sparrow App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
         virtual ~Application();
 
         void Run();
@@ -30,12 +41,14 @@ namespace Crane
 
         float GetLastFrameDuration() { return m_LastFrameDuration; }
 
+        ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
         bool OnWindowMinimize(WindowMinimizeEvent& e);
 
     private:
+        ApplicationCommandLineArgs m_CommandLineArgs;
         std::unique_ptr<Window> m_Window;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
@@ -48,5 +61,5 @@ namespace Crane
         static Application* s_Instance;
     };
 
-    Application* CreateApplication();
+    Application* CreateApplication(ApplicationCommandLineArgs args);
 }

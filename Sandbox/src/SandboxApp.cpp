@@ -1,13 +1,6 @@
 #include <Crane.h>
 #include <Crane/Core/EntryPoint.h>
 
-#include "Platform/OpenGL/Shader/OpenGLShader.h"
-
-#include "imgui/imgui.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "Sandbox2D.h"
 
 // class ExampleLayer : public Crane::Layer
@@ -141,19 +134,21 @@
 //     glm::vec3 m_SquarePosition{ -1.1f, 0.0f, 0.0f };
 // };
 
-class Sandbox : public Crane::Application
-{
-public:
-    Sandbox()
+namespace Crane {
+    class Sandbox : public Application
     {
-        // PushLayer(new ExampleLayer());
-        PushLayer(new Sandbox2D());
+    public:
+        Sandbox(ApplicationCommandLineArgs args)
+            :Application("Sandbox", args)
+        {
+            PushLayer(new Sandbox2D());
+        }
+
+        ~Sandbox() {}
+    };
+
+    Application* CreateApplication(ApplicationCommandLineArgs args)
+    {
+        return new Sandbox(args);
     }
-
-    ~Sandbox() {}
-};
-
-Crane::Application *Crane::CreateApplication()
-{
-    return new Sandbox();
 }

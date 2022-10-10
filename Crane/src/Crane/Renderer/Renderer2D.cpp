@@ -3,9 +3,11 @@
 #include "Renderer2D.h"
 #include "Shader/VertexArray.h"
 #include "Shader/Shader.h"
+#include "Crane/Renderer/UniformBuffer.h"
 #include "RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Crane
 {
@@ -44,6 +46,13 @@ namespace Crane
         uint32_t TextureSlotIndex = 1; // 0 = white texture
 
         Renderer2D::Statistics Stats;
+
+        struct CameraData
+        {
+            glm::mat4 ViewProjection;
+        };
+        CameraData CameraBuffer;
+        Ref<UniformBuffer> CameraUniformBuffer;
     };
 
     static Renderer2DData s_Data;
@@ -98,8 +107,7 @@ namespace Crane
             samplers[i] = i;
 
         s_Data.TextureShader = Shader::Create("assets/shaders/TextureShader.glsl");
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+
 
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
@@ -112,6 +120,8 @@ namespace Crane
         s_Data.QuadTextureCoords[1] = { 1.0f, 0.0f };
         s_Data.QuadTextureCoords[2] = { 1.0f, 1.0f };
         s_Data.QuadTextureCoords[3] = { 0.0f, 1.0f };
+
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
     }
     void Renderer2D::Shutdown()
     {
@@ -139,8 +149,8 @@ namespace Crane
 
         glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(transform);
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ProjectionView", viewProjection);
+        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         ResetRenderData();
     }
@@ -151,8 +161,8 @@ namespace Crane
 
         glm::mat4 viewProjection = camera.GetViewProjection();
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ProjectionView", viewProjection);
+        s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         ResetRenderData();
     }
@@ -185,6 +195,7 @@ namespace Crane
                 s_Data.TextureSlots[i]->Bind(i);
             }
 
+            s_Data.TextureShader->Bind();
             RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
             // ResetRenderData();
             s_Data.Stats.DrawCalls++;

@@ -3,7 +3,7 @@
 #include "Crane/Core/Base.h"
 #include "Crane/Core/Application.h"
 
-extern Crane::Application* Crane::CreateApplication();
+extern Crane::Application* Crane::CreateApplication(ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv)
 {
@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     CR_CORE_WARN("Initialised log");
 
     CR_BEGIN_PROFILE_SESSION("Startup", "CraneProfile-Startup.json");
-    auto app = Crane::CreateApplication();
+    auto app = Crane::CreateApplication({ argc, argv });
     CR_END_PROFILE_SESSION();
 
     CR_BEGIN_PROFILE_SESSION("Runtime", "CraneProfile-Runtime.json");

@@ -14,8 +14,8 @@ namespace Crane {
     class Sparrow : public Application
     {
     public:
-        Sparrow()
-            :Application("Sparrow")
+        Sparrow(ApplicationCommandLineArgs args)
+            :Application("Sparrow", args)
         {
             PushLayer(new EditorLayer());
         }
@@ -23,8 +23,8 @@ namespace Crane {
         ~Sparrow() {}
     };
 
-    Application* CreateApplication()
+    Application* CreateApplication(ApplicationCommandLineArgs args)
     {
-        return new Sparrow();
+        return new Sparrow(args);
     }
 }

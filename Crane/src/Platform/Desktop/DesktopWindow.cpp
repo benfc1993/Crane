@@ -57,7 +57,7 @@ namespace Crane
         }
 
         glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
-        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        // glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
         m_Context = new OpenGLContext(m_Window);
         m_Context->Init();
