@@ -25,6 +25,17 @@ project "Sandbox"
 	links
 	{
 		"Crane",
+		"vulkan",
+		"shaderc_shared",
+		"spirv-cross-c",
+		"spirv-cross-core",
+		"spirv-cross-cpp",
+		"spirv-cross-glsl",
+		"spirv-cross-reflect",
+		"spirv-cross-util",
+		"spirv-cross-c-shared",
+		"spirv-cross-hlsl",
+		"spirv-cross-msl",
 	}
 	
 	prebuildcommands

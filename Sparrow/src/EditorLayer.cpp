@@ -34,7 +34,7 @@ namespace Crane
 
         m_Panels.AddPanel<RenderStatsPanel>();
 
-
+        m_Panels.AddPanel<ContentBrowserPanel>(true);
     }
     void EditorLayer::OnDetach()
     {
@@ -180,6 +180,8 @@ namespace Crane
 
                 if (ImGui::MenuItem("Add RenderStats Panel"))
                     m_Panels.AddPanel<RenderStatsPanel>();
+                if (ImGui::MenuItem("Add Content Browser Panel"))
+                    m_Panels.AddPanel<ContentBrowserPanel>();
 
                 ImGui::EndMenu();
             }

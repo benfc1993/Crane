@@ -3,21 +3,22 @@
 
 #include "Crane/Utils/PlatformUtils.h"
 
+#define LINUX_PATH_MAX 4096 + 255 + 1
+
 namespace Crane {
     std::string FileDialogs::OpenFile()
     {
-        char filename[1024];
+        char filename[LINUX_PATH_MAX];
         FILE* f = popen("zenity --file-selection --modal --title=\"Open Scene\"", "r");
-        while (fgets(filename, 1024, f) != NULL)
+
+        std::string str(filename);
+        if (fgets(filename, LINUX_PATH_MAX, f) == NULL)
         {
+            pclose(f);
+            return std::string();
         }
 
         pclose(f);
-        std::string str(filename);
-        if (str.find('/') == std::string::npos)
-        {
-            return std::string();
-        }
         strtok(filename, "\n");
         std::string result(filename);
         return result;
@@ -25,19 +26,17 @@ namespace Crane {
 
     std::string FileDialogs::SaveFile()
     {
-        char filename[1024];
+        char filename[LINUX_PATH_MAX];
         FILE* f = popen("zenity --file-selection --save --modal --title=\"Save Scene\"", "r");
-        while (fgets(filename, 1024, f) != NULL)
-        {
 
-        }
-        pclose(f);
         std::string str(filename);
-        if (str.find('/') == std::string::npos)
+        if (fgets(filename, LINUX_PATH_MAX, f) != NULL)
         {
+            pclose(f);
             return std::string();
         }
 
+        pclose(f);
         strtok(filename, "\n");
         std::string result(filename);
         return result;

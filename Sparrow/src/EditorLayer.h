@@ -9,6 +9,7 @@
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
 #include "UI/Panels/SettingsPanel/SettingsPanel.h"
+#include "UI/Panels/ContentBrowserPanel.h"
 
 namespace Crane {
 
