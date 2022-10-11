@@ -184,9 +184,9 @@ namespace Crane
 #pragma endregion
 
 #pragma region Headers
-                colors[ImGuiCol_Header] = Medium;
-                colors[ImGuiCol_HeaderHovered] = Dark;
-                colors[ImGuiCol_HeaderActive] = Primary;
+                colors[ImGuiCol_Header] = PrimaryDark;
+                colors[ImGuiCol_HeaderHovered] = PrimaryDark;
+                colors[ImGuiCol_HeaderActive] = Light;
 #pragma endregion
 
 #pragma region Separators

@@ -2,6 +2,8 @@
 
 #include "Panel.h"
 
+#include "Crane/Renderer/Shader/Texture.h"
+
 #include <filesystem>
 
 namespace Crane {
@@ -16,5 +18,8 @@ namespace Crane {
     private:
         std::filesystem::path m_CurrentDirectory;
         float m_ViewSize = 0.0f;
+
+        Ref<Texture2D> m_DirectoryIcon;
+        Ref<Texture2D> m_FileIcon;
     };
 }

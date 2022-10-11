@@ -7,27 +7,40 @@ namespace Crane {
 
     static const std::filesystem::path s_AssetPath = "assets";
 
+    static float padding = 16.0f;
+    static float thumbnailSize = 75.0f;
+
     ContentBrowserPanel::ContentBrowserPanel(bool isRequired)
         : m_CurrentDirectory(s_AssetPath), Panel(isRequired)
     {
+        m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
+        m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
     }
 
 
     void ContentBrowserPanel::OnImGuiRender()
     {
         std::string name = "ContentBrowserPanel" + std::to_string(m_Index);
-        ImGui::Begin(name.c_str());
-        ImGui::SliderFloat("Size", &m_ViewSize, 0.0f, 1.0f, "%.1f");
+        ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoScrollbar);
+        ImGui::SliderFloat("Size", &thumbnailSize, 30.0f, 128.0f, "%1.f");
 
-        ImGui::SetWindowFontScale(((m_ViewSize * 0.1f) + 0.1f) / 0.1f);
-        if (m_ViewSize <= 0.2f)
-        {
-            DrawDirectoryTree(s_AssetPath);
-        }
-        else
-        {
-            DrawDirectoryThumbnails();
-        }
+        ImVec2 available = ImGui::GetContentRegionAvail();
+
+        ImGui::BeginTable("Browser", 2, 0, available, ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable);
+
+        ImGui::TableSetupColumn("treeC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.25f);
+        ImGui::TableSetupColumn("thumbsC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.75f);
+
+        ImGui::TableNextColumn();
+
+        ImGui::BeginTable("tree", 1, ImGuiTableFlags_ScrollY);
+        ImGui::TableNextColumn();
+        DrawDirectoryTree(s_AssetPath);
+        ImGui::EndTable();
+
+        ImGui::TableNextColumn();
+        DrawDirectoryThumbnails();
+        ImGui::EndTable();
 
         ImGui::SetWindowFontScale(1.0f);
 
@@ -36,27 +49,43 @@ namespace Crane {
 
     void ContentBrowserPanel::DrawDirectoryTree(std::filesystem::path path)
     {
+
+
         for (auto& entry : std::filesystem::directory_iterator(path))
         {
             std::string filename = entry.path().filename().string();
-
             if (entry.is_directory())
             {
-                if (ImGui::TreeNode(filename.c_str()))
+
+                bool isInPath = m_CurrentDirectory.string().find(entry.path().filename()) != std::string::npos;
+                ImGui::SetNextItemOpen(isInPath);
+                bool selected = m_CurrentDirectory.filename() == entry.path().filename();
+                bool isOpened = ImGui::TreeNodeEx(filename.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | (selected ? ImGuiTreeNodeFlags_Selected : 0));
+
+                if (ImGui::IsItemClicked())
+                {
+                    m_CurrentDirectory = entry.path();
+                }
+
+                if (isOpened)
                 {
                     DrawDirectoryTree(entry.path());
                     ImGui::TreePop();
                 }
-                continue;
             }
-            if (ImGui::Selectable(filename.c_str()))
-                CR_INFO("Selected File: {0}", filename.c_str());
         }
+
     }
 
     void ContentBrowserPanel::DrawDirectoryThumbnails()
     {
-        ImGui::Text("%s", m_CurrentDirectory.string().c_str());
+
+        float cellSize = thumbnailSize + padding;
+
+        float panelWidth = ImGui::GetContentRegionAvail().x;
+        int columnCount = (int)(panelWidth / cellSize);
+        if (columnCount < 1)
+            columnCount = 1;
         if (m_CurrentDirectory != s_AssetPath)
         {
             if (ImGui::Button("<-"))
@@ -65,22 +94,47 @@ namespace Crane {
             }
         }
 
+        ImGui::SameLine();
+
+        ImGui::Text("%s", m_CurrentDirectory.string().c_str());
+
+        ImGui::BeginTable("thumbnails", columnCount, ImGuiTableFlags_ScrollY);
+        ImGui::TableNextColumn();
+
         for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
         {
             const auto& path = entry.path();
             std::string pathString = path.string();
             std::string filename = entry.path().filename().string();
 
-            if (entry.is_directory())
+            ImGui::PushID(filename.c_str());
+            Ref<Texture2D> icon = entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+            ImVec2 uv0{ 0.0f, 1.0f }, uv1{ 1.0f, 0.0f };
+            ImGui::ImageButton("##", (ImTextureID)icon->GetRendererId(), { thumbnailSize, thumbnailSize }, uv0, uv1);
+            ImGui::PopStyleColor();
+
+            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
             {
-                if (ImGui::Button(filename.c_str()))
+                if (entry.is_directory())
                 {
                     m_CurrentDirectory /= path.filename();
                 }
-                continue;
+                else
+                {
+                    CR_INFO("Selected File: {0}", filename);
+
+                }
+
             }
-            if (ImGui::Button(filename.c_str()))
-                CR_INFO("Selected File: {0}", filename);
+
+            ImGui::TextWrapped("%s", filename.c_str());
+
+            ImGui::TableNextColumn();
+
+            ImGui::PopID();
         }
+        ImGui::EndTable();
     }
 }
