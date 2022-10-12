@@ -13,6 +13,7 @@
 
 namespace Crane
 {
+    extern const std::filesystem::path s_AssetPath = "assets";
 
     EditorLayer::EditorLayer() : Layer("EditorLayer") {}
 
@@ -194,6 +195,8 @@ namespace Crane
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             ImGui::Begin("Viewport");
 
+
+
             auto viewportOffset = ImGui::GetWindowPos();
             auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
             auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -212,6 +215,19 @@ namespace Crane
 
             uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
             ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_FILE"))
+                {
+                    const std::filesystem::path path = std::filesystem::path((char*)payload->Data);
+                    if (path.extension() == ".scene")
+                    {
+                        LoadScene(std::filesystem::path(s_AssetPath) / path);
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+            }
 
 
             //Gizmos
@@ -352,14 +368,21 @@ namespace Crane
     void EditorLayer::OpenScene()
     {
         std::string filePath = FileDialogs::OpenFile();
-        if (!filePath.empty())
+        LoadScene(filePath);
+
+    }
+
+    void EditorLayer::LoadScene(std::filesystem::path path)
+    {
+        CR_INFO("Loading scene: {0}", path.string());
+        if (!path.empty())
         {
             m_ActiveScene = CreateRef<Scene>();
             m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_Panels.SetActiveScene(m_ActiveScene);
 
             SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(filePath);
+            serializer.Deserialize(path);
         }
     }
     void EditorLayer::SaveScene()

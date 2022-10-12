@@ -30,6 +30,7 @@ namespace Crane {
 
         void NewScene();
         void OpenScene();
+        void LoadScene(std::filesystem::path path);
         void SaveScene();
         void SaveSceneAs();
     private:

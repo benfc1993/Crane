@@ -26,21 +26,25 @@ namespace Crane {
 
         ImVec2 available = ImGui::GetContentRegionAvail();
 
-        ImGui::BeginTable("Browser", 2, 0, available, ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable);
+        if (ImGui::BeginTable("Browser", 2, 0, available, ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable))
+        {
+            ImGui::TableSetupColumn("treeC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.25f);
+            ImGui::TableSetupColumn("thumbsC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.75f);
 
-        ImGui::TableSetupColumn("treeC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.25f);
-        ImGui::TableSetupColumn("thumbsC", ImGuiTableColumnFlags_WidthFixed, available.x * 0.75f);
+            ImGui::TableNextColumn();
 
-        ImGui::TableNextColumn();
+            if (ImGui::BeginTable("tree", 1, ImGuiTableFlags_ScrollY))
+            {
+                ImGui::TableNextColumn();
+                DrawDirectoryTree(s_AssetPath);
+                ImGui::EndTable();
+            }
 
-        ImGui::BeginTable("tree", 1, ImGuiTableFlags_ScrollY);
-        ImGui::TableNextColumn();
-        DrawDirectoryTree(s_AssetPath);
-        ImGui::EndTable();
+            ImGui::TableNextColumn();
+            DrawDirectoryThumbnails();
+            ImGui::EndTable();
+        }
 
-        ImGui::TableNextColumn();
-        DrawDirectoryThumbnails();
-        ImGui::EndTable();
 
         ImGui::SetWindowFontScale(1.0f);
 
@@ -98,43 +102,52 @@ namespace Crane {
 
         ImGui::Text("%s", m_CurrentDirectory.string().c_str());
 
-        ImGui::BeginTable("thumbnails", columnCount, ImGuiTableFlags_ScrollY);
-        ImGui::TableNextColumn();
-
-        for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
+        if (ImGui::BeginTable("thumbnails", columnCount, ImGuiTableFlags_ScrollY))
         {
-            const auto& path = entry.path();
-            std::string pathString = path.string();
-            std::string filename = entry.path().filename().string();
-
-            ImGui::PushID(filename.c_str());
-            Ref<Texture2D> icon = entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
-
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-            ImVec2 uv0{ 0.0f, 1.0f }, uv1{ 1.0f, 0.0f };
-            ImGui::ImageButton("##", (ImTextureID)icon->GetRendererId(), { thumbnailSize, thumbnailSize }, uv0, uv1);
-            ImGui::PopStyleColor();
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-            {
-                if (entry.is_directory())
-                {
-                    m_CurrentDirectory /= path.filename();
-                }
-                else
-                {
-                    CR_INFO("Selected File: {0}", filename);
-
-                }
-
-            }
-
-            ImGui::TextWrapped("%s", filename.c_str());
-
             ImGui::TableNextColumn();
 
-            ImGui::PopID();
+            for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
+            {
+                const auto& path = entry.path();
+                auto relativePath = std::filesystem::relative(path, s_AssetPath);
+                std::string pathString = path.string();
+                std::string filename = entry.path().filename().string();
+
+                ImGui::PushID(filename.c_str());
+                Ref<Texture2D> icon = entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+                ImVec2 uv0{ 0.0f, 1.0f }, uv1{ 1.0f, 0.0f };
+                ImGui::ImageButton("##", (ImTextureID)icon->GetRendererId(), { thumbnailSize, thumbnailSize }, uv0, uv1);
+                ImGui::PopStyleColor();
+
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+                {
+                    if (entry.is_directory())
+                    {
+                        m_CurrentDirectory /= path.filename();
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+                if (ImGui::BeginDragDropSource())
+                {
+                    std::string filePath = relativePath.string();
+                    ImGui::SetDragDropPayload("CONTENT_BROWSER_FILE", (void*)relativePath.c_str(), relativePath.string().length() + 1);
+                    ImGui::Text(filename.c_str());
+                    ImGui::EndDragDropSource();
+                }
+
+                ImGui::TextWrapped("%s", filename.c_str());
+
+                ImGui::TableNextColumn();
+
+                ImGui::PopID();
+            }
+            ImGui::EndTable();
         }
-        ImGui::EndTable();
     }
 }
