@@ -216,6 +216,23 @@ namespace Crane
         DrawQuad(transform, color, entityId);
     }
 
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, Ref<Texture2D>& texture, int entityId)
+    {
+        TextureParameters textureParameters(texture);
+
+        DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters, entityId);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, Ref<Texture2D>& texture, int entityId)
+    {
+        CR_PROFILE_FUNCTION();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        TextureParameters textureParameters(texture);
+
+        DrawQuad(transform, textureParameters, entityId);
+    }
+
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId)
     {
         DrawQuad({ position.x, position.y, 0.0f }, size, textureParameters, entityId);
@@ -316,7 +333,19 @@ namespace Crane
 
     void Renderer2D::DrawSprite(glm::mat4& transform, SpriteRendererComponent& src, int entityId)
     {
-        DrawQuad(transform, src.Color, entityId);
+        if (src.Texture)
+        {
+            TextureParameters textureParameters;
+            textureParameters.Color = src.Color;
+            textureParameters.Texture = src.Texture;
+
+            DrawQuad(transform, textureParameters, entityId);
+        }
+        else
+        {
+            DrawQuad(transform, src.Color, entityId);
+        }
+
     }
 
 

@@ -83,6 +83,8 @@ namespace Crane {
 
             auto& sprite = entity.GetComponent<SpriteRendererComponent>();
             out << YAML::Key << "Color" << YAML::Value << sprite.Color;
+            std::string texturePath = (*sprite.Texture.get());
+            out << YAML::Key << "Texture" << YAML::Value << texturePath;
 
             out << YAML::EndMap; // SpriteRendererComponent
         }

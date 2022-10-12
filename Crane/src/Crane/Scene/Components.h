@@ -10,6 +10,7 @@
 
 #include "ScriptableEntity.h"
 #include "Crane/Particle/ParticleSystem.h"
+#include "Crane/Renderer/Shader/Texture.h"
 
 namespace Crane
 {
@@ -53,8 +54,13 @@ namespace Crane
     struct SpriteRendererComponent
     {
         glm::vec4 Color;
+        Ref<Texture2D> Texture = Texture2D::Create(1, 1);
 
-        SpriteRendererComponent() = default;
+        SpriteRendererComponent()
+        {
+            uint32_t whiteTextureData = 0xffffffff;
+            Texture->SetData(&whiteTextureData, sizeof(uint32_t));
+        };
         SpriteRendererComponent(const SpriteRendererComponent&) = default;
         SpriteRendererComponent(const glm::vec4& color)
             : Color(color)

@@ -21,7 +21,12 @@ namespace Crane {
         int BurstSize = 5;
         int EntityId = -1;
 
-        ParticleData() = default;
+        ParticleData()
+        {
+            uint32_t whiteTextureData = 0xffffffff;
+            Texture->SetData(&whiteTextureData, sizeof(uint32_t));
+        }
+
         ParticleData(std::string path)
         {
             Texture = Texture2D::Create(path);

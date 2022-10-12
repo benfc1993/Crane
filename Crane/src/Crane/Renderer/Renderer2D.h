@@ -10,10 +10,11 @@
 namespace Crane {
     struct TextureParameters
     {
-        Ref<Texture2D>& Texture;
+        Ref<Texture2D> Texture;
         float TilingFactor = 1.0f;
         glm::vec4 Color = glm::vec4(1.0f);
 
+        TextureParameters() = default;
         TextureParameters(Ref<Texture2D>& texture) : Texture(texture) {}
     };
 
@@ -32,6 +33,9 @@ namespace Crane {
 
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int entityId = -1);
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityId = -1);
+
+        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, Ref<Texture2D>& texture, int entityId = -1);
+        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, Ref<Texture2D>& texture, int entityId = -1);
 
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, TextureParameters& textureParameters, int entityId = -1);
