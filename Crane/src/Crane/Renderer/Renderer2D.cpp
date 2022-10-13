@@ -98,8 +98,6 @@ namespace Crane
         delete[] quadIndices;
 
         s_Data.WhiteTexture = Texture2D::Create(1, 1);
-        uint32_t whiteTextureData = 0xffffffff;
-        s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
         int32_t samplers[s_Data.MaxTextureSlots];
 
@@ -333,7 +331,7 @@ namespace Crane
 
     void Renderer2D::DrawSprite(glm::mat4& transform, SpriteRendererComponent& src, int entityId)
     {
-        if (src.Texture)
+        if ((std::string)*src.Texture.get() != "")
         {
             TextureParameters textureParameters;
             textureParameters.Color = src.Color;

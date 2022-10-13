@@ -314,8 +314,7 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp",
     "valarray": "cpp",
-    "variant": "cpp",
-    "filesystem": "cpp"
+    "variant": "cpp"
   }
 }
 }

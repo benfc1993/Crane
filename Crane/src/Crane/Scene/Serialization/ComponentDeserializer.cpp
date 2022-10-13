@@ -51,12 +51,11 @@ namespace Crane {
         auto& spriteRendererComponent = entity.AddComponent<SpriteRendererComponent>();
 
         spriteRendererComponent.Color = node["Color"].as<glm::vec4>();
-        if (node["Texture"])
-        {
-            std::string texturePath = node["Texture"].as<std::string>();
-            if (texturePath != "")
-                spriteRendererComponent.Texture = Texture2D::Create(node["Texture"].as<std::string>());
-        }
+        std::string texturePath = node["Texture"].as<std::string>();
+        std::string texture = node["Texture"].as<std::string>();
+        if (texture != "")
+            spriteRendererComponent.Texture = Texture2D::Create(texture);
+        spriteRendererComponent.TilingFactor = node["TilingFactor"].as<float>();
     }
 
     template <>

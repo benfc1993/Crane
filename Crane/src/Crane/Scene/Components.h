@@ -55,16 +55,18 @@ namespace Crane
     {
         glm::vec4 Color;
         Ref<Texture2D> Texture = Texture2D::Create(1, 1);
+        float TilingFactor = 1.0f;
 
-        SpriteRendererComponent()
-        {
-            uint32_t whiteTextureData = 0xffffffff;
-            Texture->SetData(&whiteTextureData, sizeof(uint32_t));
-        };
+        SpriteRendererComponent() = default;
         SpriteRendererComponent(const SpriteRendererComponent&) = default;
         SpriteRendererComponent(const glm::vec4& color)
             : Color(color)
         {
+        }
+
+        void ClearTexture()
+        {
+            Texture = Texture2D::Create(1, 1);
         }
     };
 

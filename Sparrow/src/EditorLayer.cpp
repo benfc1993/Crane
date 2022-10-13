@@ -229,6 +229,12 @@ namespace Crane
                 }
             }
 
+            //Disable alt to togle nav
+            if (ImGui::IsKeyDown(Key::LeftAlt) || ImGui::IsKeyDown(Key::RightAlt))
+            {
+                ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
+            }
+
 
             //Gizmos
             Entity selectedEntity = m_Panels.GetSelectedEntity();
@@ -340,8 +346,6 @@ namespace Crane
         case Key::R:
             m_GizmoType = ImGuizmo::OPERATION::ROTATE;
             return true;
-        case Key::LeftAlt || Key::RightAlt:
-            ImGui::GetCurrentContext()->NavWindowingToggleLayer = true;
         default:
             return false;
         }

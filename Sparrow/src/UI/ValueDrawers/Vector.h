@@ -5,7 +5,7 @@
 #include <string>
 #include <imgui/imgui_internal.h>
 
-#include "UI/UIComponents/Buttons.h"  
+#include "UI/UIComponents/Drawers.h"  
 
 namespace Crane {
     namespace Drawers
@@ -53,7 +53,7 @@ namespace Crane {
             for (int i = 0; i < dimensions; i++)
             {
                 ImGui::PushFont(boldFont);
-                StyledButton(colors[i], [&]() {
+                Drawers::StyledButton(colors[i], [&]() {
                     if (ImGui::Button(labels[i].c_str(), buttonSize))
                         vector[i] = options.resetValue;
                 });
@@ -119,7 +119,7 @@ namespace Crane {
             for (int i = 0; i < dimensions; i++)
             {
                 ImGui::PushFont(boldFont);
-                StyledButton(colors[i], [&]() {
+                Drawers::StyledButton(colors[i], [&]() {
                     ImGui::Button(labels[i].c_str(), buttonSize);
                 });
                 ImGui::PopFont();

@@ -4,32 +4,40 @@ Scene:
 Entities:
   - Entity: 123523563245
     TagComponent:
-      Tag: Left
+      Tag: Right
     TransformComponent:
-      Position: [-0.349999994, 0, 0.349999994]
-      Rotation: [0, -0.785398245, 0]
+      Position: [0.349999994, 0, 0.349999994]
+      Rotation: [0, 0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.136837065, 0.772151887, 0.635438561, 1]
+      Color: [0.104862124, 0.654008448, 0.605349779, 1]
       Texture: ""
+      TilingFactor: 1
   - Entity: 123523563245
     TagComponent:
-      Tag: Second Camera
+      Tag: Top
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveVerticalFov: 0.785398185
-        PerspectiveNearClip: 0.00100000005
-        PerspectiveFarClip: 1000
-        OrthographicSize: 10
-        OrthographicNearClip: -1
-        OrthographicFarClip: 1
-      Primary: false
-      FixedAspectRatio: false
+      Position: [0, 0.500000238, 0]
+      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
+      Scale: [0.999999881, 0.999999285, 0.996328115]
+    SpriteRendererComponent:
+      Color: [0.144759551, 0.729957819, 0.603526056, 1]
+      Texture: ""
+      TilingFactor: 1
+    ParticleSystemComponent:
+      ParticleCount: 10000
+      BurstSize: 5
+      ColorBegin: [0.800000012, 0.200000003, 0.301960796, 1]
+      ColorEnd: [0.0352941193, 0.0431372561, 0.0549019612, 0.36470589]
+      Lifetime: 7.69999981
+      LifetimeVariation: 0.159999996
+      Position: [0, 0.500000238, 0]
+      SizeBegin: 0.200000003
+      SizeEnd: 0.75
+      SizeVariation: 0.300000012
+      TexturePath: ""
+      Velocity: [0.419999987, 0.370000005, 0]
+      VelocityVariation: [0.709999979, 0.75999999, 0]
   - Entity: 123523563245
     TagComponent:
       Tag: Camera
@@ -50,35 +58,30 @@ Entities:
       FixedAspectRatio: false
   - Entity: 123523563245
     TagComponent:
-      Tag: Top
+      Tag: Second Camera
     TransformComponent:
-      Position: [0, 0.500000238, 0]
-      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
-      Scale: [0.999999881, 0.999999285, 0.996328115]
-    SpriteRendererComponent:
-      Color: [0.144759551, 0.729957819, 0.603526056, 1]
-      Texture: ""
-    ParticleSystemComponent:
-      ParticleCount: 10000
-      BurstSize: 5
-      ColorBegin: [0.800000012, 0.200000003, 0.301960796, 1]
-      ColorEnd: [0.0352941193, 0.0431372561, 0.0549019612, 0.36470589]
-      Lifetime: 7.69999981
-      LifetimeVariation: 0.159999996
-      Position: [0, 0.500000238, 0]
-      SizeBegin: 0.200000003
-      SizeEnd: 0.75
-      SizeVariation: 0.300000012
-      TexturePath: ""
-      Velocity: [0.419999987, 0.370000005, 0]
-      VelocityVariation: [0.709999979, 0.75999999, 0]
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: false
+      FixedAspectRatio: false
   - Entity: 123523563245
     TagComponent:
-      Tag: Right
+      Tag: Left
     TransformComponent:
-      Position: [0.349999994, 0, 0.349999994]
-      Rotation: [0, 0.785398245, 0]
+      Position: [-0.349999994, 0, 0.349999994]
+      Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.104862124, 0.654008448, 0.605349779, 1]
+      Color: [0.136837065, 0.772151887, 0.635438561, 1]
       Texture: ""
+      TilingFactor: 1

@@ -137,7 +137,7 @@ namespace Crane {
                 {
                     std::string filePath = relativePath.string();
                     ImGui::SetDragDropPayload("CONTENT_BROWSER_FILE", (void*)relativePath.c_str(), relativePath.string().length() + 1);
-                    ImGui::Text(filename.c_str());
+                    ImGui::Text("%s", filename.c_str());
                     ImGui::EndDragDropSource();
                 }
 

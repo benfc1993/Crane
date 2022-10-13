@@ -85,6 +85,7 @@ namespace Crane {
             out << YAML::Key << "Color" << YAML::Value << sprite.Color;
             std::string texturePath = (*sprite.Texture.get());
             out << YAML::Key << "Texture" << YAML::Value << texturePath;
+            out << YAML::Key << "TilingFactor" << YAML::Value << sprite.TilingFactor;
 
             out << YAML::EndMap; // SpriteRendererComponent
         }

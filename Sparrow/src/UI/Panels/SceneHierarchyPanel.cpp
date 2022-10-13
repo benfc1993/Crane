@@ -1,13 +1,17 @@
 #include "SceneHierarchyPanel.h"
 
 #include "Crane/Scene/Components.h"
+#include "Crane/Renderer/Shader/Texture.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "UI/ValueDrawers/Vector.h"
+#include "UI/UIComponents/Drawers.h"
 
 namespace Crane
 {
+    static const std::filesystem::path s_AssetPath = "assets";
+
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene, bool isRequired)
         : Panel(isRequired)
     {
@@ -52,7 +56,7 @@ namespace Crane
         {
             DrawComponents(m_SelectionContext);
             ImVec4 color = ImVec4{ 0.2f, 0.8f, 0.3f, 1.0f };
-            StyledButton(color, [&]()
+            Drawers::StyledButton(color, [&]()
             {
                 if (ImGui::Button("Add Component"))
                     ImGui::OpenPopup("AddComponent");
@@ -216,8 +220,12 @@ namespace Crane
 
         ComponentDrawer<SpriteRendererComponent>(entity, "Sprite", [&]()
         {
-            auto& spriteColor = entity.GetComponent<SpriteRendererComponent>().Color;
-            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(spriteColor)); });
+            auto& sprite = entity.GetComponent<SpriteRendererComponent>();
+            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(sprite.Color));
+            Drawers::TextureDrawer(sprite.Texture, s_AssetPath);
+
+            ImGui::DragFloat("Tiling Factor", &sprite.TilingFactor, 0.1f, 1.0f, 100.0f);
+        });
 
         ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]()
         {
@@ -231,6 +239,8 @@ namespace Crane
 
             ImGui::ColorEdit4("Start Color", glm::value_ptr(particleData.ColorBegin));
             ImGui::ColorEdit4("End Color", glm::value_ptr(particleData.ColorEnd));
+
+            Drawers::TextureDrawer(particleData.Texture, s_AssetPath);
 
             ImGui::DragFloat("Life Time", &particleData.Lifetime, 0.1f, 0.0f, 1000.0f);
             Drawers::Range("Life Time Variation", particleData.LifetimeVariation, 0.0f, 1.0f);
