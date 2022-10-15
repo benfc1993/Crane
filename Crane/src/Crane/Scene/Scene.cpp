@@ -39,7 +39,7 @@ namespace Crane {
         {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            Renderer2D::DrawSprite(transform, sprite, (int)entity);
+            Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
         }
 
         {
@@ -102,13 +102,13 @@ namespace Crane {
 
         if (mainCamera)
         {
-            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+            Renderer2D::BeginScene(*mainCamera, cameraTransform->Transform());
             auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
             for (auto entity : spriteGroup)
             {
                 auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawQuad(transform, sprite.Color);
+                Renderer2D::DrawQuad(transform.Transform(), sprite.Color);
             }
 
             {

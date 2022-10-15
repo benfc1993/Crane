@@ -9,15 +9,19 @@
 namespace Crane {
     ParticleSystem::ParticleSystem()
     {
-        m_ParticlePool.resize(m_ParticleCount);
-        m_PoolIndex = m_ParticleCount - 1;
+        Reset();
     }
 
     ParticleSystem::ParticleSystem(uint32_t particleCount)
     {
         m_ParticleCount = particleCount;
-        m_ParticlePool.resize(particleCount);
-        m_PoolIndex = particleCount - 1;
+        Reset();
+    }
+
+    void ParticleSystem::Reset()
+    {
+        m_ParticlePool.resize(m_ParticleCount);
+        m_PoolIndex = m_ParticleCount - 1;
     }
 
     void ParticleSystem::OnUpdate(Time time)
@@ -71,6 +75,8 @@ namespace Crane {
     void ParticleSystem::Emit(const ParticleData& particleData)
     {
         CR_PROFILE_FUNCTION();
+
+        if (!m_Active) return;
 
         Particle& particle = m_ParticlePool[m_PoolIndex];
 

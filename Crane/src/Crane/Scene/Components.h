@@ -31,23 +31,18 @@ namespace Crane
         glm::vec3 Position{ 0.0f };
         glm::vec3 Rotation{ 0.0f };
         glm::vec3 Scale{ 1.0f };
-        glm::mat4 Transform{ 1.0f };
 
         TransformComponent() = default;
         TransformComponent(const TransformComponent&) = default;
-        TransformComponent(const glm::mat4& transform)
-            : Transform(transform)
-        {
-        }
 
-        operator glm::mat4& ()
+        glm::mat4 Transform() const
         {
             glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-            Transform = glm::translate(glm::mat4(1.0f), Position)
+            return glm::translate(glm::mat4(1.0f), Position)
                 * rotation
                 * glm::scale(glm::mat4(1.0f), Scale);
 
-            return Transform;
+
         }
     };
 
@@ -104,20 +99,17 @@ namespace Crane
 
         ParticleSystemComponent(int entityId)
         {
-            System.SetActive(true);
             Data.EntityId = entityId;
         };
         ParticleSystemComponent(const ParticleSystemComponent&) = default;
         ParticleSystemComponent(const uint32_t particleCount, int entityId)
         {
             System.SetParticleCount(particleCount);
-            System.SetActive(true);
             Data.EntityId = entityId;
         }
         ParticleSystemComponent(const uint32_t particleCount, std::string path, int entityId)
         {
             System.SetParticleCount(particleCount);
-            System.SetActive(true);
             Data = ParticleData(path);
             Data.EntityId = entityId;
         }

@@ -290,7 +290,7 @@ namespace Crane
         s_Data.Stats.QuadsDrawn++;
     }
 
-    void Renderer2D::DrawQuad(glm::mat4& transform, const glm::vec4& color, int entityId)
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityId)
     {
         CheckDrawCall();
 
@@ -301,7 +301,7 @@ namespace Crane
 
         AddQuadToVertexBuffer(color, transform, textureIndex, tilingFactor, entityId);
     }
-    void Renderer2D::DrawQuad(glm::mat4& transform, TextureParameters& textureParameters, int entityId)
+    void Renderer2D::DrawQuad(const glm::mat4& transform, TextureParameters& textureParameters, int entityId)
     {
         CheckDrawCall();
 
@@ -329,7 +329,7 @@ namespace Crane
         AddQuadToVertexBuffer(textureParameters.Color, transform, textureIndex, tilingFactor, entityId);
     }
 
-    void Renderer2D::DrawSprite(glm::mat4& transform, SpriteRendererComponent& src, int entityId)
+    void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId)
     {
         if ((std::string)*src.Texture.get() != "")
         {

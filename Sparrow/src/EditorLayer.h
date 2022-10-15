@@ -10,6 +10,7 @@
 #include "UI/Panels/SceneHierarchyPanel.h"
 #include "UI/Panels/SettingsPanel/SettingsPanel.h"
 #include "UI/Panels/ContentBrowserPanel.h"
+#include "UI/ToolBars/SceneToolbar.h"
 
 namespace Crane {
 
@@ -65,5 +66,7 @@ namespace Crane {
 
         //Gizmos
         int m_GizmoType = -1;
+
+        Ref<SceneState> m_SceneState = nullptr;
     };
 }

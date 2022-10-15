@@ -8,6 +8,11 @@
 namespace Crane {
     class Entity;
 
+    enum class SceneState
+    {
+        Edit = 0, Play = 1
+    };
+
     class Scene
     {
     public:
@@ -28,11 +33,16 @@ namespace Crane {
         void SetFilePath(const std::string& filePath) { m_FilePath = filePath; }
         std::string GetFilePath() { return m_FilePath; }
 
+        SceneState GetState() const { return m_State; }
+        void SetState(SceneState state) { m_State = state; }
+
         Entity GetPrimaryCameraEntity();
     private:
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         std::string m_FilePath;
+
+        SceneState m_State = SceneState::Edit;
 
         friend class Entity;
         friend class SceneSerializer;

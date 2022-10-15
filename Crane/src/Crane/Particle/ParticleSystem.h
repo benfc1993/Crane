@@ -49,8 +49,10 @@ namespace Crane {
 
         uint32_t GetParticleCount() const { return m_ParticleCount; }
 
-        void SetActive(bool isActive) { m_Active = isActive; }
+        void SetActive(bool isActive) { m_Active = isActive; Reset(); }
         bool GetState() const { return m_Active; }
+
+        void Reset();
 
         void OnUpdate(Time time);
         void OnRender();
