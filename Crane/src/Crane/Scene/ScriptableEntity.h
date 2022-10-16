@@ -11,11 +11,11 @@ namespace Crane {
     public:
         virtual ~ScriptableEntity() {}
 
-        template<typename T>
-        T& GetComponent()
-        {
-            return m_Entity.GetComponent<T>();
-        }
+        // template<typename T>
+        // T& GetComponent()
+        // {
+        //     return m_Entity.GetComponent<T>();
+        // }
 
     protected:
         virtual void OnCreate() {}

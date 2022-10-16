@@ -37,9 +37,7 @@ namespace Crane
 
         m_Panels.AddPanel<ContentBrowserPanel>(true);
 
-        m_SceneState = CreateRef<SceneState>();
-
-        m_Panels.AddPanel<SceneToolbar>();
+        m_Panels.AddPanel<SceneToolbar>(std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this));
     }
     void EditorLayer::OnDetach()
     {
@@ -77,7 +75,7 @@ namespace Crane
 
         auto sceneState = m_ActiveScene->GetState();
 
-        switch (sceneState)
+        switch (m_SceneState)
         {
         case SceneState::Edit:
             m_ActiveScene->OnUpdateEditor(time, m_EditorCamera);
@@ -251,7 +249,8 @@ namespace Crane
 
 
             //Gizmos
-            if (m_ActiveScene->GetState() == SceneState::Edit)
+            // if (m_ActiveScene->GetState() == SceneState::Edit)
+            if (m_SceneState == SceneState::Edit)
             {
                 Entity selectedEntity = m_Panels.GetSelectedEntity();
                 if (selectedEntity && m_GizmoType != -1)
@@ -353,14 +352,14 @@ namespace Crane
             if (control)
             {
                 CR_INFO("Control + P");
-                if (m_ActiveScene->GetState() == SceneState::Edit)
+                if (m_SceneState == SceneState::Edit)
                 {
-                    m_ActiveScene->SetState(SceneState::Play);
+                    OnScenePlay();
                     return true;
                 }
-                if (m_ActiveScene->GetState() == SceneState::Play)
+                if (m_SceneState == SceneState::Play)
                 {
-                    m_ActiveScene->SetState(SceneState::Edit);
+                    OnSceneStop();
                     return true;
                 }
             }
@@ -445,5 +444,19 @@ namespace Crane
             serializer.Serialize(filePath);
             m_ActiveScene->SetFilePath(filePath);
         }
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+        m_ActiveScene->SetState(SceneState::Play);
+        m_ActiveScene->OnRuntimeStart();
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
+        m_ActiveScene->SetState(SceneState::Edit);
+        m_ActiveScene->OnRuntimeStop();
     }
 }

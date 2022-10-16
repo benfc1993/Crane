@@ -17,15 +17,20 @@ namespace Crane {
         float size = ImGui::GetWindowHeight() - 20.0f;
         ImGui::SetCursorPosX((ImGui::GetContentRegionMax().x * 0.5f) - (size * 0.5f));
         ImGui::SetCursorPosY((ImGui::GetContentRegionMax().y * 0.5f) - (size * 0.5f));
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
         if (ImGui::ImageButton("##", (ImTextureID)icon->GetRendererId(), ImVec2(size, size)))
         {
             if (SceneState == SceneState::Edit)
-                m_ActiveScene->SetState(SceneState::Play);
+                // m_ActiveScene->SetState(SceneState::Play);
+                OnPlay();
             if (SceneState == SceneState::Play)
-                m_ActiveScene->SetState(SceneState::Edit);
+                // m_ActiveScene->SetState(SceneState::Edit);
+                OnStop();
+
 
         }
-
+        ImGui::PopStyleColor();
         ImGui::End();
         ImGui::PopStyleVar(2);
     }

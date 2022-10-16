@@ -59,6 +59,34 @@ namespace Crane {
     }
 
     template <>
+    void ComponentDeserializer::DeserializeComponent<RigidBody2DComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["RigidBody2DComponent"];
+        if (!node) return;
+
+        auto& rb2d = entity.AddComponent <RigidBody2DComponent>();
+
+        rb2d.Type = StringToRigidBodyType(node["Type"].as<std::string>());
+        rb2d.FixedRotation = node["FixedRotation"].as<bool>();
+    }
+
+    template <>
+    void ComponentDeserializer::DeserializeComponent<BoxCollider2DComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["BoxCollider2DComponent"];
+        if (!node) return;
+
+        auto& boxCollider = entity.AddComponent <BoxCollider2DComponent>();
+
+        boxCollider.Size = node["Size"].as<glm::vec2>();
+        boxCollider.Offset = node["Offset"].as<glm::vec2>();
+        boxCollider.Density = node["Density"].as<float>();
+        boxCollider.Friction = node["Friction"].as<float>();
+        boxCollider.Restitution = node["Restitution"].as<float>();
+        boxCollider.RestitutionThreshold = node["RestitutionThreshold"].as<float>();
+    }
+
+    template <>
     void ComponentDeserializer::DeserializeComponent<ParticleSystemComponent>(YAML::Node& data, Entity& entity)
     {
         YAML::Node node = data["ParticleSystemComponent"];

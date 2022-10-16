@@ -63,23 +63,48 @@ namespace Crane
 
                 if (ImGui::BeginPopup("AddComponent"))
                 {
-
-                    if (ImGui::MenuItem("Sprite"))
+                    if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
                     {
-                        m_SelectionContext.AddComponent<SpriteRendererComponent>();
-                        ImGui::CloseCurrentPopup();
+                        if (ImGui::MenuItem("Sprite"))
+                        {
+                            m_SelectionContext.AddComponent<SpriteRendererComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    if (!m_SelectionContext.HasComponent<ParticleSystem>())
+                    {
+                        if (ImGui::MenuItem("Particle System"))
+                        {
+                            m_SelectionContext.AddComponent<ParticleSystemComponent>((int)m_SelectionContext);
+                            ImGui::CloseCurrentPopup();
+                        }
                     }
 
-                    if (ImGui::MenuItem("Particle System"))
+                    if (!m_SelectionContext.HasComponent<CameraComponent>())
                     {
-                        m_SelectionContext.AddComponent<ParticleSystemComponent>((int)m_SelectionContext);
-                        ImGui::CloseCurrentPopup();
+                        if (ImGui::MenuItem("Camera"))
+                        {
+                            m_SelectionContext.AddComponent<CameraComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
                     }
 
-                    if (ImGui::MenuItem("Camera"))
+                    if (!m_SelectionContext.HasComponent<RigidBody2DComponent>())
                     {
-                        m_SelectionContext.AddComponent<CameraComponent>();
-                        ImGui::CloseCurrentPopup();
+                        if (ImGui::MenuItem("Rigid Body 2D"))
+                        {
+                            m_SelectionContext.AddComponent<RigidBody2DComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+
+                    if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
+                    {
+                        if (ImGui::MenuItem("Box Collider 2D"))
+                        {
+                            m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
                     }
 
                     ImGui::EndPopup();
@@ -225,6 +250,46 @@ namespace Crane
             Drawers::TextureDrawer(sprite.Texture, s_AssetPath);
 
             ImGui::DragFloat("Tiling Factor", &sprite.TilingFactor, 0.1f, 1.0f, 100.0f);
+        });
+
+        ComponentDrawer<RigidBody2DComponent>(entity, "Rigid Body 2D", [&]()
+        {
+            auto& component = entity.GetComponent<RigidBody2DComponent>();
+
+            const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
+            const char* currentBodyType = bodyTypeStrings[(int)component.Type];
+
+            if (ImGui::BeginCombo("Body Type", currentBodyType))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    bool isSelected = currentBodyType == bodyTypeStrings[i];
+                    if (ImGui::Selectable(bodyTypeStrings[i], isSelected, ImGuiSelectableFlags_SpanAvailWidth | ImGuiSelectableFlags_AllowItemOverlap))
+                    {
+                        currentBodyType = bodyTypeStrings[i];
+                        component.Type = (RigidBody2DComponent::BodyType)i;
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+
+                ImGui::EndCombo();
+            }
+
+            ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+        });
+
+        ComponentDrawer<BoxCollider2DComponent>(entity, "Rigid Body 2D", [&]()
+        {
+            auto& component = entity.GetComponent<BoxCollider2DComponent>();
+
+            Drawers::Vector("Offset", component.Offset);
+            Drawers::Vector("Size", component.Size);
+            ImGui::DragFloat("Density", &component.Density, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Friction", &component.Friction, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution", &component.Restitution, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.1f, 0.0f, 1.0f);
         });
 
         ComponentDrawer<ParticleSystemComponent>(entity, "Particle System", [&]()

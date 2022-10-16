@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Crane/Scene/Components.h"
+
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -23,6 +25,21 @@ namespace Crane {
         out << YAML::Flow;
         out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
         return out;
+    }
+
+    static std::string RigidBodyTypeToString(RigidBody2DComponent::BodyType type)
+    {
+        CR_CORE_INFO("RB to string");
+        switch (type)
+        {
+        case RigidBody2DComponent::BodyType::Static: return "Static";
+        case RigidBody2DComponent::BodyType::Dynamic: return "Dynamic";
+        case RigidBody2DComponent::BodyType::Kinematic: return "Kinematic";
+        }
+
+        CR_CORE_ASSERT(false, "Invalid RigidBody2D Body Type");
+        return {};
+
     }
 
     // template <typename T, int U>

@@ -11,16 +11,20 @@ namespace Crane {
         char filename[LINUX_PATH_MAX];
         FILE* f = popen("zenity --file-selection --modal --title=\"Open Scene\"", "r");
 
-        std::string str(filename);
-        if (fgets(filename, LINUX_PATH_MAX, f) == NULL)
+        while (fgets(filename, LINUX_PATH_MAX, f) != NULL)
+        {
+        }
+
+        strtok(filename, "\n");
+        std::string result(filename);
+        if (result.find('/') == std::string::npos)
         {
             pclose(f);
             return std::string();
         }
 
         pclose(f);
-        strtok(filename, "\n");
-        std::string result(filename);
+
         return result;
     }
 
@@ -29,16 +33,19 @@ namespace Crane {
         char filename[LINUX_PATH_MAX];
         FILE* f = popen("zenity --file-selection --save --modal --title=\"Save Scene\"", "r");
 
-        std::string str(filename);
-        if (fgets(filename, LINUX_PATH_MAX, f) != NULL)
+        while (fgets(filename, LINUX_PATH_MAX, f) != NULL)
+        {
+        }
+
+        strtok(filename, "\n");
+        std::string result(filename);
+        if (result.find('/') == std::string::npos)
         {
             pclose(f);
             return std::string();
         }
 
         pclose(f);
-        strtok(filename, "\n");
-        std::string result(filename);
         return result;
     }
 }

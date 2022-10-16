@@ -93,6 +93,43 @@ namespace Crane {
     }
 
     template <>
+    void ComponentSerializer::SerializeComponent<RigidBody2DComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<RigidBody2DComponent>())
+        {
+            out << YAML::Key << "RigidBody2DComponent";
+            out << YAML::BeginMap; // RigidBody2DComponent
+
+            auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+            out << YAML::Key << "Type" << YAML::Value << RigidBodyTypeToString(rb2d.Type);
+            out << YAML::Key << "FixedRotation" << YAML::Value << rb2d.FixedRotation;
+
+            out << YAML::EndMap; // RigidBody2DComponent
+        }
+    }
+
+    template <>
+    void ComponentSerializer::SerializeComponent<BoxCollider2DComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<BoxCollider2DComponent>())
+        {
+            out << YAML::Key << "BoxCollider2DComponent";
+            out << YAML::BeginMap; // BoxCollider2DComponent
+
+            auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
+            out << YAML::Key << "Size" << YAML::Value << boxCollider.Size;
+            out << YAML::Key << "Offset" << YAML::Value << boxCollider.Offset;
+            out << YAML::Key << "Density" << YAML::Value << boxCollider.Density;
+            out << YAML::Key << "Friction" << YAML::Value << boxCollider.Friction;
+            out << YAML::Key << "Restitution" << YAML::Value << boxCollider.Restitution;
+            out << YAML::Key << "RestitutionThreshold" << YAML::Value << boxCollider.RestitutionThreshold;
+
+            out << YAML::EndMap; // BoxCollider2DComponent
+        }
+    }
+
+
+    template <>
     void ComponentSerializer::SerializeComponent<ParticleSystemComponent>(YAML::Emitter& out, Entity entity)
     {
         if (entity.HasComponent<ParticleSystemComponent>())

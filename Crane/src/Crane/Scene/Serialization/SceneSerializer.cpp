@@ -32,6 +32,10 @@ namespace Crane {
 
         ComponentSerializer::SerializeComponent<ParticleSystemComponent>(out, entity);
 
+        ComponentSerializer::SerializeComponent<RigidBody2DComponent>(out, entity);
+
+        ComponentSerializer::SerializeComponent<BoxCollider2DComponent>(out, entity);
+
         out << YAML::EndMap; // Entity
     }
 
@@ -102,6 +106,11 @@ namespace Crane {
                 ComponentDeserializer::DeserializeComponent<SpriteRendererComponent>(entity, deserializedEntity);
 
                 ComponentDeserializer::DeserializeComponent<ParticleSystemComponent>(entity, deserializedEntity);
+
+                ComponentDeserializer::DeserializeComponent<RigidBody2DComponent>(entity, deserializedEntity);
+
+                ComponentDeserializer::DeserializeComponent<BoxCollider2DComponent>(entity, deserializedEntity);
+
 
                 CR_CORE_TRACE("Deserialized Entity Id = {0}, Name = {1}", uuid, name);
             }

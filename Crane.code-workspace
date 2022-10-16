@@ -3,6 +3,9 @@
 "path": "Crane"
 },
 {
+"path": "Crane/vendor/Box2D"
+},
+{
 "path": "Crane/vendor/GLAD"
 },
 {
@@ -246,7 +249,11 @@
 	"C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
   "githubPullRequests.fileListLayout": "tree",
   "files.associations": {
-    "chrono": "cpp"
+    "*.tcc": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "unordered_set": "cpp",
+    "string_view": "cpp"
   }
 }
 }

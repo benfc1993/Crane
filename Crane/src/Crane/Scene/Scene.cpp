@@ -7,7 +7,28 @@
 
 #include "Entity.h"
 
+// Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
+
 namespace Crane {
+
+    static b2BodyType CrBodyTypeToB2BodyType(RigidBody2DComponent::BodyType bodyType)
+    {
+        switch (bodyType)
+        {
+        case RigidBody2DComponent::BodyType::Static: return b2_staticBody;
+        case RigidBody2DComponent::BodyType::Dynamic: return b2_dynamicBody;
+        case RigidBody2DComponent::BodyType::Kinematic: return b2_kinematicBody;
+        }
+
+        CR_CORE_ASSERT(false, "Invalid body type");
+        return b2_staticBody;
+    }
+
     Scene::Scene()
     {
     }
@@ -81,7 +102,25 @@ namespace Crane {
             nsc.Instance->OnUpdate(time);
         });
 
+        {
+            const uint32_t velocityIterations = 6;
+            const uint32_t positionIterations = 2;
+            m_PhysicsWorld->Step(time.DeltaTime(), velocityIterations, positionIterations);
 
+            auto view = m_Registry.view<RigidBody2DComponent>();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                auto& transform = entity.GetComponent<TransformComponent>();
+                auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+                b2Body* body = (b2Body*)rb2d.RuntimeBody;
+                const auto& position = body->GetPosition();
+                transform.Position.x = position.x;
+                transform.Position.y = position.y;
+                transform.Rotation.z = body->GetAngle();
+            }
+        }
 
         Camera* mainCamera = nullptr;
         TransformComponent* cameraTransform = nullptr;
@@ -134,6 +173,63 @@ namespace Crane {
         }
 
     }
+
+    void Scene::OnRuntimeStart()
+    {
+        m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
+        {
+            auto view = m_Registry.view<RigidBody2DComponent>();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                auto& transform = entity.GetComponent<TransformComponent>();
+                auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+                b2BodyDef bodyDef;
+                bodyDef.type = CrBodyTypeToB2BodyType(rb2d.Type);
+                bodyDef.fixedRotation = rb2d.FixedRotation;
+                bodyDef.position.Set(transform.Position.x, transform.Position.y);
+                bodyDef.angle = transform.Rotation.z;
+
+                b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+                rb2d.RuntimeBody = body;
+            };
+        }
+
+        {
+            auto view = m_Registry.view<BoxCollider2DComponent>();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                auto& transform = entity.GetComponent<TransformComponent>();
+                auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
+
+                b2PolygonShape polygonShape;
+                polygonShape.SetAsBox(boxCollider.Size.x * transform.Scale.x, boxCollider.Size.y * transform.Scale.y);
+
+                RigidBody2DComponent component;
+                if (entity.TryGetComponent(component))
+                {
+                    b2FixtureDef fixtureDef;
+                    fixtureDef.shape = &polygonShape;
+                    fixtureDef.density = boxCollider.Density;
+                    fixtureDef.friction = boxCollider.Friction;
+                    fixtureDef.restitution = boxCollider.Restitution;
+                    fixtureDef.restitutionThreshold = boxCollider.RestitutionThreshold;
+#
+                    ((b2Body*)component.RuntimeBody)->CreateFixture(&fixtureDef);
+                }
+            }
+        }
+    }
+
+    void Scene::OnRuntimeStop()
+    {
+        delete m_PhysicsWorld;
+        m_PhysicsWorld = nullptr;
+    }
+
+
     void Scene::OnViewportResized(uint32_t width, uint32_t height)
     {
         m_ViewportWidth = width;
@@ -198,6 +294,16 @@ namespace Crane {
 
     template<>
     void Scene::OnComponentAdded<ParticleSystemComponent>(Entity entity, ParticleSystemComponent& component)
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
     {
     }
 }

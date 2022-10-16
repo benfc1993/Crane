@@ -16,3 +16,6 @@
 [submodule "Crane/vendor/ImGuizmo"]
 	path = Crane/vendor/ImGuizmo
 	url = git@github.com:benfc1993/ImGuizmo.git
+[submodule "Crane/vendor/Box2D"]
+	path = Crane/vendor/Box2D
+	url = git@github.com:benfc1993/Box2D.git

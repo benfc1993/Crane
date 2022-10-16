@@ -6,7 +6,7 @@ project "Crane"
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "crpch.h"
-	pchsource "Crane/src/crpch.cpp"
+	pchsource "crpch.cpp"
 
 	files
 	{
@@ -25,6 +25,7 @@ project "Crane"
 	{
 		"src",
 		"vendor/spdlog/include",
+		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
@@ -38,6 +39,7 @@ project "Crane"
 
 	links 
 	{ 
+		"Box2D",
 		"GLFW",
 		"GLAD",
     	"ImGui",

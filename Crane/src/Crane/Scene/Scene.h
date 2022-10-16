@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include "entt.hpp"
 
+class b2World;
+
 namespace Crane {
     class Entity;
 
@@ -28,6 +30,9 @@ namespace Crane {
 
         void OnUpdateRuntime(Time time);
 
+        void OnRuntimeStart();
+        void OnRuntimeStop();
+
         void OnViewportResized(uint32_t width, uint32_t height);
 
         void SetFilePath(const std::string& filePath) { m_FilePath = filePath; }
@@ -43,6 +48,8 @@ namespace Crane {
         std::string m_FilePath;
 
         SceneState m_State = SceneState::Edit;
+
+        b2World* m_PhysicsWorld = nullptr;
 
         friend class Entity;
         friend class SceneSerializer;

@@ -3,8 +3,8 @@
 #include "entt.hpp"
 #include "Scene.h"
 
-
 namespace Crane {
+    // struct TransformComponent;
     class Entity
     {
     public:
@@ -36,6 +36,13 @@ namespace Crane {
         };
 
         template <typename T>
+        bool TryGetComponent(T& t)
+        {
+            t = m_Scene->m_Registry.get<T>(m_EntityHandle);
+            return HasComponent<T>();
+        };
+
+        template <typename T>
         bool HasComponent()
         {
             return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
@@ -47,6 +54,11 @@ namespace Crane {
             CR_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component");
             m_Scene->m_Registry.remove<T>(m_EntityHandle);
         };
+
+        // TransformComponent& Transform()
+        // {
+        //     return GetComponent<TransformComponent>();
+        // };
 
         operator bool() const { return m_EntityHandle != entt::null; }
         operator entt::entity() const { return m_EntityHandle; }

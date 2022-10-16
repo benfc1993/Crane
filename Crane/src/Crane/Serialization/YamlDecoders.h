@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Crane/Scene/Components.h"
+
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -78,5 +80,17 @@ namespace YAML {
             return true;
         }
     };
+}
 
+namespace Crane {
+
+    static RigidBody2DComponent::BodyType StringToRigidBodyType(const std::string& type)
+    {
+        if (type == "Static") return RigidBody2DComponent::BodyType::Static;
+        if (type == "Dynamic") return RigidBody2DComponent::BodyType::Dynamic;
+        if (type == "Kinematic") return RigidBody2DComponent::BodyType::Kinematic;
+
+        CR_CORE_ASSERT(false, "Invalid RigidBody2D Body Type");
+        return RigidBody2DComponent::BodyType::Static;
+    }
 }

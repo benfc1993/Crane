@@ -19,6 +19,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 
 group "Dependencies"
+	include "Crane/vendor/Box2D"
 	include "Crane/vendor/GLFW"
 	include "Crane/vendor/GLAD"
 	include "Crane/vendor/imgui"

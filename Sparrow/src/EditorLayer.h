@@ -25,6 +25,9 @@ namespace Crane {
         virtual void OnUpdate(Time time) override;
         virtual void OnImGuiRender() override;
         virtual void OnEvent(Event& event) override;
+
+        void OnScenePlay();
+        void OnSceneStop();
     private:
         bool OnKeyPressed(KeyPressedEvent& e);
         bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -55,6 +58,7 @@ namespace Crane {
 
         bool m_ViewportFocused = false, m_ViewportHovered = false;
 
+        SceneState m_SceneState = SceneState::Edit;
 
         //Panels
         Panels m_Panels;
@@ -66,7 +70,5 @@ namespace Crane {
 
         //Gizmos
         int m_GizmoType = -1;
-
-        Ref<SceneState> m_SceneState = nullptr;
     };
 }
