@@ -29,7 +29,6 @@ namespace Crane {
 
     static std::string RigidBodyTypeToString(RigidBody2DComponent::BodyType type)
     {
-        CR_CORE_INFO("RB to string");
         switch (type)
         {
         case RigidBody2DComponent::BodyType::Static: return "Static";

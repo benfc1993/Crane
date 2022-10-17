@@ -233,10 +233,8 @@ namespace Crane
                 if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_FILE"))
                 {
                     const std::filesystem::path path = std::filesystem::path((char*)payload->Data);
-                    if (path.extension() == ".scene")
-                    {
-                        LoadScene(std::filesystem::path(s_AssetPath) / path);
-                    }
+
+                    LoadScene(std::filesystem::path(s_AssetPath) / path);
                     ImGui::EndDragDropTarget();
                 }
             }
@@ -348,6 +346,12 @@ namespace Crane
                 SaveSceneAs();
                 return true;
             }
+        case Key::D:
+            if (control)
+            {
+                OnDuplicateEntity();
+                return true;
+            }
         case Key::P:
             if (control)
             {
@@ -402,22 +406,36 @@ namespace Crane
     }
     void EditorLayer::OpenScene()
     {
-        std::string filePath = FileDialogs::OpenFile();
+        std::filesystem::path filePath = FileDialogs::OpenFile();
         LoadScene(filePath);
 
     }
 
-    void EditorLayer::LoadScene(std::filesystem::path path)
+    void EditorLayer::LoadScene(const std::filesystem::path& path)
     {
-        CR_INFO("Loading scene: {0}", path.string());
+
+        if (m_SceneState == SceneState::Play)
+            OnSceneStop();
+
+        if (path.extension() != ".scene")
+        {
+            CR_WARN("Could not load {0} - Not a scene file", path.filename().string());
+            return;
+        }
+
         if (!path.empty())
         {
-            m_ActiveScene = CreateRef<Scene>();
-            m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_Panels.SetActiveScene(m_ActiveScene);
+            Ref<Scene> newScene = CreateRef<Scene>();
+            SceneSerializer serializer(newScene);
+            if (serializer.Deserialize(path))
+            {
+                m_EditorScene = newScene;
+                m_EditorScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(path);
+                m_ActiveScene = m_EditorScene;
+                m_Panels.SetActiveScene(m_ActiveScene);
+            }
+
         }
     }
     void EditorLayer::SaveScene()
@@ -449,14 +467,29 @@ namespace Crane
     void EditorLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
-        m_ActiveScene->SetState(SceneState::Play);
+
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+
+        m_ActiveScene->OnViewportResized(m_ViewportSize.x, m_ViewportSize.y);
         m_ActiveScene->OnRuntimeStart();
+        m_ActiveScene->SetState(SceneState::Play);
+        m_Panels.SetActiveScene(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
-        m_ActiveScene->SetState(SceneState::Edit);
         m_ActiveScene->OnRuntimeStop();
+
+        m_ActiveScene = m_EditorScene;
+        m_ActiveScene->SetState(SceneState::Edit);
+        m_Panels.SetActiveScene(m_ActiveScene);
+    }
+
+    void EditorLayer::OnDuplicateEntity()
+    {
+        Entity selectedEntity = m_Panels.GetSelectedEntity();
+        if (selectedEntity)
+            m_EditorScene->DuplicateEntity(selectedEntity);
     }
 }

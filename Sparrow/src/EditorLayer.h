@@ -34,15 +34,18 @@ namespace Crane {
 
         void NewScene();
         void OpenScene();
-        void LoadScene(std::filesystem::path path);
+        void LoadScene(const std::filesystem::path& path);
         void SaveScene();
         void SaveSceneAs();
+
+        void OnDuplicateEntity();
     private:
         Ref<VertexArray> m_SquareVertexArray;
         Ref<VertexArray> m_TriangleVertexArray;
         Ref<Framebuffer> m_Framebuffer;
 
         Ref<Scene> m_ActiveScene = nullptr;
+        Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
         Entity m_CameraEntity;
         Entity m_SecondCameraEntity;
         Entity m_HoveredEntity;

@@ -22,6 +22,8 @@ namespace Crane {
         Scene();
         ~Scene();
 
+        static Ref<Scene> Copy(Ref<Scene> other);
+
         Entity CreateEntity(const std::string& name = std::string());
         Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
         void DestroyEntity(Entity entity);
@@ -42,6 +44,8 @@ namespace Crane {
 
         SceneState GetState() const { return m_State; }
         void SetState(SceneState state) { m_State = state; }
+
+        void DuplicateEntity(Entity entity);
 
         Entity GetPrimaryCameraEntity();
     private:

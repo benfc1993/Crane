@@ -63,6 +63,7 @@ namespace Crane {
         operator uint32_t() const { return (uint32_t)m_EntityHandle; }
 
         UUID GetUUID() { return  GetComponent<IdComponent>().id; }
+        const std::string& GetName() { return  GetComponent<TagComponent>().Tag; }
 
         bool operator!=(const Entity& other)
         {

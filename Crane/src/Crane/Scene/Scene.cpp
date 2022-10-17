@@ -39,6 +39,64 @@ namespace Crane {
 
     }
 
+    template<typename Component>
+    static void CopyComponent(entt::registry& dst, entt::registry& src, std::unordered_map<UUID, entt::entity>& idMap)
+    {
+        auto view = src.view<Component>();
+
+        for (auto e : view)
+        {
+            UUID uuid = src.get<IdComponent>(e).id;
+            CR_CORE_ASSERT(idMap.find(uuid) != idMap.end());
+            entt::entity enttId = idMap.at(uuid);
+
+            auto& component = src.get<Component>(e);
+
+            dst.emplace_or_replace<Component>(enttId, component);
+        }
+    }
+
+    template<typename Component>
+    static void CopyComponentIfExists(Entity dst, Entity src)
+    {
+        if (src.HasComponent<Component>())
+        {
+            dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+        }
+    }
+
+    Ref<Scene> Scene::Copy(Ref<Scene> other)
+    {
+        Ref<Scene> newScene = CreateRef<Scene>();
+
+        newScene->m_ViewportWidth = other->m_ViewportWidth;
+        newScene->m_ViewportHeight = other->m_ViewportHeight;
+
+        auto& srcSceneReg = other->m_Registry;
+        auto& dstSceneReg = newScene->m_Registry;
+        auto idView = srcSceneReg.view<IdComponent>();
+
+        std::unordered_map<UUID, entt::entity> idMap;
+
+        for (auto e : idView)
+        {
+            UUID uuid = srcSceneReg.get<IdComponent>(e).id;
+            const auto& name = srcSceneReg.get<TagComponent>(e).Tag;
+            Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
+            idMap[uuid] = newEntity;
+        }
+
+        CopyComponent<TransformComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent<CameraComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent<SpriteRendererComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent<ParticleSystemComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent<RigidBody2DComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent<BoxCollider2DComponent>(dstSceneReg, srcSceneReg, idMap);
+
+        return newScene;
+    }
+
+
     Entity Scene::CreateEntity(const std::string& name)
     {
         Entity entity = { m_Registry.create(), this };
@@ -257,6 +315,19 @@ namespace Crane {
             }
         }
     }
+
+    void Scene::DuplicateEntity(Entity entity)
+    {
+        Entity newEntity = CreateEntity(entity.GetName());
+
+        CopyComponentIfExists<TransformComponent>(newEntity, entity);
+        CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+        CopyComponentIfExists<CameraComponent>(newEntity, entity);
+        CopyComponentIfExists<ParticleSystemComponent>(newEntity, entity);
+        CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
+        CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+    }
+
 
     Entity Scene::GetPrimaryCameraEntity()
     {
