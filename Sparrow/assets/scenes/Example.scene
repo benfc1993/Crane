@@ -2,7 +2,43 @@ Scene:
   Name: Untitled
   FilePath: assets/scenes/Example.scene
 Entities:
-  - Entity: 123523563245
+  - Entity: 14398495987050225051
+    TagComponent:
+      Tag: Second Camera
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: false
+      FixedAspectRatio: false
+  - Entity: 16942930218764672072
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 13951400681151378042
     TagComponent:
       Tag: Particles texture
     TransformComponent:
@@ -23,39 +59,3 @@ Entities:
       TexturePath: assets/textures/white-smoke.png
       Velocity: [0.419999987, 0.370000005, 0]
       VelocityVariation: [0.5, 0.5, 0]
-  - Entity: 123523563245
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveVerticalFov: 0.785398185
-        PerspectiveNearClip: 0.00100000005
-        PerspectiveFarClip: 1000
-        OrthographicSize: 10
-        OrthographicNearClip: -1
-        OrthographicFarClip: 1
-      Primary: true
-      FixedAspectRatio: false
-  - Entity: 123523563245
-    TagComponent:
-      Tag: Second Camera
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveVerticalFov: 0.785398185
-        PerspectiveNearClip: 0.00100000005
-        PerspectiveFarClip: 1000
-        OrthographicSize: 10
-        OrthographicNearClip: -1
-        OrthographicFarClip: 1
-      Primary: false
-      FixedAspectRatio: false

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Crane/Camera/EditorCamera.h"
+#include "Crane/Core/UUID.h"
 
 #include <glm/glm.hpp>
 #include "entt.hpp"
@@ -22,6 +23,7 @@ namespace Crane {
         ~Scene();
 
         Entity CreateEntity(const std::string& name = std::string());
+        Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
         void DestroyEntity(Entity entity);
 
         entt::registry& Reg() { return m_Registry; }

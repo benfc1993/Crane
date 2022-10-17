@@ -1,4 +1,4 @@
-{"folders": [
+﻿{"folders": [
 {
 "path": "Crane"
 },
@@ -247,13 +247,6 @@
 	"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "newLine",
 	"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
 	"C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
-  "githubPullRequests.fileListLayout": "tree",
-  "files.associations": {
-    "*.tcc": "cpp",
-    "string": "cpp",
-    "unordered_map": "cpp",
-    "unordered_set": "cpp",
-    "string_view": "cpp"
-  }
+	"githubPullRequests.fileListLayout": "tree"
 }
 }

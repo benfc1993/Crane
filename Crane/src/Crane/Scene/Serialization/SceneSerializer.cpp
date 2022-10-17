@@ -18,9 +18,10 @@ namespace Crane {
 
     static void SerializeEntity(YAML::Emitter& out, Entity entity)
     {
-        out << YAML::BeginMap; // Entity
-        out << YAML::Key << "Entity" << YAML::Value << "123523563245";
+        CR_CORE_ASSERT(entity.HasComponent<IdComponent>());
 
+        out << YAML::BeginMap; // Entity
+        out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
         ComponentSerializer::SerializeComponent<TagComponent>(out, entity);
 
@@ -97,7 +98,7 @@ namespace Crane {
                 auto tagComponent = entity["TagComponent"];
                 name = tagComponent["Tag"].as<std::string>();
 
-                Entity deserializedEntity = m_scene->CreateEntity(name);
+                Entity deserializedEntity = m_scene->CreateEntityWithUUID(uuid, name);
 
                 ComponentDeserializer::DeserializeComponent<TransformComponent>(entity, deserializedEntity);
 

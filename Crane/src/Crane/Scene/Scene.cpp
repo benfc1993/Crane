@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "Components.h"
+#include "ScriptableEntity.h"
 #include "Crane/Renderer/Renderer2D.h"
 
 #include "Entity.h"
@@ -41,9 +42,20 @@ namespace Crane {
     Entity Scene::CreateEntity(const std::string& name)
     {
         Entity entity = { m_Registry.create(), this };
-        entity.AddComponent<TransformComponent>();
+        entity.AddComponent<IdComponent>();
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
+        entity.AddComponent<TransformComponent>();
+        return entity;
+    }
+
+    Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+    {
+        Entity entity = { m_Registry.create(), this };
+        entity.AddComponent<IdComponent>(uuid);
+        auto& tag = entity.AddComponent<TagComponent>();
+        tag.Tag = name.empty() ? "Entity" : name;
+        entity.AddComponent<TransformComponent>();
         return entity;
     }
 
@@ -263,6 +275,12 @@ namespace Crane {
     void Scene::OnComponentAdded(Entity entity, T& component)
     {
         CR_ASSERT(true, "OnComponentAdded not handled");
+    }
+
+
+    template<>
+    void Scene::OnComponentAdded<IdComponent>(Entity entity, IdComponent& component)
+    {
     }
 
     template<>

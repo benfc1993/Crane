@@ -2,18 +2,27 @@
 
 #include "SceneCamera.h"
 
+#include "Crane/Core/UUID.h"
+#include "Crane/Particle/ParticleSystem.h"
+#include "Crane/Renderer/Shader/Texture.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "ScriptableEntity.h"
-#include "Crane/Particle/ParticleSystem.h"
-#include "Crane/Renderer/Shader/Texture.h"
 
 namespace Crane
 {
+    struct IdComponent
+    {
+        UUID id;
+
+        IdComponent() = default;
+        IdComponent(const IdComponent&) = default;
+    };
+
     struct TagComponent
     {
         std::string Tag;
@@ -75,6 +84,7 @@ namespace Crane
         CameraComponent(const CameraComponent&) = default;
     };
 
+    class ScriptableEntity;
     struct NativeScriptComponent
     {
         ScriptableEntity* Instance = nullptr;
