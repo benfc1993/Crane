@@ -59,6 +59,19 @@ namespace Crane {
     }
 
     template <>
+    void ComponentDeserializer::DeserializeComponent<CircleRendererComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["CircleRendererComponent"];
+        if (!node) return;
+
+        auto& circleRendererComponent = entity.AddComponent<CircleRendererComponent>();
+
+        circleRendererComponent.Color = node["Color"].as<glm::vec4>();
+        circleRendererComponent.Thickness = node["Thickness"].as<float>();
+        circleRendererComponent.Fade = node["Fade"].as<float>();
+    }
+
+    template <>
     void ComponentDeserializer::DeserializeComponent<RigidBody2DComponent>(YAML::Node& data, Entity& entity)
     {
         YAML::Node node = data["RigidBody2DComponent"];

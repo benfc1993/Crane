@@ -39,6 +39,44 @@ namespace Crane {
 
     }
 
+    template<typename... Component>
+    static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+    {
+        ([&]()
+        {
+            auto view = src.view<Component>();
+            for (auto srcEntity : view)
+            {
+                entt::entity dstEntity = enttMap.at(src.get<IdComponent>(srcEntity).Id);
+
+                auto& srcComponent = src.get<Component>(srcEntity);
+                dst.emplace_or_replace<Component>(dstEntity, srcComponent);
+            }
+        }(), ...);
+    }
+
+    template<typename... Component>
+    static void CopyComponent(ComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+    {
+        CopyComponent<Component...>(dst, src, enttMap);
+    }
+
+    template<typename... Component>
+    static void CopyComponentIfExists(Entity dst, Entity src)
+    {
+        ([&]()
+        {
+            if (src.HasComponent<Component>())
+                dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+        }(), ...);
+    }
+
+    template<typename... Component>
+    static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src)
+    {
+        CopyComponentIfExists<Component...>(dst, src);
+    }
+
     template<typename Component>
     static void CopyComponent(entt::registry& dst, entt::registry& src, std::unordered_map<UUID, entt::entity>& idMap)
     {
@@ -46,7 +84,7 @@ namespace Crane {
 
         for (auto e : view)
         {
-            UUID uuid = src.get<IdComponent>(e).id;
+            UUID uuid = src.get<IdComponent>(e).Id;
             CR_CORE_ASSERT(idMap.find(uuid) != idMap.end());
             entt::entity enttId = idMap.at(uuid);
 
@@ -80,18 +118,13 @@ namespace Crane {
 
         for (auto e : idView)
         {
-            UUID uuid = srcSceneReg.get<IdComponent>(e).id;
+            UUID uuid = srcSceneReg.get<IdComponent>(e).Id;
             const auto& name = srcSceneReg.get<TagComponent>(e).Tag;
             Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
             idMap[uuid] = newEntity;
         }
 
-        CopyComponent<TransformComponent>(dstSceneReg, srcSceneReg, idMap);
-        CopyComponent<CameraComponent>(dstSceneReg, srcSceneReg, idMap);
-        CopyComponent<SpriteRendererComponent>(dstSceneReg, srcSceneReg, idMap);
-        CopyComponent<ParticleSystemComponent>(dstSceneReg, srcSceneReg, idMap);
-        CopyComponent<RigidBody2DComponent>(dstSceneReg, srcSceneReg, idMap);
-        CopyComponent<BoxCollider2DComponent>(dstSceneReg, srcSceneReg, idMap);
+        CopyComponent(AllComponents{}, dstSceneReg, srcSceneReg, idMap);
 
         return newScene;
     }
@@ -131,6 +164,14 @@ namespace Crane {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
             Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
+        }
+
+        auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+        for (auto entity : circleView)
+        {
+            auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
+
+            Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
         }
 
         {
@@ -218,6 +259,14 @@ namespace Crane {
                 auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
                 Renderer2D::DrawQuad(transform.Transform(), sprite.Color);
+            }
+
+            auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity : circleView)
+            {
+                auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
+
+                Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
             }
 
             {
@@ -319,13 +368,7 @@ namespace Crane {
     void Scene::DuplicateEntity(Entity entity)
     {
         Entity newEntity = CreateEntity(entity.GetName());
-
-        CopyComponentIfExists<TransformComponent>(newEntity, entity);
-        CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-        CopyComponentIfExists<CameraComponent>(newEntity, entity);
-        CopyComponentIfExists<ParticleSystemComponent>(newEntity, entity);
-        CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
-        CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+        CopyComponentIfExists(AllComponents{}, newEntity, entity);
     }
 
 
@@ -366,6 +409,11 @@ namespace Crane {
 
     template<>
     void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
     {
     }
 

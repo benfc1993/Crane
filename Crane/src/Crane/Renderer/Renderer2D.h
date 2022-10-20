@@ -49,6 +49,8 @@ namespace Crane {
         static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityId = -1);
         static void DrawQuad(const glm::mat4& transform, TextureParameters& textureParameters, int entityId = -1);
 
+        static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entityId = -1);
+
         static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId);
 
         struct Statistics

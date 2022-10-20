@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 
 
+
 namespace Crane {
 
     static const std::filesystem::path s_AssetPath = "assets";
@@ -10,8 +11,8 @@ namespace Crane {
     static float padding = 16.0f;
     static float thumbnailSize = 75.0f;
 
-    ContentBrowserPanel::ContentBrowserPanel(bool isRequired)
-        : m_CurrentDirectory(s_AssetPath), Panel(isRequired)
+    ContentBrowserPanel::ContentBrowserPanel(void* editor, bool isRequired)
+        : m_Editor(editor), m_CurrentDirectory(s_AssetPath), Panel(isRequired)
     {
         m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
         m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
@@ -64,7 +65,7 @@ namespace Crane {
                 bool isInPath = m_CurrentDirectory.string().find(entry.path().filename()) != std::string::npos;
                 ImGui::SetNextItemOpen(isInPath);
                 bool selected = m_CurrentDirectory.filename() == entry.path().filename();
-                bool isOpened = ImGui::TreeNodeEx(filename.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | (selected ? ImGuiTreeNodeFlags_Selected : 0));
+                bool isOpened = ImGui::TreeNodeEx(filename.c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth | (selected ? ImGuiTreeNodeFlags_Selected : 0));
 
                 if (ImGui::IsItemClicked())
                 {
@@ -129,7 +130,7 @@ namespace Crane {
                     }
                     else
                     {
-                        
+                        ((EditorLayer*)m_Editor)->LoadScene(path);
                     }
                 }
 

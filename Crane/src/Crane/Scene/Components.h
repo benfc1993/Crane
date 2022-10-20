@@ -17,7 +17,7 @@ namespace Crane
 {
     struct IdComponent
     {
-        UUID id;
+        UUID Id;
 
         IdComponent() = default;
         IdComponent(const IdComponent&) = default;
@@ -72,6 +72,18 @@ namespace Crane
         {
             Texture = Texture2D::Create(1, 1);
         }
+    };
+
+    struct CircleRendererComponent
+    {
+        glm::vec4 Color = { 1.0f, 1.0f , 1.0f , 1.0f };
+        float Radius = 0.5f;
+        float Thickness = 1.0f;
+        float Fade = 0.05f;
+
+        CircleRendererComponent() = default;
+        CircleRendererComponent(const CircleRendererComponent&) = default;
+
     };
 
     struct CameraComponent
@@ -154,4 +166,14 @@ namespace Crane
         BoxCollider2DComponent() = default;
         BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
     };
+
+    template<typename... Component>
+    struct ComponentGroup
+    {
+    };
+
+    using AllComponents =
+        ComponentGroup<TransformComponent, SpriteRendererComponent,
+        CircleRendererComponent, CameraComponent, NativeScriptComponent,
+        RigidBody2DComponent, BoxCollider2DComponent>;
 }

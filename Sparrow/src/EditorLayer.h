@@ -28,13 +28,14 @@ namespace Crane {
 
         void OnScenePlay();
         void OnSceneStop();
+
+        void LoadScene(const std::filesystem::path& path);
     private:
         bool OnKeyPressed(KeyPressedEvent& e);
         bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
         void NewScene();
         void OpenScene();
-        void LoadScene(const std::filesystem::path& path);
         void SaveScene();
         void SaveSceneAs();
 

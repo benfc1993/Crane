@@ -31,6 +31,8 @@ namespace Crane {
 
         ComponentSerializer::SerializeComponent<SpriteRendererComponent>(out, entity);
 
+        ComponentSerializer::SerializeComponent<CircleRendererComponent>(out, entity);
+
         ComponentSerializer::SerializeComponent<ParticleSystemComponent>(out, entity);
 
         ComponentSerializer::SerializeComponent<RigidBody2DComponent>(out, entity);
@@ -105,6 +107,8 @@ namespace Crane {
                 ComponentDeserializer::DeserializeComponent<CameraComponent>(entity, deserializedEntity);
 
                 ComponentDeserializer::DeserializeComponent<SpriteRendererComponent>(entity, deserializedEntity);
+
+                ComponentDeserializer::DeserializeComponent<CircleRendererComponent>(entity, deserializedEntity);
 
                 ComponentDeserializer::DeserializeComponent<ParticleSystemComponent>(entity, deserializedEntity);
 

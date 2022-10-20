@@ -35,7 +35,7 @@ namespace Crane
 
         m_Panels.AddPanel<RenderStatsPanel>();
 
-        m_Panels.AddPanel<ContentBrowserPanel>(true);
+        m_Panels.AddPanel<ContentBrowserPanel>((void*)this, true);
 
         m_Panels.AddPanel<SceneToolbar>(std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this));
     }
@@ -194,7 +194,7 @@ namespace Crane
                 if (ImGui::MenuItem("Add RenderStats Panel"))
                     m_Panels.AddPanel<RenderStatsPanel>();
                 if (ImGui::MenuItem("Add Content Browser Panel"))
-                    m_Panels.AddPanel<ContentBrowserPanel>();
+                    m_Panels.AddPanel<ContentBrowserPanel>((void*)this);
 
                 ImGui::EndMenu();
             }

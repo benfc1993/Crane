@@ -2,162 +2,44 @@ Scene:
   Name: Untitled
   FilePath: /home/ben/projects/crane/Sparrow/assets/scenes/Physics.scene
 Entities:
-  - Entity: 2699803407226957464
+  - Entity: 4178358826899090953
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Position: [-1.52080107, -0.554505825, 0.282547653]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.0500000007
+  - Entity: 3378829209165439318
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 7275969103264385248
     TagComponent:
       Tag: Box
     TransformComponent:
-      Position: [3.44148588, 3.27526569, -6.10355346e-05]
+      Position: [1.63294065, 3.39193726, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 0.708860755, 0, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 7249830225756913278
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [2.43025541, 0.0470591486, -6.10355492e-05]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 1, 0.810126543, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 950066060227329302
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [2.73294067, 1.99193716, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 0, 1, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 13263872653072058454
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [-1.6670593, 0.99193716, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.658227861, 0, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 18142996115705457481
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [0.132940769, 2.49193716, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 0.379746914, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 11698245279014404909
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [-1.46705925, 2.69193721, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 0, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 2372577341796504644
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [-3.26705933, 2.39193726, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 0.83544302, 1, 1]
-      Texture: ""
-      TilingFactor: 1
-    RigidBody2DComponent:
-      Type: Dynamic
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [0.5, 0.5]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 13901992526737169129
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Position: [0.0194468498, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 1, 0.177215099, 1]
+      Color: [0.810126305, 0, 1, 1]
       Texture: ""
       TilingFactor: 1
     RigidBody2DComponent:
@@ -191,15 +73,15 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 7275969103264385248
+  - Entity: 13901992526737169129
     TagComponent:
       Tag: Box
     TransformComponent:
-      Position: [1.63294065, 3.39193726, 0]
+      Position: [0.0194468647, 3.7252903e-09, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.810126305, 0, 1, 1]
+      Color: [0, 1, 0.177215099, 1]
       Texture: ""
       TilingFactor: 1
     RigidBody2DComponent:
@@ -212,21 +94,150 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 3378829209165439318
+  - Entity: 2372577341796504644
     TagComponent:
-      Tag: Camera
+      Tag: Box
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [-3.26705933, 2.39193726, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveVerticalFov: 0.785398185
-        PerspectiveNearClip: 0.00100000005
-        PerspectiveFarClip: 1000
-        OrthographicSize: 10
-        OrthographicNearClip: -1
-        OrthographicFarClip: 1
-      Primary: true
-      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [0, 0.83544302, 1, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11698245279014404909
+    TagComponent:
+      Tag: Box 2
+    TransformComponent:
+      Position: [-1.46705925, 2.69193721, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 18142996115705457481
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Position: [0.132940769, 2.49193716, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0.379746914, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 13263872653072058454
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Position: [-1.6670593, 0.99193716, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.658227861, 0, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 950066060227329302
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Position: [2.73294067, 1.99193716, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 0, 1, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 7249830225756913278
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Position: [2.43025541, 0.0470591486, -6.10355492e-05]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0.810126543, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 2699803407226957464
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Position: [3.44148588, 3.27526569, -6.10355346e-05]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.708860755, 0, 1]
+      Texture: ""
+      TilingFactor: 1
+    RigidBody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [0.5, 0.5]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5

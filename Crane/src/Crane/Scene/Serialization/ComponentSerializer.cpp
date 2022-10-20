@@ -93,6 +93,24 @@ namespace Crane {
     }
 
     template <>
+    void ComponentSerializer::SerializeComponent<CircleRendererComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<CircleRendererComponent>())
+        {
+            out << YAML::Key << "CircleRendererComponent";
+            out << YAML::BeginMap; // CircleRendererComponent
+
+            auto& circle = entity.GetComponent<CircleRendererComponent>();
+            out << YAML::Key << "Color" << YAML::Value << circle.Color;
+            out << YAML::Key << "Thickness" << YAML::Value << circle.Thickness;
+            out << YAML::Key << "Fade" << YAML::Value << circle.Fade;
+
+            out << YAML::EndMap; // CircleRendererComponent
+        }
+
+    }
+
+    template <>
     void ComponentSerializer::SerializeComponent<RigidBody2DComponent>(YAML::Emitter& out, Entity entity)
     {
         if (entity.HasComponent<RigidBody2DComponent>())

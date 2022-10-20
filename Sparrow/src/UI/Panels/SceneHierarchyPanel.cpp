@@ -23,6 +23,7 @@ namespace Crane
     {
         m_ActiveScene = scene;
         m_SelectionContext = {};
+        m_EditingEntity = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender()
@@ -38,12 +39,18 @@ namespace Crane
             DrawEntityNode(entity); });
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
+        {
             m_SelectionContext = {};
+            m_EditingEntity = {};
+        }
 
         if (ImGui::BeginPopupContextWindow(0, 1, false))
         {
             if (ImGui::MenuItem("Create Entity"))
-                m_ActiveScene->CreateEntity("Entity");
+            {
+                Entity entity = m_ActiveScene->CreateEntity("Entity");
+                m_SelectionContext = entity;
+            }
 
             ImGui::EndPopup();
         }
@@ -68,6 +75,14 @@ namespace Crane
                         if (ImGui::MenuItem("Sprite"))
                         {
                             m_SelectionContext.AddComponent<SpriteRendererComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
+                    {
+                        if (ImGui::MenuItem("Circle"))
+                        {
+                            m_SelectionContext.AddComponent<CircleRendererComponent>();
                             ImGui::CloseCurrentPopup();
                         }
                     }
@@ -115,15 +130,26 @@ namespace Crane
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
-        auto tag = entity.GetComponent<TagComponent>().Tag;
+        auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | (m_EditingEntity == entity ? ImGuiTreeNodeFlags_AllowItemOverlap : 0);
 
-        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
+        std::string hId = "##header" + std::to_string(entity.GetUUID());
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 10.0f));
+
+        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", "");
+
+        ImGui::PopStyleVar();
 
         if (ImGui::IsItemClicked())
         {
             m_SelectionContext = entity;
+        }
+
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+        {
+            m_EditingEntity = entity;
         }
 
         bool entityShouldBeDelete = false;
@@ -137,6 +163,40 @@ namespace Crane
             ImGui::EndPopup();
         }
 
+
+
+        if (m_SelectionContext == entity && m_EditingEntity == entity)
+        {
+
+            ImGui::SameLine(30.0f);
+            char buffer[256];
+            memset(buffer, 0, sizeof(buffer));
+            strcpy(buffer, tag.c_str());
+
+            std::string id = "##" + std::to_string(entity.GetUUID());
+            ImGui::SetKeyboardFocusHere();
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 0.0f));
+            if (ImGui::InputText(id.c_str(), buffer, sizeof(buffer), ImGuiInputTextFlags_AutoSelectAll))
+            {
+                auto input = std::string(buffer, sizeof(buffer));
+                input.erase(input.find('\0'));
+                tag = input;
+            }
+            ImGui::PopStyleVar();
+        }
+        else
+        {
+            ImGui::SameLine(40.0f);
+            std::string name = tag.c_str();
+            ImGui::Text("%s", name.c_str());
+
+        }
+
+
+
+
+
+
         if (opened)
         {
             ImGui::TreePop();
@@ -146,6 +206,8 @@ namespace Crane
             m_ActiveScene->DestroyEntity(entity);
             if (entity == m_SelectionContext)
                 m_SelectionContext = {};
+            if (entity == m_EditingEntity)
+                m_EditingEntity = {};
         }
     }
 
@@ -250,6 +312,15 @@ namespace Crane
             Drawers::TextureDrawer(sprite.Texture, s_AssetPath);
 
             ImGui::DragFloat("Tiling Factor", &sprite.TilingFactor, 0.1f, 1.0f, 100.0f);
+        });
+
+        ComponentDrawer<CircleRendererComponent>(entity, "Circle", [&]()
+        {
+            auto& circle = entity.GetComponent<CircleRendererComponent>();
+            ImGui::ColorEdit4("Sprite Color", glm::value_ptr(circle.Color));
+
+            ImGui::DragFloat("Thickness", &circle.Thickness, 0.025f, 0.0f, 1.0f);
+            ImGui::DragFloat("Fade", &circle.Fade, 0.00025f, 0.0f, 1.0f);
         });
 
         ComponentDrawer<RigidBody2DComponent>(entity, "Rigid Body 2D", [&]()
