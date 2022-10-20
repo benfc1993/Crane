@@ -22,6 +22,17 @@ namespace Crane {
         {
             s_RendererAPI->DrawIndexed(vertexArray, indexCount);
         }
+
+        static inline void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+        {
+            s_RendererAPI->DrawLines(vertexArray, vertexCount);
+        }
+
+        static void SetLineWidth(float lineWidth)
+        {
+            s_RendererAPI->SetLineWidth(lineWidth);
+        }
+
     private:
         static RendererAPI* s_RendererAPI;
     };

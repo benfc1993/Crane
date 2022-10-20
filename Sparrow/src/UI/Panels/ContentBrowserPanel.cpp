@@ -118,7 +118,7 @@ namespace Crane {
                 Ref<Texture2D> icon = entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
 
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-                ImVec2 uv0{ 0.0f, 1.0f }, uv1{ 1.0f, 0.0f };
+                ImVec2 uv0{ 0, 1 }, uv1{ 1, 0 };
                 ImGui::ImageButton("##", (ImTextureID)icon->GetRendererId(), { thumbnailSize, thumbnailSize }, uv0, uv1);
                 ImGui::PopStyleColor();
 

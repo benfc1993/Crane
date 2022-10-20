@@ -163,16 +163,19 @@ namespace Crane {
         {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
+            // Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
+            Renderer2D::DrawRect(transform.Transform(), glm::vec4(1, 0, 1, 1), (int)entity);
         }
-
-        auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
-        for (auto entity : circleView)
         {
-            auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
+            auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+            for (auto entity : circleView)
+            {
+                auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
 
-            Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+                Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+            }
         }
+
 
         {
             auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();

@@ -20,7 +20,7 @@ namespace Crane
         float TextureIndex;
         float TilingFactor;
 
-        int EntityId = 0;
+        int EntityId;
     };
 
     struct CircleVertex
@@ -31,7 +31,15 @@ namespace Crane
         float Thickness;
         float Fade;
 
-        int EntityId = 0;
+        int EntityId;
+    };
+
+    struct LineVertex
+    {
+        glm::vec3 Position;
+        glm::vec4 Color;
+
+        int EntityId;
     };
 
     struct Renderer2DData
@@ -50,6 +58,11 @@ namespace Crane
         Ref<VertexBuffer> CircleVertexBuffer;
         Ref<Shader> CircleShader;
 
+        float LineWidth = 2.0f;
+        Ref<VertexArray> LineVertexArray;
+        Ref<VertexBuffer> LineVertexBuffer;
+        Ref<Shader> LineShader;
+
         uint32_t QuadIndexCount = 0;
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
@@ -57,6 +70,10 @@ namespace Crane
         uint32_t CircleIndexCount = 0;
         CircleVertex* CircleVertexBufferBase = nullptr;
         CircleVertex* CircleVertexBufferPtr = nullptr;
+
+        uint32_t LineVertexCount = 0;
+        LineVertex* LineVertexBufferBase = nullptr;
+        LineVertex* LineVertexBufferPtr = nullptr;
 
         glm::vec4 QuadVertexPositions[4];
         glm::vec2 QuadTextureCoords[4];
@@ -135,6 +152,19 @@ namespace Crane
         s_Data.CircleVertexArray->SetIndexBuffer(quadIB);
         s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
+        //Lines
+        s_Data.LineVertexArray = VertexArray::Create();
+
+        s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+
+        s_Data.LineVertexBuffer->SetLayout({
+            {ShaderDataType::Float3, "a_Position"},
+            {ShaderDataType::Float4, "a_Color"},
+            {ShaderDataType::Int, "a_EntityId"}
+            });
+
+        s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+        s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
         s_Data.WhiteTexture = Texture2D::Create(1, 1);
 
@@ -145,6 +175,7 @@ namespace Crane
 
         s_Data.TextureShader = Shader::Create("assets/shaders/Renderer2D_Quad.glsl");
         s_Data.CircleShader = Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
+        s_Data.LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
 
 
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
@@ -173,6 +204,11 @@ namespace Crane
 
         s_Data.CircleIndexCount = 0;
         s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+        s_Data.LineVertexCount = 0;
+        s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
+
         s_Data.TextureSlotIndex = 1;
     }
 
@@ -248,6 +284,17 @@ namespace Crane
 
             s_Data.CircleShader->Bind();
             RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+            s_Data.Stats.DrawCalls++;
+        }
+
+        if (s_Data.LineVertexCount)
+        {
+            uint32_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
+            s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+            s_Data.LineShader->Bind();
+            RenderCommand::SetLineWidth(s_Data.LineWidth);
+            RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
             s_Data.Stats.DrawCalls++;
         }
     }
@@ -405,6 +452,43 @@ namespace Crane
         AddCircleToVertexBuffer(transform, color, thickness, fade, entityId);
     }
 
+    void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityId)
+    {
+        s_Data.LineVertexBufferPtr->Position = p0;
+        s_Data.LineVertexBufferPtr->Color = color;
+        s_Data.LineVertexBufferPtr->EntityId = entityId;
+        s_Data.LineVertexBufferPtr++;
+
+        s_Data.LineVertexBufferPtr->Position = p1;
+        s_Data.LineVertexBufferPtr->Color = color;
+        s_Data.LineVertexBufferPtr->EntityId = entityId;
+        s_Data.LineVertexBufferPtr++;
+
+        s_Data.LineVertexCount += 2;
+    }
+
+    void Renderer2D::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int entityId)
+    {
+        DrawRect({ position.x, position.y, 0.0f }, size, color, entityId);
+    }
+    void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityId)
+    {
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        DrawRect(transform, color, entityId);
+
+    }
+    void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityId)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            auto p0 = transform * s_Data.QuadVertexPositions[i];
+            auto p1 = transform * s_Data.QuadVertexPositions[(i + 1) % 4];
+
+            DrawLine(p0, p1, color);
+        }
+    }
+
+
     void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityId)
     {
         if ((std::string)*src.Texture.get() != "")
@@ -420,6 +504,16 @@ namespace Crane
             DrawQuad(transform, src.Color, entityId);
         }
 
+    }
+
+    float Renderer2D::GetLineWidth()
+    {
+        return s_Data.LineWidth;
+    }
+
+    void Renderer2D::SetLineWidth(float lineWidth)
+    {
+        s_Data.LineWidth = lineWidth;
     }
 
 
