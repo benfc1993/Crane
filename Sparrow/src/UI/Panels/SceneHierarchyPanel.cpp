@@ -122,6 +122,15 @@ namespace Crane
                         }
                     }
 
+                    if (!m_SelectionContext.HasComponent<CircleColliderComponent>())
+                    {
+                        if (ImGui::MenuItem("Circle Collider"))
+                        {
+                            m_SelectionContext.AddComponent<CircleColliderComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+
                     ImGui::EndPopup();
                 } });
         }
@@ -351,12 +360,24 @@ namespace Crane
             ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
         });
 
-        ComponentDrawer<BoxCollider2DComponent>(entity, "Rigid Body 2D", [&]()
+        ComponentDrawer<BoxCollider2DComponent>(entity, "Box Collider", [&]()
         {
             auto& component = entity.GetComponent<BoxCollider2DComponent>();
 
             Drawers::Vector("Offset", component.Offset);
             Drawers::Vector("Size", component.Size);
+            ImGui::DragFloat("Density", &component.Density, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Friction", &component.Friction, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution", &component.Restitution, 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.1f, 0.0f, 1.0f);
+        });
+
+        ComponentDrawer<CircleColliderComponent>(entity, "Circle Collider", [&]()
+        {
+            auto& component = entity.GetComponent<CircleColliderComponent>();
+
+            Drawers::Vector("Offset", component.Offset);
+            ImGui::DragFloat("Radius", &component.Radius);
             ImGui::DragFloat("Density", &component.Density, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Friction", &component.Friction, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Restitution", &component.Restitution, 0.1f, 0.0f, 1.0f);

@@ -16,6 +16,24 @@ namespace Crane {
 
     }
 
+    template<typename... Component>
+    static void SerializeComponents(ComponentGroup<Component...>, YAML::Emitter& out, Entity entity)
+    {
+        ([&]()
+        {
+            ComponentSerializer::SerializeComponent<Component>(out, entity);
+        }(), ...);
+    }
+
+    template<typename... Component>
+    static void DeserializeComponents(ComponentGroup<Component...>, YAML::Node& entity, Entity& deserialisedEntity)
+    {
+        ([&]()
+        {
+            ComponentDeserializer::DeserializeComponent<Component>(entity, deserialisedEntity);
+        }(), ...);
+    }
+
     static void SerializeEntity(YAML::Emitter& out, Entity entity)
     {
         CR_CORE_ASSERT(entity.HasComponent<IdComponent>());
@@ -25,19 +43,7 @@ namespace Crane {
 
         ComponentSerializer::SerializeComponent<TagComponent>(out, entity);
 
-        ComponentSerializer::SerializeComponent<TransformComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<CameraComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<SpriteRendererComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<CircleRendererComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<ParticleSystemComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<RigidBody2DComponent>(out, entity);
-
-        ComponentSerializer::SerializeComponent<BoxCollider2DComponent>(out, entity);
+        SerializeComponents(AllComponents{}, out, entity);
 
         out << YAML::EndMap; // Entity
     }
@@ -102,20 +108,7 @@ namespace Crane {
 
                 Entity deserializedEntity = m_scene->CreateEntityWithUUID(uuid, name);
 
-                ComponentDeserializer::DeserializeComponent<TransformComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<CameraComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<SpriteRendererComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<CircleRendererComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<ParticleSystemComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<RigidBody2DComponent>(entity, deserializedEntity);
-
-                ComponentDeserializer::DeserializeComponent<BoxCollider2DComponent>(entity, deserializedEntity);
-
+                DeserializeComponents(AllComponents{}, entity, deserializedEntity);
 
                 CR_CORE_TRACE("Deserialized Entity Id = {0}, Name = {1}", uuid, name);
             }

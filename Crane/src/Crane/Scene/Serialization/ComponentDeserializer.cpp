@@ -100,6 +100,22 @@ namespace Crane {
     }
 
     template <>
+    void ComponentDeserializer::DeserializeComponent<CircleColliderComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["CircleColliderComponent"];
+        if (!node) return;
+
+        auto& circleCollider = entity.AddComponent <CircleColliderComponent>();
+
+        circleCollider.Radius = node["Radius"].as<float>();
+        circleCollider.Offset = node["Offset"].as<glm::vec2>();
+        circleCollider.Density = node["Density"].as<float>();
+        circleCollider.Friction = node["Friction"].as<float>();
+        circleCollider.Restitution = node["Restitution"].as<float>();
+        circleCollider.RestitutionThreshold = node["RestitutionThreshold"].as<float>();
+    }
+
+    template <>
     void ComponentDeserializer::DeserializeComponent<ParticleSystemComponent>(YAML::Node& data, Entity& entity)
     {
         YAML::Node node = data["ParticleSystemComponent"];
@@ -121,5 +137,11 @@ namespace Crane {
         particleSystemComponent.Data.SizeVariation = node["SizeVariation"].as<float>();
         particleSystemComponent.Data.Velocity = node["Velocity"].as<glm::vec3>();
         particleSystemComponent.Data.VelocityVariation = node["VelocityVariation"].as<glm::vec3>();
+    }
+
+    template <>
+    void ComponentDeserializer::DeserializeComponent<NativeScriptComponent>(YAML::Node& data, Entity& entity)
+    {
+        return;
     }
 }

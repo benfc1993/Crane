@@ -146,6 +146,26 @@ namespace Crane {
         }
     }
 
+    template <>
+    void ComponentSerializer::SerializeComponent<CircleColliderComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<CircleColliderComponent>())
+        {
+            out << YAML::Key << "CircleColliderComponent";
+            out << YAML::BeginMap; // CircleColliderComponent
+
+            auto& circleCollider = entity.GetComponent<CircleColliderComponent>();
+            out << YAML::Key << "Radius" << YAML::Value << circleCollider.Radius;
+            out << YAML::Key << "Offset" << YAML::Value << circleCollider.Offset;
+            out << YAML::Key << "Density" << YAML::Value << circleCollider.Density;
+            out << YAML::Key << "Friction" << YAML::Value << circleCollider.Friction;
+            out << YAML::Key << "Restitution" << YAML::Value << circleCollider.Restitution;
+            out << YAML::Key << "RestitutionThreshold" << YAML::Value << circleCollider.RestitutionThreshold;
+
+            out << YAML::EndMap; // CircleColliderComponent
+        }
+    }
+
 
     template <>
     void ComponentSerializer::SerializeComponent<ParticleSystemComponent>(YAML::Emitter& out, Entity entity)
@@ -177,5 +197,11 @@ namespace Crane {
             out << YAML::EndMap; // ParticleSystemComponent
         }
 
+    }
+
+    template <>
+    void ComponentSerializer::SerializeComponent<NativeScriptComponent>(YAML::Emitter& out, Entity entity)
+    {
+        return;
     }
 };

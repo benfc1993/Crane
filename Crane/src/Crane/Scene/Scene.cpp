@@ -327,7 +327,7 @@ namespace Crane {
                 auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
 
                 b2PolygonShape polygonShape;
-                polygonShape.SetAsBox(boxCollider.Size.x * transform.Scale.x, boxCollider.Size.y * transform.Scale.y);
+                polygonShape.SetAsBox((boxCollider.Size.x * transform.Scale.x) + boxCollider.Offset.x, (boxCollider.Size.y * transform.Scale.y) + boxCollider.Offset.y);
 
                 RigidBody2DComponent component;
                 if (entity.TryGetComponent(component))
@@ -338,6 +338,33 @@ namespace Crane {
                     fixtureDef.friction = boxCollider.Friction;
                     fixtureDef.restitution = boxCollider.Restitution;
                     fixtureDef.restitutionThreshold = boxCollider.RestitutionThreshold;
+#
+                    ((b2Body*)component.RuntimeBody)->CreateFixture(&fixtureDef);
+                }
+            }
+        }
+
+        {
+            auto view = m_Registry.view<CircleColliderComponent>();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                auto& transform = entity.GetComponent<TransformComponent>();
+                auto& circleCollider = entity.GetComponent<CircleColliderComponent>();
+
+                b2CircleShape circleShape;
+                circleShape.m_p.Set(circleCollider.Offset.x, circleCollider.Offset.y);
+                circleShape.m_radius = circleCollider.Radius;
+
+                RigidBody2DComponent component;
+                if (entity.TryGetComponent(component))
+                {
+                    b2FixtureDef fixtureDef;
+                    fixtureDef.shape = &circleShape;
+                    fixtureDef.density = circleCollider.Density;
+                    fixtureDef.friction = circleCollider.Friction;
+                    fixtureDef.restitution = circleCollider.Restitution;
+                    fixtureDef.restitutionThreshold = circleCollider.RestitutionThreshold;
 #
                     ((b2Body*)component.RuntimeBody)->CreateFixture(&fixtureDef);
                 }
@@ -444,6 +471,11 @@ namespace Crane {
 
     template<>
     void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<CircleColliderComponent>(Entity entity, CircleColliderComponent& component)
     {
     }
 }
