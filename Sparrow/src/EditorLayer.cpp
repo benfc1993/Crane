@@ -331,34 +331,19 @@ namespace Crane
         auto selectedEntity = m_Panels.GetSelectedEntity();
         if (selectedEntity && m_SceneState == SceneState::Edit)
         {
+            auto& transform = selectedEntity.GetComponent<TransformComponent>();
+            if (selectedEntity.HasComponent<SpriteRendererComponent>())
             {
-                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, SpriteRendererComponent>();
 
-                for (auto entity : view)
-                {
-                    if (entity == selectedEntity)
-                    {
-                        auto [transformC, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-
-                        Renderer2D::DrawRect(glm::translate(transformC.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor);
-                    }
-                }
+                Renderer2D::DrawRect(glm::translate(transform.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor);
             }
 
+            if (selectedEntity.HasComponent<CircleRendererComponent>())
             {
-                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleRendererComponent>();
-
-                for (auto entity : view)
-                {
-                    if (entity == selectedEntity)
-                    {
-                        auto [transformC, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-                        Renderer2D::DrawCircle(glm::translate(transformC.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor, 0.075f);
-                    }
-                }
+                Renderer2D::DrawCircle(glm::translate(transform.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor, 0.075f);
             }
         }
+
 
         if (m_EditorSettings->ShowColiders)
         {
