@@ -13,7 +13,7 @@ namespace Crane {
 
     enum class SceneState
     {
-        Edit = 0, Play = 1
+        Edit = 0, Play = 1, Simulate = 2
     };
 
     class Scene
@@ -34,8 +34,15 @@ namespace Crane {
 
         void OnUpdateRuntime(Time time);
 
+        void OnUpdateSimulation(Time time, EditorCamera& camera);
+        void UpdatePhysics(Time time);
+
+        void Render(Time time);
+
         void OnRuntimeStart();
         void OnRuntimeStop();
+        void OnSumulatePhysicsStart();
+        void OnSumulatePhysicsStop();
 
         void OnViewportResized(uint32_t width, uint32_t height);
 
@@ -54,6 +61,9 @@ namespace Crane {
         {
             return m_Registry.view<Components...>();
         }
+    private:
+        void SetupPhysics();
+        void StopPhysics();
     private:
 
         entt::registry m_Registry;

@@ -25,7 +25,9 @@ namespace Crane
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
 
-        m_ActiveScene = CreateRef<Scene>();
+        m_EditorScene = CreateRef<Scene>();
+        m_ActiveScene = m_EditorScene;
+
         m_Panels.SetActiveScene(m_ActiveScene);
 
         m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
@@ -37,7 +39,7 @@ namespace Crane
 
         m_Panels.AddPanel<ContentBrowserPanel>((void*)this, true);
 
-        m_Panels.AddPanel<SceneToolbar>(m_EditorSettings, std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this));
+        m_Panels.AddPanel<SceneToolbar>(m_EditorSettings, std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this), std::bind(&EditorLayer::OnSimulateStart, this), std::bind(&EditorLayer::OnSimulateStop, this));
     }
     void EditorLayer::OnDetach()
     {
@@ -82,6 +84,9 @@ namespace Crane
             break;
         case SceneState::Play:
             m_ActiveScene->OnUpdateRuntime(time);
+            break;
+        case SceneState::Simulate:
+            m_ActiveScene->OnUpdateSimulation(time, m_EditorCamera);
             break;
         }
 
@@ -312,9 +317,9 @@ namespace Crane
         glm::vec4 selectedColor = glm::vec4(1, 0.5f, 0, 1);
         glm::vec4 colliderColor = glm::vec4(0, 1, 0, 1);
 
-        if (m_SceneState == SceneState::Play)
+        Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+        if (camera && m_SceneState == SceneState::Play)
         {
-            Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
             Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.Transform().Transform());
         }
         else
@@ -566,6 +571,31 @@ namespace Crane
     {
         m_SceneState = SceneState::Edit;
         m_ActiveScene->OnRuntimeStop();
+
+        m_ActiveScene = m_EditorScene;
+        m_ActiveScene->SetState(SceneState::Edit);
+        m_Panels.SetActiveScene(m_ActiveScene);
+    }
+
+    void EditorLayer::OnSimulateStart()
+    {
+        if (m_SceneState == SceneState::Play)
+            OnSceneStop();
+
+        m_SceneState = SceneState::Simulate;
+
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+
+        m_ActiveScene->OnViewportResized(m_ViewportSize.x, m_ViewportSize.y);
+        m_ActiveScene->OnSumulatePhysicsStart();
+        m_ActiveScene->SetState(SceneState::Simulate);
+        m_Panels.SetActiveScene(m_ActiveScene);
+    }
+
+    void EditorLayer::OnSimulateStop()
+    {
+        m_SceneState = SceneState::Edit;
+        m_ActiveScene->OnSumulatePhysicsStop();
 
         m_ActiveScene = m_EditorScene;
         m_ActiveScene->SetState(SceneState::Edit);

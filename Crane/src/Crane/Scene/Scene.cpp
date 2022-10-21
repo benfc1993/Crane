@@ -38,7 +38,7 @@ namespace Crane {
     {
 
     }
-
+#pragma region templates
     template<typename... Component>
     static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
     {
@@ -102,7 +102,9 @@ namespace Crane {
             dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
         }
     }
+#pragma endregion
 
+#pragma region Entity
     Ref<Scene> Scene::Copy(Ref<Scene> other)
     {
         Ref<Scene> newScene = CreateRef<Scene>();
@@ -155,54 +157,57 @@ namespace Crane {
         m_Registry.destroy(entity);
     }
 
+    void Scene::DuplicateEntity(Entity entity)
+    {
+        Entity newEntity = CreateEntity(entity.GetName());
+        CopyComponentIfExists(AllComponents{}, newEntity, entity);
+    }
+
+
+    Entity Scene::GetPrimaryCameraEntity()
+    {
+        auto view = m_Registry.view <CameraComponent>();
+        for (auto entity : view)
+        {
+            auto& camera = view.get<CameraComponent>(entity);
+            if (camera.Primary)
+                return Entity{ entity, this };
+        }
+
+        return {};
+    }
+#pragma endregion
+
+    void Scene::OnRuntimeStart()
+    {
+        SetupPhysics();
+    }
+
+    void Scene::OnRuntimeStop()
+    {
+        StopPhysics();
+    }
+
+    void Scene::OnSumulatePhysicsStart()
+    {
+        SetupPhysics();
+    }
+
+    void Scene::OnSumulatePhysicsStop()
+    {
+        StopPhysics();
+    }
+
     void Scene::OnUpdateEditor(Time time, EditorCamera& camera)
     {
         Renderer2D::BeginScene(camera);
-        auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-        for (auto entity : spriteGroup)
-        {
-            auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
-
-            Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
-        }
-        {
-            auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
-            for (auto entity : circleView)
-            {
-                auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
-
-                Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-            }
-        }
-
-
-        {
-            auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();
-            for (auto entity : view)
-            {
-                auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
-
-                particleSystem.Data.Position = transform.Position;
-
-                for (int i = 0; i < particleSystem.Data.BurstSize; i++)
-                {
-                    particleSystem.System.Emit(particleSystem.Data);
-                }
-
-                particleSystem.System.OnUpdate(time);
-                particleSystem.System.OnRender();
-            }
-
-        }
-
+        Render(time);
         Renderer2D::EndScene();
     }
 
     void Scene::OnUpdateRuntime(Time time)
     {
 
-        //Update script
-        //TODO: Move to Scene on play
         m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
         {
             if (!nsc.Instance)
@@ -215,31 +220,13 @@ namespace Crane {
             nsc.Instance->OnUpdate(time);
         });
 
-        {
-            const uint32_t velocityIterations = 6;
-            const uint32_t positionIterations = 2;
-            m_PhysicsWorld->Step(time.DeltaTime(), velocityIterations, positionIterations);
-
-            auto view = m_Registry.view<RigidBody2DComponent>();
-            for (auto e : view)
-            {
-                Entity entity = { e, this };
-                auto& transform = entity.GetComponent<TransformComponent>();
-                auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
-
-                b2Body* body = (b2Body*)rb2d.RuntimeBody;
-                const auto& position = body->GetPosition();
-                transform.Position.x = position.x;
-                transform.Position.y = position.y;
-                transform.Rotation.z = body->GetAngle();
-            }
-        }
+        UpdatePhysics(time);
 
         Camera* mainCamera = nullptr;
         TransformComponent* cameraTransform = nullptr;
 
         {
-            auto view = m_Registry.view <TransformComponent, CameraComponent>();
+            auto view = m_Registry.view<TransformComponent, CameraComponent>();
             for (auto entity : view)
             {
                 auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
@@ -255,47 +242,25 @@ namespace Crane {
         if (mainCamera)
         {
             Renderer2D::BeginScene(*mainCamera, cameraTransform->Transform());
-            auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-            for (auto entity : spriteGroup)
-            {
-                auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawQuad(transform.Transform(), sprite.Color);
-            }
-
-            auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
-            for (auto entity : circleView)
-            {
-                auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
-
-                Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-            }
-
-            {
-                auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();
-                for (auto entity : view)
-                {
-                    auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
-
-                    particleSystem.Data.Position = transform.Position;
-
-                    for (int i = 0; i < particleSystem.Data.BurstSize; i++)
-                    {
-                        particleSystem.System.Emit(particleSystem.Data);
-                    }
-
-                    particleSystem.System.OnUpdate(time);
-                    particleSystem.System.OnRender();
-                }
-
-            }
+            Render(time);
 
             Renderer2D::EndScene();
         }
 
     }
 
-    void Scene::OnRuntimeStart()
+
+    void Scene::OnUpdateSimulation(Time time, EditorCamera& camera)
+    {
+        Renderer2D::BeginScene(camera);
+        UpdatePhysics(time);
+        Render(time);
+        Renderer2D::EndScene();
+    }
+
+
+    void Scene::SetupPhysics()
     {
         m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
         {
@@ -371,12 +336,73 @@ namespace Crane {
         }
     }
 
-    void Scene::OnRuntimeStop()
+    void Scene::StopPhysics()
     {
         delete m_PhysicsWorld;
         m_PhysicsWorld = nullptr;
     }
 
+    void Scene::UpdatePhysics(Time time)
+    {
+        {
+            const uint32_t velocityIterations = 6;
+            const uint32_t positionIterations = 2;
+            m_PhysicsWorld->Step(time.DeltaTime(), velocityIterations, positionIterations);
+
+            auto view = m_Registry.view<RigidBody2DComponent>();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                auto& transform = entity.GetComponent<TransformComponent>();
+                auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+                b2Body* body = (b2Body*)rb2d.RuntimeBody;
+                const auto& position = body->GetPosition();
+                transform.Position.x = position.x;
+                transform.Position.y = position.y;
+                transform.Rotation.z = body->GetAngle();
+            }
+        }
+    }
+
+
+    void Scene::Render(Time time)
+    {
+        auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : spriteGroup)
+        {
+            auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+
+            Renderer2D::DrawQuad(transform.Transform(), sprite.Color);
+        }
+
+        auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+        for (auto entity : circleView)
+        {
+            auto [transform, circle] = circleView.get<TransformComponent, CircleRendererComponent>(entity);
+
+            Renderer2D::DrawCircle(transform.Transform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+        }
+
+        {
+            auto view = m_Registry.view<ParticleSystemComponent, TransformComponent>();
+            for (auto entity : view)
+            {
+                auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
+
+                particleSystem.Data.Position = transform.Position;
+
+                for (int i = 0; i < particleSystem.Data.BurstSize; i++)
+                {
+                    particleSystem.System.Emit(particleSystem.Data);
+                }
+
+                particleSystem.System.OnUpdate(time);
+                particleSystem.System.OnRender();
+            }
+
+        }
+    }
 
     void Scene::OnViewportResized(uint32_t width, uint32_t height)
     {
@@ -394,26 +420,7 @@ namespace Crane {
         }
     }
 
-    void Scene::DuplicateEntity(Entity entity)
-    {
-        Entity newEntity = CreateEntity(entity.GetName());
-        CopyComponentIfExists(AllComponents{}, newEntity, entity);
-    }
-
-
-    Entity Scene::GetPrimaryCameraEntity()
-    {
-        auto view = m_Registry.view <CameraComponent>();
-        for (auto entity : view)
-        {
-            auto& camera = view.get<CameraComponent>(entity);
-            if (camera.Primary)
-                return Entity{ entity, this };
-        }
-
-        return {};
-    }
-
+#pragma region OnComponentAdded
     template<typename T>
     void Scene::OnComponentAdded(Entity entity, T& component)
     {
@@ -477,5 +484,6 @@ namespace Crane {
     void Scene::OnComponentAdded<CircleColliderComponent>(Entity entity, CircleColliderComponent& component)
     {
     }
+#pragma endregion
 }
 

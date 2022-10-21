@@ -31,6 +31,8 @@ namespace Crane {
 
         void OnScenePlay();
         void OnSceneStop();
+        void OnSimulateStart();
+        void OnSimulateStop();
 
         void LoadScene(const std::filesystem::path& path);
     private:
