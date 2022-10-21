@@ -242,11 +242,11 @@ Entities:
       Thickness: 1
       Fade: 0.0500000007
     RigidBody2DComponent:
-      Type: Dynamic
+      Type: Static
       FixedRotation: false
     CircleColliderComponent:
       Radius: 0.5
-      Offset: [0, 0]
+      Offset: [0.660000026, 0]
       Density: 1
       Friction: 0.5
       Restitution: 0

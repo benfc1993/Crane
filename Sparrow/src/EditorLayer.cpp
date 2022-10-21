@@ -37,7 +37,7 @@ namespace Crane
 
         m_Panels.AddPanel<ContentBrowserPanel>((void*)this, true);
 
-        m_Panels.AddPanel<SceneToolbar>(std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this));
+        m_Panels.AddPanel<SceneToolbar>(m_EditorSettings, std::bind(&EditorLayer::OnScenePlay, this), std::bind(&EditorLayer::OnSceneStop, this));
     }
     void EditorLayer::OnDetach()
     {
@@ -101,6 +101,7 @@ namespace Crane
             m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
+        OnOverlayRender();
 
         m_Framebuffer->Unbind();
     }
@@ -305,6 +306,106 @@ namespace Crane
         ImGui::End();
         m_CanPick = !ImGuizmo::IsOver() && m_ViewportHovered;
     }
+
+    void EditorLayer::OnOverlayRender()
+    {
+        glm::vec4 selectedColor = glm::vec4(1, 0.5f, 0, 1);
+        glm::vec4 colliderColor = glm::vec4(0, 1, 0, 1);
+
+        if (m_SceneState == SceneState::Play)
+        {
+            Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.Transform().Transform());
+        }
+        else
+        {
+            Renderer2D::BeginScene(m_EditorCamera);
+        }
+
+        Renderer2D::SetLineWidth(3.0f);
+
+        float zIndex = 0.001f;
+        glm::vec3 cameraForwardDirection = m_EditorCamera.GetForwardDirection();
+        glm::vec3 projectionCollider = cameraForwardDirection * glm::vec3(zIndex);
+
+        auto selectedEntity = m_Panels.GetSelectedEntity();
+        if (selectedEntity && m_SceneState == SceneState::Edit)
+        {
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, SpriteRendererComponent>();
+
+                for (auto entity : view)
+                {
+                    if (entity == selectedEntity)
+                    {
+                        auto [transformC, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                        Renderer2D::DrawRect(glm::translate(transformC.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor);
+                    }
+                }
+            }
+
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleRendererComponent>();
+
+                for (auto entity : view)
+                {
+                    if (entity == selectedEntity)
+                    {
+                        auto [transformC, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+                        Renderer2D::DrawCircle(glm::translate(transformC.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor, 0.075f);
+                    }
+                }
+            }
+        }
+
+        if (m_EditorSettings->ShowColiders)
+        {
+
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+
+                for (auto entity : view)
+                {
+                    auto [transformC, box] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+                    glm::vec3 position = transformC.Position + glm::vec3(box.Offset, -projectionCollider.z);
+                    glm::vec3 scale = transformC.Scale * glm::vec3(box.Size * 2.0f, 1.0f);
+
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.Position)
+                        * glm::rotate(glm::mat4(1.0f), transformC.Rotation.z, glm::vec3(0, 0, 1))
+                        * glm::translate(glm::mat4(1.0f), glm::vec3(box.Offset, -projectionCollider.z))
+                        * glm::scale(glm::mat4(1.0f), scale);
+                    Renderer2D::DrawRect(transform, colliderColor);
+                }
+            }
+
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleColliderComponent>();
+
+                for (auto entity : view)
+                {
+                    auto [transformC, circle] = view.get<TransformComponent, CircleColliderComponent>(entity);
+
+                    glm::vec3 scale = transformC.Scale * glm::vec3(circle.Radius * 2.0f);
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.Position)
+                        * glm::rotate(glm::mat4(1.0f), transformC.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                        * glm::translate(glm::mat4(1.0f), glm::vec3(circle.Offset, -projectionCollider.z))
+                        * glm::scale(glm::mat4(1.0f), glm::vec3(scale.x, scale.x, scale.z));
+
+                    Renderer2D::DrawCircle(transform, colliderColor, 0.05f);
+                }
+            }
+
+        }
+
+        Renderer2D::EndScene();
+
+        Renderer2D::SetLineWidth(2.0f);
+
+    }
+
     void EditorLayer::OnEvent(Event& event)
     {
         EventDispatcher dispatcher(event);

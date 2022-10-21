@@ -65,6 +65,8 @@ namespace Crane {
         UUID GetUUID() { return  GetComponent<IdComponent>().Id; }
         const std::string& GetName() { return  GetComponent<TagComponent>().Tag; }
 
+        TransformComponent Transform() { return GetComponent<TransformComponent>(); }
+
         bool operator!=(const Entity& other)
         {
             return !(*this == other);

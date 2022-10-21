@@ -31,6 +31,12 @@ namespace Crane {
 
         }
         ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+
+        ImGui::SetCursorPosY((ImGui::GetContentRegionMax().y * 0.5f) - (size * 0.5f));
+        ImGui::Checkbox("Show Colliders", &m_EditorSettings->ShowColiders);
+
         ImGui::End();
         ImGui::PopStyleVar(2);
     }

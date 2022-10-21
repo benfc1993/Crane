@@ -48,7 +48,14 @@ namespace Crane {
         void DuplicateEntity(Entity entity);
 
         Entity GetPrimaryCameraEntity();
+
+        template<typename ...Components>
+        auto GetAllEntitiesWith()
+        {
+            return m_Registry.view<Components...>();
+        }
     private:
+
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         std::string m_FilePath;

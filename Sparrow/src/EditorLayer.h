@@ -5,6 +5,8 @@
 #include "Crane/Scene/Serialization/SceneSerializer.h"
 #include "Crane/Camera/EditorCamera.h"
 
+#include "EditorSettings.h"
+
 #include "UI/Panels/Panels.h"
 #include "UI/Panels/RenderStatsPanel.h"
 #include "UI/Panels/SceneHierarchyPanel.h"
@@ -24,6 +26,7 @@ namespace Crane {
 
         virtual void OnUpdate(Time time) override;
         virtual void OnImGuiRender() override;
+        void OnOverlayRender();
         virtual void OnEvent(Event& event) override;
 
         void OnScenePlay();
@@ -63,6 +66,8 @@ namespace Crane {
         bool m_ViewportFocused = false, m_ViewportHovered = false;
 
         SceneState m_SceneState = SceneState::Edit;
+
+        Ref<EditorSettings> m_EditorSettings = CreateRef<EditorSettings>();
 
         //Panels
         Panels m_Panels;

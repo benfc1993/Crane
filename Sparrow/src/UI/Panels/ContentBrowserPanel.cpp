@@ -9,7 +9,7 @@ namespace Crane {
     static const std::filesystem::path s_AssetPath = "assets";
 
     static float padding = 16.0f;
-    static float thumbnailSize = 75.0f;
+    static float thumbnailSize = 50.0f;
 
     ContentBrowserPanel::ContentBrowserPanel(void* editor, bool isRequired)
         : m_Editor(editor), m_CurrentDirectory(s_AssetPath), Panel(isRequired)

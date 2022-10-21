@@ -163,8 +163,7 @@ namespace Crane {
         {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            // Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
-            Renderer2D::DrawRect(transform.Transform(), glm::vec4(1, 0, 1, 1), (int)entity);
+            Renderer2D::DrawSprite(transform.Transform(), sprite, (int)entity);
         }
         {
             auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
@@ -327,7 +326,7 @@ namespace Crane {
                 auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
 
                 b2PolygonShape polygonShape;
-                polygonShape.SetAsBox((boxCollider.Size.x * transform.Scale.x) + boxCollider.Offset.x, (boxCollider.Size.y * transform.Scale.y) + boxCollider.Offset.y);
+                polygonShape.SetAsBox(boxCollider.Size.x * transform.Scale.x, boxCollider.Size.y * transform.Scale.y, b2Vec2(boxCollider.Offset.x, boxCollider.Offset.y), 0.0f);
 
                 RigidBody2DComponent component;
                 if (entity.TryGetComponent(component))
@@ -354,7 +353,7 @@ namespace Crane {
 
                 b2CircleShape circleShape;
                 circleShape.m_p.Set(circleCollider.Offset.x, circleCollider.Offset.y);
-                circleShape.m_radius = circleCollider.Radius;
+                circleShape.m_radius = circleCollider.Radius * transform.Scale.x;
 
                 RigidBody2DComponent component;
                 if (entity.TryGetComponent(component))
