@@ -49,7 +49,7 @@ namespace Crane {
         ImGui::SameLine();
 
         ImGui::SetCursorPosY((ImGui::GetContentRegionMax().y * 0.5f) - (size * 0.5f));
-        ImGui::Checkbox("Show Colliders", &m_EditorSettings->ShowColiders);
+        ImGui::Checkbox("Show Colliders", &m_EditorSettings->Get()->ShowColiders);
 
         ImGui::End();
         ImGui::PopStyleVar(2);

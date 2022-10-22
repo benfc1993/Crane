@@ -4,7 +4,7 @@
 #include "UI/Panels/Panel.h"
 #include "Crane/Renderer/Shader/Texture.h"
 
-#include "EditorSettings.h"
+#include "Settings/EditorSettings.h"
 
 
 namespace Crane {

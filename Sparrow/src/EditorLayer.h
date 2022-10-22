@@ -5,7 +5,7 @@
 #include "Crane/Scene/Serialization/SceneSerializer.h"
 #include "Crane/Camera/EditorCamera.h"
 
-#include "EditorSettings.h"
+#include "Settings/EditorSettings.h"
 
 #include "UI/Panels/Panels.h"
 #include "UI/Panels/RenderStatsPanel.h"
@@ -20,7 +20,7 @@ namespace Crane {
     {
     public:
         EditorLayer();
-        virtual ~EditorLayer() = default;
+        virtual ~EditorLayer() override;
         virtual void OnAttach() override;
         virtual void OnDetach() override;
 

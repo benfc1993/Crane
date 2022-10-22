@@ -20,7 +20,8 @@ project "Sparrow"
 		"%{wks.location}/Crane/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 	
 	links
@@ -36,7 +37,8 @@ project "Sparrow"
 		"spirv-cross-util",
 		"spirv-cross-c-shared",
 		"spirv-cross-hlsl",
-		"spirv-cross-msl",
+    	"spirv-cross-msl",
+		"yaml-cpp",
 	}
 	
 	prebuildcommands

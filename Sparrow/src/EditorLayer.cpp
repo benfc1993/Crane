@@ -15,7 +15,14 @@ namespace Crane
 {
     extern const std::filesystem::path s_AssetPath = "assets";
 
-    EditorLayer::EditorLayer() : Layer("EditorLayer") {}
+    EditorLayer::EditorLayer() : Layer("EditorLayer")
+    {
+        m_EditorSettings->Deserialize();
+    }
+    EditorLayer::~EditorLayer()
+    {
+        m_EditorSettings->Serialize();
+    }
 
     void EditorLayer::OnAttach()
     {
@@ -25,10 +32,14 @@ namespace Crane
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
 
-        m_EditorScene = CreateRef<Scene>();
-        m_ActiveScene = m_EditorScene;
-
-        m_Panels.SetActiveScene(m_ActiveScene);
+        if (m_EditorSettings->Get()->CurrentScenePath.empty())
+        {
+            NewScene();
+        }
+        else
+        {
+            LoadScene(m_EditorSettings->Get()->CurrentScenePath);
+        }
 
         m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 
@@ -225,7 +236,7 @@ namespace Crane
             m_ViewportHovered = ImGui::IsWindowHovered();
             bool imGuiInteracting = ImGui::IsAnyItemActive() || ImGui::IsAnyItemFocused();
 
-            Application::Get().GetImGuiLayer()->ShouldBlockEvents((!m_ViewportFocused || !m_ViewportHovered) && imGuiInteracting);
+            Application::Get().GetImGuiLayer()->ShouldBlockEvents((!m_ViewportFocused && !m_ViewportHovered) || imGuiInteracting);
 
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
@@ -350,7 +361,7 @@ namespace Crane
         }
 
 
-        if (m_EditorSettings->ShowColiders)
+        if (m_EditorSettings->Get()->ShowColiders)
         {
 
             {
@@ -491,10 +502,11 @@ namespace Crane
 
     void EditorLayer::NewScene()
     {
-        m_ActiveScene = CreateRef<Scene>();
-        m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_EditorScene = CreateRef<Scene>();
+        m_ActiveScene = m_EditorScene;
         m_Panels.SetActiveScene(m_ActiveScene);
     }
+
     void EditorLayer::OpenScene()
     {
         std::filesystem::path filePath = FileDialogs::OpenFile();
@@ -521,11 +533,11 @@ namespace Crane
             if (serializer.Deserialize(path))
             {
                 m_EditorScene = newScene;
-                m_EditorScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
                 m_ActiveScene = m_EditorScene;
                 m_Panels.SetActiveScene(m_ActiveScene);
             }
+
+            m_EditorSettings->Get()->CurrentScenePath = path;
 
         }
     }
