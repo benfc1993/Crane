@@ -20,10 +20,17 @@ namespace Crane
         }
     };
 
+    struct ApplicationSpecification
+    {
+        std::string Name = "Sparrow App";
+        std::string WorkingDirectory;
+        ApplicationCommandLineArgs CommandLineArgs;
+    };
+
     class Application
     {
     public:
-        Application(const std::string& name = "Sparrow App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+        Application(const ApplicationSpecification& specification);
         virtual ~Application();
 
         void Run();
@@ -41,14 +48,14 @@ namespace Crane
 
         float GetLastFrameDuration() { return m_LastFrameDuration; }
 
-        ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+        const ApplicationSpecification& GetApplicationSpecification() const { return m_Specification; }
     private:
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
         bool OnWindowMinimize(WindowMinimizeEvent& e);
 
     private:
-        ApplicationCommandLineArgs m_CommandLineArgs;
+        ApplicationSpecification m_Specification;
         std::unique_ptr<Window> m_Window;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;

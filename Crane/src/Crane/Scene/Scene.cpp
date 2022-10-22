@@ -36,7 +36,7 @@ namespace Crane {
 
     Scene::~Scene()
     {
-
+        StopPhysics();
     }
 #pragma region templates
     template<typename... Component>

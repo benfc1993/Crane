@@ -11,15 +11,18 @@ namespace Crane
 {
     Application* Application::s_Instance = nullptr;
 
-    Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-        : m_CommandLineArgs(args)
+    Application::Application(const ApplicationSpecification& specification)
+        : m_Specification(specification)
     {
         CR_PROFILE_FUNCTION();
 
         CR_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
+        if (!m_Specification.WorkingDirectory.empty())
+            std::filesystem::current_path(m_Specification.WorkingDirectory);
+
+        m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(m_Specification.Name)));
         m_Window->SetEventCallback(CR_BIND_EVENT_FN(Application::OnEvent));
 
         Renderer::Init();
