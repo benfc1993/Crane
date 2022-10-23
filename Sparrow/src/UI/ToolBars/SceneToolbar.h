@@ -23,9 +23,9 @@ namespace Crane {
 
 
     private:
-        Ref<Texture2D> m_PlayIcon = Texture2D::Create("resources/icons/Toolbar/PlayButton.png");
-        Ref<Texture2D> m_StopIcon = Texture2D::Create("resources/icons/Toolbar/StopButton.png");
-        Ref<Texture2D> m_SimulateIcon = Texture2D::Create("resources/icons/Toolbar/SimulateButton.png");
+        Ref<Texture2D> m_PlayIcon = Texture2D::Create("Resources/icons/Toolbar/PlayButton.png");
+        Ref<Texture2D> m_StopIcon = Texture2D::Create("Resources/icons/Toolbar/StopButton.png");
+        Ref<Texture2D> m_SimulateIcon = Texture2D::Create("Resources/icons/Toolbar/SimulateButton.png");
 
         std::function<void()> OnPlay;
         std::function<void()> OnStop;

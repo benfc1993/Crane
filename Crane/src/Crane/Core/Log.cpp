@@ -6,6 +6,7 @@ namespace Crane
 {
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
     std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+    std::shared_ptr<spdlog::logger> Log::s_ScriptLogger;
 
     void Log::Init()
     {
@@ -15,5 +16,8 @@ namespace Crane
 
         s_ClientLogger = spdlog::stdout_color_mt("App");
         s_ClientLogger->set_level(spdlog::level::trace);
+
+        s_ScriptLogger = spdlog::stdout_color_mt("Script");
+        s_ScriptLogger->set_level(spdlog::level::trace);
     }
 }

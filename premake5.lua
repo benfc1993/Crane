@@ -29,6 +29,7 @@ group ""
 
 group "Core"
 	include "Crane"
+	include "Crane-ScriptCore"
 group ""
 
 group "Tools"

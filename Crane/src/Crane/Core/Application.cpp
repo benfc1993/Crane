@@ -4,6 +4,7 @@
 #include "Crane/Core/Log.h"
 
 #include "Crane/Renderer/Renderer.h"
+#include "Crane/Scripting/ScriptEngine.h"
 
 #include <GLFW/glfw3.h>
 
@@ -26,6 +27,7 @@ namespace Crane
         m_Window->SetEventCallback(CR_BIND_EVENT_FN(Application::OnEvent));
 
         Renderer::Init();
+        ScriptEngine::Init();
 
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
@@ -34,6 +36,9 @@ namespace Crane
     Application::~Application()
     {
         CR_PROFILE_FUNCTION();
+
+        ScriptEngine::Shutdown();
+        Renderer::Shutdown();
     }
 
     void Application::PushLayer(Layer* layer)

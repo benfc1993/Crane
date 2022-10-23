@@ -14,8 +14,8 @@ namespace Crane {
     ContentBrowserPanel::ContentBrowserPanel(void* editor, bool isRequired)
         : m_Editor(editor), m_CurrentDirectory(s_AssetPath), Panel(isRequired)
     {
-        m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
-        m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+        m_DirectoryIcon = Texture2D::Create("Resources/icons/contentBrowser/DirectoryIcon.png");
+        m_FileIcon = Texture2D::Create("Resources/icons/contentBrowser/FileIcon.png");
     }
 
 

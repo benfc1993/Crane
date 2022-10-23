@@ -36,6 +36,7 @@ project "Sandbox"
 		"spirv-cross-c-shared",
 		"spirv-cross-hlsl",
 		"spirv-cross-msl",
+		"z",
 	}
 	
 	prebuildcommands

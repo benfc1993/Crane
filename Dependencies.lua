@@ -14,7 +14,7 @@ LibraryDir = {}
 LibraryDir["mono"] = "%{wks.location}/Crane/vendor/mono/lib"
 
 Library = {}
--- Library["mono"] = "%{LibraryDir.mono}/libmonosgen-2.0.so"
+Library["mono"] = "%{wks.location}/Crane/vendor/mono/lib/monosgen-2.0"
 
 if os.host() == "windows" then
 

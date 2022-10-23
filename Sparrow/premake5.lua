@@ -39,6 +39,13 @@ project "Sparrow"
 		"spirv-cross-hlsl",
     	"spirv-cross-msl",
 		"yaml-cpp",
+		"X11",
+		"dl",
+		"mono-2.0",
+		"m",
+		"rt",
+		"pthread",
+		"xcb"
 	}
 	
 	prebuildcommands

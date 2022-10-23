@@ -3,6 +3,9 @@
 "path": "Crane"
 },
 {
+"path": "Crane-ScriptCore"
+},
+{
 "path": "Crane/vendor/Box2D"
 },
 {

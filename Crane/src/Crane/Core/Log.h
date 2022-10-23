@@ -21,10 +21,12 @@ namespace Crane
 
         static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
         static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+        static std::shared_ptr<spdlog::logger>& GetScriptLogger() { return s_ScriptLogger; }
 
     private:
         static std::shared_ptr<spdlog::logger> s_CoreLogger;
         static std::shared_ptr<spdlog::logger> s_ClientLogger;
+        static std::shared_ptr<spdlog::logger> s_ScriptLogger;
     };
 
 }
@@ -58,3 +60,9 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 #define CR_WARN(...) Crane::Log::GetClientLogger()->warn(__VA_ARGS__);
 #define CR_ERROR(...) Crane::Log::GetClientLogger()->error(__VA_ARGS__);
 #define CR_FATAL(...) Crane::Log::GetClientLogger()->fatal(__VA_ARGS__);
+
+#define CR_SCR_INFO(...) Crane::Log::GetScriptLogger()->info(__VA_ARGS__);
+#define CR_SCR_TRACE(...) Crane::Log::GetScriptLogger()->trace(__VA_ARGS__);
+#define CR_SCR_WARN(...) Crane::Log::GetScriptLogger()->warn(__VA_ARGS__);
+#define CR_SCR_ERROR(...) Crane::Log::GetScriptLogger()->error(__VA_ARGS__);
+#define CR_SCR_FATAL(...) Crane::Log::GetScriptLogger()->fatal(__VA_ARGS__);
