@@ -1,9 +1,7 @@
 [submodule "Crane/vendor/spdlog"]
 	path = Crane/vendor/spdlog
 	url = git@github.com:gabime/spdlog.git
-[submodule "Crane/vendor/GLFW"]
-	path = Crane/vendor/GLFW
-	url = git@github.com:benfc1993/glfw.git
+
 [submodule "Crane/vendor/imgui"]
 	path = Crane/vendor/imgui
 	url = git@github.com:benfc1993/imgui.git
@@ -19,3 +17,6 @@
 [submodule "Crane/vendor/Box2D"]
 	path = Crane/vendor/Box2D
 	url = git@github.com:benfc1993/Box2D.git
+[submodule "Crane/vendor/GLFW"]
+	path = Crane/vendor/GLFW
+	url = git@github.com:benfc1993/glfw.git
