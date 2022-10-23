@@ -27,6 +27,14 @@ group "Dependencies"
 
 group ""
 
+group "Core"
+	include "Crane"
+group ""
+
+group "Tools"
+	include "Sparrow"
 include "Crane"
-include "Sandbox"
-include "Sparrow"
+
+group "Misc"
+	include "Sandbox"
+include "Crane"

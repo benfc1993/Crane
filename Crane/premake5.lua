@@ -30,6 +30,7 @@ project "Crane"
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.mono}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
@@ -44,6 +45,7 @@ project "Crane"
 		"GLAD",
     	"ImGui",
     	"yaml-cpp",
+		-- "%{Library.mono}",
 	}
 
 	
