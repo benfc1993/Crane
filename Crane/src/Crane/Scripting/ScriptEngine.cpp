@@ -127,7 +127,7 @@ namespace Crane {
 		PrintAssemblyTypes(s_Data->CoreAssembly);
 
 		MonoImage* assemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
-		MonoClass* monoClass = mono_class_from_name(assemblyImage, "", "Main");
+		MonoClass* monoClass = mono_class_from_name(assemblyImage, "Crane", "Main");
 
 		// 1. create an object (and call constructor)
 		MonoObject* instance = mono_object_new(s_Data->AppDomain, monoClass);
