@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Crane {
 
@@ -17,8 +16,6 @@ namespace Crane {
 	public class Main
 	{
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static string Print(string msg);
 
 		public float FloatVar { get; set; }
 
@@ -26,25 +23,9 @@ namespace Crane {
 		{
 		}
 
-		public int PrintMessage()
+		public void PrintMessage(string message)
 		{
-			return 5 + 6 * 10;
-		}
-
-		public int PrintInt(ref int value)
-		{
-			Print("Hello, World!");
-			return 2 * value;
-		}
-
-		public void PrintInts(int value1, int value2)
-		{
-			Print($"C# says: {value1} and {value2}");
-		}
-
-		public void PrintCustomMessage(string message)
-		{
-			Print($"C# says: {message}");
+			Debug.Log($"C# says: {message}");
 		}
 
 	}
