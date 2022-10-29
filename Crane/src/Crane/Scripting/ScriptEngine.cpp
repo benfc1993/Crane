@@ -102,9 +102,12 @@ namespace Crane {
 
 		ScriptGlue::RegisterFunctions();
 
-		ScriptClass monoClass = ScriptClass("Crane", "Main");
+		ScriptClass monoClass = ScriptClass("Crane", "Entity");
 		// 1. create an object (and call constructor)
 		MonoObject* instance = monoClass.Instantiate();
+
+		MonoMethod* OnCreateFunc = monoClass.GetMethod("OnCreate", 0);
+		monoClass.InvokeMethod(instance, OnCreateFunc);
 
 		// 2. call function
 		MonoMethod* printMessageFunc = monoClass.GetMethod("PrintMessage", 1);

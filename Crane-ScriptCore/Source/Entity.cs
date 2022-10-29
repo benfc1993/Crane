@@ -14,16 +14,21 @@ namespace Crane
             this.z = z;
         }
     }
-    public class Main
+    public class Entity
     {
 
 
         public float FloatVar { get; set; }
 
-        public Main()
+        public Entity()
         {
             Vector3 pos = new Vector3(1.0f, 5.2f, 4.7f);
             Debug.Log(pos);
+        }
+
+        public void OnCreate()
+        {
+            Debug.Log("Created");
         }
 
         public void PrintMessage(string message)
