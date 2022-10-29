@@ -96,6 +96,14 @@ namespace Crane
         CameraComponent(const CameraComponent&) = default;
     };
 
+    struct ScriptComponent
+    {
+        std::string Name;
+
+        ScriptComponent() = default;
+        ScriptComponent(const ScriptComponent&) = default;
+    };
+
     class ScriptableEntity;
     struct NativeScriptComponent
     {
@@ -190,6 +198,6 @@ namespace Crane
 
     using AllComponents =
         ComponentGroup<TransformComponent, SpriteRendererComponent,
-        CircleRendererComponent, CameraComponent, NativeScriptComponent,
+        CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
         RigidBody2DComponent, BoxCollider2DComponent, CircleColliderComponent>;
 }

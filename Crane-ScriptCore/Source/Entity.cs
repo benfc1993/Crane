@@ -26,9 +26,12 @@ namespace Crane
             Debug.Log(pos);
         }
 
-        public void OnCreate()
+        public virtual void OnCreate()
         {
-            Debug.Log("Created");
+        }
+
+        public virtual void OnUpdate()
+        {
         }
 
         public void PrintMessage(string message)

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
+
 extern "C" {
     typedef struct _MonoClass MonoClass;
     typedef struct _MonoObject MonoObject;
     typedef struct _MonoMethod MonoMethod;
+    typedef struct _MonoAssembly MonoAssembly;
 }
 
 
@@ -19,6 +22,7 @@ namespace Crane {
         static void ShutdownMono();
 
         static void LoadAssembly(const std::filesystem::path& filePath);
+        static void LoadAssemblyClasses(MonoAssembly* assembly);
         static MonoObject* InstantiateClass(MonoClass* monoClass);
 
         friend class ScriptClass;
@@ -39,5 +43,22 @@ namespace Crane {
         std::string m_ClassName;
 
         MonoClass* m_MonoClass = nullptr;
+    };
+
+    class ScriptInstance
+    {
+    public:
+        ScriptInstance(Ref<ScriptClass> scriptClass);
+
+        void InvokeOnCreate();
+        void InvokeOnUpdate(float ts);
+
+    private:
+        Ref<ScriptClass> m_ScriptClass;
+
+        MonoObject* m_Instance = nullptr;
+        MonoMethod* m_OnCreateMethod = nullptr;
+        MonoMethod* m_OnUpdateMethod = nullptr;
+
     };
 }
