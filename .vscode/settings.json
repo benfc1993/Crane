@@ -42,4 +42,5 @@
     "numeric": "cpp",
     "ratio": "cpp"
   },
+  "cmake.configureOnOpen": false,
 }

@@ -1,13 +1,17 @@
-using System.Runtime.CompilerServices;
+namespace Crane
+{
+    public static class Debug
+    {
 
-namespace Crane {
-    public static class Debug {
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        extern static string Print(string msg);
 
         public static void Log(string msg)
         {
-            Print(msg);
+            InternalCalls.Print(msg);
+        }
+
+        public static void Log(Vector3 vec)
+        {
+            InternalCalls.Print_Vector(ref vec);
         }
     }
 }

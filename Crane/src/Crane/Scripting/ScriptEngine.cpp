@@ -1,5 +1,6 @@
 #include "crpch.h"
 #include "ScriptEngine.h"
+#include "ScriptGlue.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
@@ -8,7 +9,7 @@
 namespace Crane {
 
 	namespace Utils {
-		char* ReadBytes(const std::string& filepath, uint32_t* outSize)
+		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
 		{
 			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
@@ -20,7 +21,7 @@ namespace Crane {
 
 			std::streampos end = stream.tellg();
 			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
+			uint64_t size = end - stream.tellg();
 
 			if (size == 0)
 			{
@@ -32,11 +33,11 @@ namespace Crane {
 			stream.read((char*)buffer, size);
 			stream.close();
 
-			*outSize = size;
+			*outSize = (uint32_t)size;
 			return buffer;
 		}
 
-		MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath)
+		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath)
 		{
 			uint32_t fileSize = 0;
 			char* fileData = ReadBytes(assemblyPath, &fileSize);
@@ -52,20 +53,14 @@ namespace Crane {
 				return nullptr;
 			}
 
-			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
+			std::string pathString = assemblyPath.string();
+			MonoAssembly* assembly = mono_assembly_load_from_full(image, pathString.c_str(), &status, 0);
 			mono_image_close(image);
 
 			// Don't forget to free the file data
 			delete[] fileData;
 
 			return assembly;
-		}
-
-		void Print(MonoString* string)
-		{
-			char* CString = mono_string_to_utf8(string);
-			CR_SCR_INFO(CString);
-			mono_free(CString);
 		}
 
 		void PrintAssemblyTypes(MonoAssembly* assembly)
@@ -81,10 +76,7 @@ namespace Crane {
 
 				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-				std::string ns(nameSpace);
-				std::string nm(name);
-				std::string path = (!ns.empty() ? ns + "." : "") + nm + "::Print";
-				mono_add_internal_call(path.c_str(), (const void*)&Print);
+
 				CR_CORE_TRACE("{}.{}", nameSpace, name);
 			}
 		}
@@ -101,8 +93,6 @@ namespace Crane {
 
 	static ScriptEngineData* s_Data = nullptr;
 
-	void Print(MonoString* string);
-
 	void ScriptEngine::Init()
 	{
 		s_Data = new ScriptEngineData();
@@ -110,8 +100,9 @@ namespace Crane {
 		InitMono();
 		LoadAssembly("Resources/Scripts/Crane-ScriptCore.dll");
 
-		ScriptClass monoClass = ScriptClass("Crane", "Main");
+		ScriptGlue::RegisterFunctions();
 
+		ScriptClass monoClass = ScriptClass("Crane", "Main");
 		// 1. create an object (and call constructor)
 		MonoObject* instance = monoClass.Instantiate();
 
@@ -152,7 +143,7 @@ namespace Crane {
 		s_Data->AppDomain = mono_domain_create_appdomain((char*)"CraneScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
-		s_Data->CoreAssembly = Utils::LoadCSharpAssembly(filePath);
+		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filePath);
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
 		Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 	}
