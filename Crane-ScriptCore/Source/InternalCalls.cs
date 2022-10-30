@@ -15,5 +15,20 @@ namespace Crane
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string TransformComponent_SetPosition(ulong entityID, ref Vector3 position);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TransformComponent_GetRotation(ulong entityID, out Vector3 rotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TransformComponent_SetRotation(ulong entityID, ref Vector3 rotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TransformComponent_GetScale(ulong entityID, out Vector3 scale);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TransformComponent_SetScale(ulong entityID, ref Vector3 scale);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyDown(KeyCode keycode);
     }
 }

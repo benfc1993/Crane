@@ -5,6 +5,7 @@ namespace Sandbox
 {
     public class Player : Entity
     {
+        float speed = 3.2f;
         void OnCreate()
         {
             Debug.Log($"Player.OnCreate");
@@ -12,11 +13,31 @@ namespace Sandbox
 
         void OnUpdate(float ts)
         {
-            Debug.Log($"Player.OnUpdate {ts}");
-            Vector3 pos = Position;
-            pos.x = Position.x + 10 * ts;
+            Vector3 velocity = Vector3.zero;
 
-            Position = pos;
+            Debug.Log($"Player.OnUpdate {ts}");
+
+            if (Input.IsKeyDown(KeyCode.W))
+            {
+                velocity.y += speed;
+            }
+
+            if (Input.IsKeyDown(KeyCode.S))
+            {
+                velocity.y -= speed;
+            }
+
+            if (Input.IsKeyDown(KeyCode.A))
+            {
+                velocity.x -= speed;
+            }
+
+            if (Input.IsKeyDown(KeyCode.D))
+            {
+                velocity.x += speed;
+            }
+
+            transform.position += velocity * ts;
         }
     }
 }

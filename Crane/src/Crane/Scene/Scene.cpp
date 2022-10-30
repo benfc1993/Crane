@@ -402,7 +402,7 @@ namespace Crane {
         {
             auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
-            Renderer2D::DrawQuad(transform.Transform(), sprite.Color);
+            Renderer2D::DrawQuad(transform.Transform(), sprite.Color, (int)entity);
         }
 
         auto circleView = m_Registry.view<TransformComponent, CircleRendererComponent>();
