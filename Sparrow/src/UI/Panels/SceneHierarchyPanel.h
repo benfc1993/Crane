@@ -73,6 +73,15 @@ namespace Crane {
                     entity.RemoveComponent<T>();
             }
         }
+        template<typename T, typename TitleFn, typename ContentFn>
+        void ComponentDrawerTitle(Entity& entity, const TitleFn& titleFn, const ContentFn& contentFn, bool canDelete = true)
+        {
+            if (entity.HasComponent<T>())
+            {
+                std::string title = titleFn();
+                ComponentDrawer<T>(entity, title, contentFn, canDelete);
+            }
+        }
 
     private:
         Entity m_SelectionContext;

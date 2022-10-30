@@ -140,6 +140,16 @@ namespace Crane {
     }
 
     template <>
+    void ComponentDeserializer::DeserializeComponent<ScriptComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["ScriptComponent"];
+        if (!node) return;
+        entity.AddComponent<ScriptComponent>(node["FullName"].as<std::string>());
+
+        return;
+    }
+
+    template <>
     void ComponentDeserializer::DeserializeComponent<NativeScriptComponent>(YAML::Node& data, Entity& entity)
     {
         return;

@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "ScriptableEntity.h"
 #include "Crane/Renderer/Renderer2D.h"
+#include "Crane/Scripting/ScriptEngine.h"
 
 #include "Entity.h"
 
@@ -134,12 +135,7 @@ namespace Crane {
 
     Entity Scene::CreateEntity(const std::string& name)
     {
-        Entity entity = { m_Registry.create(), this };
-        entity.AddComponent<IdComponent>();
-        auto& tag = entity.AddComponent<TagComponent>();
-        tag.Tag = name.empty() ? "Entity" : name;
-        entity.AddComponent<TransformComponent>();
-        return entity;
+        return CreateEntityWithUUID(UUID(), name);
     }
 
     Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
@@ -149,6 +145,8 @@ namespace Crane {
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
         entity.AddComponent<TransformComponent>();
+        m_EntityMap[uuid] = entity;
+
         return entity;
     }
 
@@ -161,6 +159,14 @@ namespace Crane {
     {
         Entity newEntity = CreateEntity(entity.GetName());
         CopyComponentIfExists(AllComponents{}, newEntity, entity);
+    }
+
+    Entity Scene::GetEntityByUUID(UUID uuid)
+    {
+        if (m_EntityMap.find(uuid) != m_EntityMap.end())
+            return { m_EntityMap.at(uuid), this };
+
+        return {};
     }
 
 
@@ -181,6 +187,20 @@ namespace Crane {
     void Scene::OnRuntimeStart()
     {
         SetupPhysics();
+
+        ScriptEngine::OnRuntimeStart(this);
+
+        auto view = m_Registry.view <ScriptComponent>();
+        for (auto e : view)
+        {
+            Entity entity = { e, this };
+            const auto sc = entity.GetComponent<ScriptComponent>();
+
+            if (ScriptEngine::ScriptClassExists(sc.FullName))
+            {
+                ScriptEngine::OnCreateEntity(entity);
+            }
+        }
     }
 
     void Scene::OnRuntimeStop()
@@ -219,6 +239,15 @@ namespace Crane {
 
             nsc.Instance->OnUpdate(time);
         });
+
+        // UpdateScripts
+        m_Registry.view<ScriptComponent>().each([=](auto e, auto& sc)
+        {
+            Entity entity = { e, this };
+            ScriptEngine::OnUpdateEntity(entity, time.DeltaTime());
+        });
+
+
 
         UpdatePhysics(time);
 
@@ -484,6 +513,11 @@ namespace Crane {
     void Scene::OnComponentAdded<CircleColliderComponent>(Entity entity, CircleColliderComponent& component)
     {
     }
+    template<>
+    void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+    {
+    }
+
 #pragma endregion
 }
 

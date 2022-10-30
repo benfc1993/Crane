@@ -56,6 +56,8 @@ namespace Crane {
 
         Entity GetPrimaryCameraEntity();
 
+        Entity GetEntityByUUID(UUID uuid);
+
         template<typename ...Components>
         auto GetAllEntitiesWith()
         {
@@ -69,6 +71,8 @@ namespace Crane {
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         std::string m_FilePath;
+
+        std::unordered_map<UUID, entt::entity> m_EntityMap;
 
         SceneState m_State = SceneState::Edit;
 

@@ -16,28 +16,26 @@ namespace Crane
     }
     public class Entity
     {
+        public readonly ulong id;
 
+        protected Entity() { id = 0; }
 
-        public float FloatVar { get; set; }
-
-        public Entity()
+        public Entity(ulong id)
         {
-            Vector3 pos = new Vector3(1.0f, 5.2f, 4.7f);
-            Debug.Log(pos);
+            this.id = id;
         }
 
-        public virtual void OnCreate()
+        public Vector3 Position
         {
+            get
+            {
+                InternalCalls.TransformComponent_GetPosition(id, out Vector3 position);
+                return position;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetPosition(id, ref value);
+            }
         }
-
-        public virtual void OnUpdate()
-        {
-        }
-
-        public void PrintMessage(string message)
-        {
-            Debug.Log($"C# says: {message}");
-        }
-
     }
 }

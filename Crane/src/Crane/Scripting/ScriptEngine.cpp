@@ -5,6 +5,7 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
+#include "mono/metadata/mono-config.h"
 
 namespace Crane {
 
@@ -90,7 +91,11 @@ namespace Crane {
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
+		ScriptClass EntityClass;
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
+		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+
+		Scene* SceneContext = nullptr;
 	};
 
 	static ScriptEngineData* s_Data = nullptr;
@@ -105,18 +110,7 @@ namespace Crane {
 
 		ScriptGlue::RegisterFunctions();
 
-		ScriptClass monoClass = ScriptClass("Crane", "Entity");
-		// 1. create an object (and call constructor)
-		MonoObject* instance = monoClass.Instantiate();
-
-		MonoMethod* OnCreateFunc = monoClass.GetMethod("OnCreate", 0);
-		monoClass.InvokeMethod(instance, OnCreateFunc);
-
-		// 2. call function
-		MonoMethod* printMessageFunc = monoClass.GetMethod("PrintMessage", 1);
-		MonoString* message = mono_string_new(s_Data->AppDomain, "Testing");
-		void* params = message;
-		monoClass.InvokeMethod(instance, printMessageFunc, &params);
+		s_Data->EntityClass = ScriptClass("Crane", "Entity");
 	}
 
 	void ScriptEngine::Shutdown()
@@ -127,6 +121,7 @@ namespace Crane {
 
 	void ScriptEngine::InitMono()
 	{
+		mono_config_parse("mono/config.xml");
 		mono_set_assemblies_path("/usr/lib");
 
 		MonoDomain* rootDomain = mono_jit_init("CraneJITRuntime");
@@ -154,6 +149,41 @@ namespace Crane {
 		Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 	}
 
+	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	{
+		s_Data->SceneContext = scene;
+	}
+
+	void ScriptEngine::OnRuntimeStop()
+	{
+		s_Data->SceneContext = nullptr;
+	}
+
+	bool ScriptEngine::ScriptClassExists(const std::string& fullClassName)
+	{
+		return s_Data->EntityClasses.find(fullClassName) != s_Data->EntityClasses.end();
+	}
+
+	void ScriptEngine::OnCreateEntity(Entity entity)
+	{
+		const auto& sc = entity.GetComponent<ScriptComponent>();
+		if (ScriptClassExists(sc.FullName))
+		{
+			UUID uuid = entity.GetUUID();
+			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[sc.FullName], uuid);
+			s_Data->EntityInstances[uuid] = instance;
+
+			instance->InvokeOnCreate();
+		}
+	}
+
+	void ScriptEngine::OnUpdateEntity(Entity entity, float ts)
+	{
+		UUID uuid = entity.GetUUID();
+		CR_CORE_ASSERT(s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end());
+		auto instance = s_Data->EntityInstances[uuid];
+		instance->InvokeOnUpdate(ts);
+	}
 
 	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
 	{
@@ -195,6 +225,16 @@ namespace Crane {
 		return instance;
 	}
 
+	Scene* ScriptEngine::GetSceneContext()
+	{
+		return s_Data->SceneContext;
+	}
+
+	std::unordered_map<std::string, Crane::Ref<Crane::ScriptClass>> ScriptEngine::GetScripts()
+	{
+		return s_Data->EntityClasses;
+	}
+
 	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className)
 	{
 		m_ClassNamespace = classNamespace;
@@ -217,21 +257,30 @@ namespace Crane {
 		return mono_runtime_invoke(method, instance, params, nullptr);
 	}
 
-	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass)
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, UUID uuid)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = scriptClass->Instantiate();
+
+		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+
+		{
+			void* param = &uuid;
+			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
+		}
 	}
 
 	void ScriptInstance::InvokeOnCreate()
 	{
+		if (m_OnUpdateMethod == nullptr) return;
 		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
+		if (m_OnUpdateMethod == nullptr) return;
 		void* param = &ts;
 		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
 	}

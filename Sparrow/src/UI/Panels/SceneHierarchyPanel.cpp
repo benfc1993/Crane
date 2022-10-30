@@ -2,6 +2,7 @@
 
 #include "Crane/Scene/Components.h"
 #include "Crane/Renderer/Shader/Texture.h"
+#include "Crane/Scripting/ScriptEngine.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -130,6 +131,14 @@ namespace Crane
                             ImGui::CloseCurrentPopup();
                         }
                     }
+                    if (!m_SelectionContext.HasComponent<ScriptComponent>())
+                    {
+                        if (ImGui::MenuItem("Script Component"))
+                        {
+                            m_SelectionContext.AddComponent<ScriptComponent>();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
 
                     ImGui::EndPopup();
                 } });
@@ -172,8 +181,6 @@ namespace Crane
             ImGui::EndPopup();
         }
 
-
-
         if (m_SelectionContext == entity && m_EditingEntity == entity)
         {
 
@@ -200,11 +207,6 @@ namespace Crane
             ImGui::Text("%s", name.c_str());
 
         }
-
-
-
-
-
 
         if (opened)
         {
@@ -419,5 +421,37 @@ namespace Crane
             }
             if (ImGui::Checkbox("Emit", &isEmmitting))
                 particleSystem.SetActive(isEmmitting); });
+
+        ComponentDrawerTitle<ScriptComponent>(entity, [&]() {return entity.GetComponent<ScriptComponent>().ScriptName;}, [&]()
+        {
+            auto& component = entity.GetComponent<ScriptComponent>();
+
+
+            std::string currentScript = component.FullName;
+            if (ImGui::BeginCombo("Script", component.ScriptName.c_str()))
+            {
+                auto scriptMap = ScriptEngine::GetScripts();
+                std::string scripts[scriptMap.size()];
+                for (auto script : scriptMap)
+                {
+                    std::string fullName = script.second->GetFullName();
+                    std::string scriptName = script.second->GetName();
+                    bool isSelected = currentScript == fullName;
+                    if (ImGui::Selectable(scriptName.c_str(), isSelected, ImGuiSelectableFlags_SpanAvailWidth | ImGuiSelectableFlags_AllowItemOverlap))
+                    {
+                        currentScript = fullName.c_str();
+                        component.SetScript(fullName);
+                    }
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+
+                ImGui::EndCombo();
+            }
+
+
+        });
     }
+
 }

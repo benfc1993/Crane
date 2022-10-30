@@ -1,3 +1,4 @@
+using System;
 using Crane;
 
 namespace Sandbox
@@ -6,12 +7,16 @@ namespace Sandbox
     {
         void OnCreate()
         {
-            Debug.Log("Player.OnCreate");
+            Debug.Log($"Player.OnCreate");
         }
 
         void OnUpdate(float ts)
         {
-            Debug.Log($"Player.OnUpdate: {ts}");
+            Debug.Log($"Player.OnUpdate {ts}");
+            Vector3 pos = Position;
+            pos.x = Position.x + 10 * ts;
+
+            Position = pos;
         }
     }
 }

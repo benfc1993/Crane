@@ -199,6 +199,20 @@ namespace Crane {
 
     }
 
+
+    template <>
+    void ComponentSerializer::SerializeComponent<ScriptComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<ScriptComponent>())
+        {
+            auto& sc = entity.GetComponent<ScriptComponent>();
+            out << YAML::Key << "ScriptComponent";
+            out << YAML::BeginMap;
+            out << YAML::Key << "FullName" << YAML::Value << sc.FullName;
+            out << YAML::EndMap;
+        }
+    }
+
     template <>
     void ComponentSerializer::SerializeComponent<NativeScriptComponent>(YAML::Emitter& out, Entity entity)
     {

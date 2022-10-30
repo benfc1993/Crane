@@ -6,6 +6,9 @@
 #include "Crane/Particle/ParticleSystem.h"
 #include "Crane/Renderer/Shader/Texture.h"
 
+#include <sstream>
+#include <iostream>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -98,10 +101,31 @@ namespace Crane
 
     struct ScriptComponent
     {
-        std::string Name;
+        std::string FullName;
+        std::string ScriptName;
 
         ScriptComponent() = default;
+        ScriptComponent(const std::string& fullName)
+        {
+            SetScript(fullName);
+        }
+
         ScriptComponent(const ScriptComponent&) = default;
+
+        void SetScript(const std::string& fullName)
+        {
+            FullName = fullName;
+
+            std::vector<std::string> result;
+            std::stringstream  data(fullName);
+            std::string line;
+            while (std::getline(data, line, '.'))
+            {
+                result.push_back(line);
+            }
+
+            ScriptName = result.back();
+        }
     };
 
     class ScriptableEntity;
