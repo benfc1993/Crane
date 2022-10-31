@@ -57,6 +57,7 @@ namespace Crane {
         Entity GetPrimaryCameraEntity();
 
         Entity GetEntityByUUID(UUID uuid);
+        bool EntityExists(UUID uuid);
 
         template<typename ...Components>
         auto GetAllEntitiesWith()

@@ -115,8 +115,6 @@ namespace Crane
         {
             int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
             m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
-            if (pixelData != -1)
-                CR_INFO("{0}", m_HoveredEntity.GetName());
         }
 
         OnOverlayRender();
@@ -459,7 +457,6 @@ namespace Crane
         case Key::P:
             if (control)
             {
-                CR_INFO("Control + P");
                 if (m_SceneState == SceneState::Edit)
                 {
                     OnScenePlay();
@@ -496,7 +493,6 @@ namespace Crane
         if (!m_CanPick || Input::IsKeyPressed(Key::LeftAlt)) return false;
         if (e.getMouseButton() == 0)
         {
-            CR_INFO("CLICK");
             m_Panels.SetSelectedEntity(m_HoveredEntity);
         }
         return true;

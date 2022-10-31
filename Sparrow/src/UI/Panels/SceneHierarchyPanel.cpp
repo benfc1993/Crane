@@ -3,6 +3,7 @@
 #include "Crane/Scene/Components.h"
 #include "Crane/Renderer/Shader/Texture.h"
 #include "Crane/Scripting/ScriptEngine.h"
+#include "Crane/Scene/Hierarchy.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -12,6 +13,9 @@
 namespace Crane
 {
     static const std::filesystem::path s_AssetPath = "assets";
+    static EntityAction entityAction = EntityAction::None;
+    static UUID toActOn = UUID(0);
+    static UUID toMove = UUID(0);
 
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene, bool isRequired)
         : Panel(isRequired)
@@ -33,11 +37,72 @@ namespace Crane
         std::string hName = "Hierarchy###" + std::to_string(m_Index);
         ImGui::Begin(hName.c_str());
 
+
+        if (entityAction != EntityAction::Moving && entityAction != EntityAction::Move)
+        {
+            toActOn = UUID(0);
+            toMove = UUID(0);
+            entityAction = EntityAction::None;
+        }
+
+        ImGui::BeginGroup();
         m_ActiveScene->Reg().each([&](auto entityId)
         {
             Entity entity{ entityId, m_ActiveScene.get() };
+            if (m_ActiveScene->EntityExists(entity.GetUUID()))
+                if (entity.GetComponent<HierarchyComponent>().Parent == 0)
+                {
+                    DrawEntityNode(entity, 0);
+                }
+        });
 
-            DrawEntityNode(entity); });
+        ImGui::EndGroup();
+        ImVec2 region = ImGui::GetContentRegionAvail();
+        ImGui::InvisibleButton("bg", region, ImGuiButtonFlags_AllowItemOverlap);
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
+            {
+                toActOn = UUID(0);
+                entityAction = EntityAction::Move;
+                ImGui::EndDragDropTarget();
+            }
+        }
+        if (entityAction == EntityAction::Delete)
+        {
+            Entity entity = m_ActiveScene->GetEntityByUUID(toActOn);
+            Hierarchy::Delete(m_ActiveScene, entity);
+            m_ActiveScene->DestroyEntity(entity);
+            if (entity == m_SelectionContext)
+                m_SelectionContext = {};
+            if (entity == m_EditingEntity)
+                m_EditingEntity = {};
+        }
+
+        if (entityAction == EntityAction::AddChild)
+        {
+            Entity entity = m_ActiveScene->GetEntityByUUID(toActOn);
+            Entity newChild = m_ActiveScene->CreateEntity("Entity");
+            Hierarchy::AddChild(m_ActiveScene, entity, newChild);
+        }
+
+        if (entityAction == EntityAction::AddParent)
+        {
+            Entity entity = m_ActiveScene->GetEntityByUUID(toActOn);
+            Entity newParent = m_ActiveScene->CreateEntity("Entity");
+            Hierarchy::AddParent(m_ActiveScene, entity, newParent);
+        }
+
+        if (entityAction == EntityAction::Move)
+        {
+            CR_WARN("ToActOn: {0}", toActOn);
+            CR_TRACE("ToMove: {0}", toMove);
+            Entity parent = m_ActiveScene->GetEntityByUUID(toActOn);
+            Entity child = m_ActiveScene->GetEntityByUUID(toMove);
+            Hierarchy::Move(m_ActiveScene, child, parent);
+            entityAction = EntityAction::None;
+        }
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
         {
@@ -146,17 +211,39 @@ namespace Crane
         ImGui::End();
     }
 
-    void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+    void SceneHierarchyPanel::DrawEntityNode(Entity entity, float level)
     {
-        auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | (m_EditingEntity == entity ? ImGuiTreeNodeFlags_AllowItemOverlap : 0);
+
+        auto& tag = entity.GetComponent<TagComponent>().Tag;
+        bool hasChild = entity.GetComponent<HierarchyComponent>().First != 0;
+
+        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | (m_EditingEntity == entity ? ImGuiTreeNodeFlags_AllowItemOverlap : 0) | (hasChild ? 0 : ImGuiTreeNodeFlags_Leaf);
 
         std::string hId = "##header" + std::to_string(entity.GetUUID());
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 10.0f));
 
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", "");
+
+        if (ImGui::BeginDragDropSource())
+        {
+            toMove = entity.GetUUID();
+            entityAction = EntityAction::Moving;
+
+            ImGui::SetDragDropPayload("ENTITY", NULL, 0);
+            ImGui::Text("%s", entity.GetName().c_str());
+            ImGui::EndDragDropSource();
+        }
+        else if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
+            {
+                toActOn = entity.GetUUID();
+                entityAction = EntityAction::Move;
+                ImGui::EndDragDropTarget();
+            }
+        }
 
         ImGui::PopStyleVar();
 
@@ -170,12 +257,25 @@ namespace Crane
             m_EditingEntity = entity;
         }
 
-        bool entityShouldBeDelete = false;
         if (ImGui::BeginPopupContextItem())
         {
+
+            if (ImGui::MenuItem("Add Child Entity"))
+            {
+                toActOn = entity.GetUUID();
+                entityAction = EntityAction::AddChild;
+            }
+
+            if (ImGui::MenuItem("Add Parent"))
+            {
+                toActOn = entity.GetUUID();
+                entityAction = EntityAction::AddParent;
+            }
+
             if (ImGui::MenuItem("Delete Entity"))
             {
-                entityShouldBeDelete = true;
+                toActOn = entity.GetUUID();
+                entityAction = EntityAction::Delete;
             }
 
             ImGui::EndPopup();
@@ -184,7 +284,7 @@ namespace Crane
         if (m_SelectionContext == entity && m_EditingEntity == entity)
         {
 
-            ImGui::SameLine(30.0f);
+            ImGui::SameLine(30.0f + (10 * level));
             char buffer[256];
             memset(buffer, 0, sizeof(buffer));
             strcpy(buffer, tag.c_str());
@@ -202,7 +302,7 @@ namespace Crane
         }
         else
         {
-            ImGui::SameLine(40.0f);
+            ImGui::SameLine(40.0f + (10 * level));
             std::string name = tag.c_str();
             ImGui::Text("%s", name.c_str());
 
@@ -210,15 +310,18 @@ namespace Crane
 
         if (opened)
         {
+            auto& hc = entity.GetComponent<HierarchyComponent>();
+
+            UUID curr = hc.First;
+            while (curr != 0)
+            {
+                DrawEntityNode(m_ActiveScene->GetEntityByUUID(curr), (level + 1.0f));
+                if (!m_ActiveScene->EntityExists(curr)) break;
+                auto next = m_ActiveScene->GetEntityByUUID(curr).GetComponent<HierarchyComponent>().Next;
+                curr = next;
+            }
+
             ImGui::TreePop();
-        }
-        if (entityShouldBeDelete)
-        {
-            m_ActiveScene->DestroyEntity(entity);
-            if (entity == m_SelectionContext)
-                m_SelectionContext = {};
-            if (entity == m_EditingEntity)
-                m_EditingEntity = {};
         }
     }
 

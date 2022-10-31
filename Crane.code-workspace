@@ -95,7 +95,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sandbox}",
       "environment": [{"name": "config", "value": "Debug"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -120,7 +120,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sandbox}",
       "environment": [{"name": "config", "value": "Release"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -145,7 +145,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sandbox}",
       "environment": [{"name": "config", "value": "Dist"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -171,7 +171,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sparrow}",
       "environment": [{"name": "config", "value": "Debug"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -196,7 +196,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sparrow}",
       "environment": [{"name": "config", "value": "Release"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {
@@ -221,7 +221,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder:Sparrow}",
       "environment": [{"name": "config", "value": "Dist"}],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
         {

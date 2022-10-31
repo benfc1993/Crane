@@ -7,11 +7,10 @@
 #include "Crane/Core/UUID.h"
 
 namespace Crane {
-    // struct TransformComponent;
     class Entity
     {
     public:
-        friend class Scene;
+
         Entity() {}
         Entity(entt::entity entity, Scene* scene) : m_EntityHandle(entity), m_Scene(scene) {};
         Entity(const Entity& other) = default;
@@ -67,6 +66,8 @@ namespace Crane {
 
         TransformComponent Transform() { return GetComponent<TransformComponent>(); }
 
+        bool IsNull() const { return m_EntityHandle == entt::null; }
+
         bool operator!=(const Entity& other)
         {
             return !(*this == other);
@@ -80,5 +81,6 @@ namespace Crane {
     private:
         entt::entity m_EntityHandle{ entt::null };
         Scene* m_Scene = nullptr;
+        friend class Scene;
     };
 }

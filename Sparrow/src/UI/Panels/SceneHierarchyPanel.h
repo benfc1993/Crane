@@ -11,6 +11,17 @@
 #include <imgui/imgui_internal.h>
 
 namespace Crane {
+
+    enum class EntityAction
+    {
+        None = 0,
+        AddParent = 1,
+        AddChild = 2,
+        Delete = 3,
+        Move = 4,
+        Moving = 5
+    };
+
     class SceneHierarchyPanel : public Panel
     {
     public:
@@ -25,7 +36,7 @@ namespace Crane {
         virtual Entity GetSelectedEntity() const override { return m_SelectionContext; }
 
     private:
-        void DrawEntityNode(Entity entity);
+        void DrawEntityNode(Entity entity, float level);
         void DrawComponents(Entity entity);
 
     private:

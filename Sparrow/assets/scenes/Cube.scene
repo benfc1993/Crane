@@ -2,9 +2,38 @@ Scene:
   Name: Untitled
   FilePath: assets/scenes/Cube.scene
 Entities:
+  - Entity: 6919364969697287934
+    TagComponent:
+      Tag: Entity
+    HierarchyComponent:
+      Parent: 0
+      First: 8605688591870603252
+      Prev: 0
+      Next: 0
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 14948043079478639404
+    TagComponent:
+      Tag: GC
+    HierarchyComponent:
+      Parent: 12829984455450302587
+      First: 0
+      Prev: 12012691860128107949
+      Next: 0
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
   - Entity: 5937376109484499236
     TagComponent:
       Tag: Left
+    HierarchyComponent:
+      Parent: 0
+      First: 0
+      Prev: 0
+      Next: 0
     TransformComponent:
       Position: [-0.349999994, 0, 0.349999994]
       Rotation: [0, -0.785398245, 0]
@@ -18,6 +47,11 @@ Entities:
   - Entity: 11581802434867503407
     TagComponent:
       Tag: Second Camera
+    HierarchyComponent:
+      Parent: 0
+      First: 0
+      Prev: 0
+      Next: 0
     TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -36,6 +70,11 @@ Entities:
   - Entity: 3327796764114754579
     TagComponent:
       Tag: Camera
+    HierarchyComponent:
+      Parent: 0
+      First: 0
+      Prev: 0
+      Next: 0
     TransformComponent:
       Position: [0, 1.70000005, 4]
       Rotation: [-0.404916406, 0, 0]
@@ -54,6 +93,11 @@ Entities:
   - Entity: 8605688591870603252
     TagComponent:
       Tag: Top
+    HierarchyComponent:
+      Parent: 6919364969697287934
+      First: 0
+      Prev: 0
+      Next: 0
     TransformComponent:
       Position: [0, 0.500000238, 0]
       Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
@@ -65,6 +109,11 @@ Entities:
   - Entity: 12829984455450302587
     TagComponent:
       Tag: Right
+    HierarchyComponent:
+      Parent: 0
+      First: 16873184990387075181
+      Prev: 0
+      Next: 0
     TransformComponent:
       Position: [0.349999994, 0, 0.349999994]
       Rotation: [0, 0.785398245, 0]
@@ -73,3 +122,27 @@ Entities:
       Color: [0.104862124, 0.654008448, 0.605349779, 1]
       Texture: ""
       TilingFactor: 1
+  - Entity: 12012691860128107949
+    TagComponent:
+      Tag: 3
+    HierarchyComponent:
+      Parent: 12829984455450302587
+      First: 0
+      Prev: 16873184990387075181
+      Next: 14948043079478639404
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 16873184990387075181
+    TagComponent:
+      Tag: 2
+    HierarchyComponent:
+      Parent: 12829984455450302587
+      First: 0
+      Prev: 0
+      Next: 12012691860128107949
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]

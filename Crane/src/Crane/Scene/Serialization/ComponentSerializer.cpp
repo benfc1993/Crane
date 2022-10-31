@@ -26,6 +26,26 @@ namespace Crane {
     }
 
     template <>
+    void ComponentSerializer::SerializeComponent<HierarchyComponent>(YAML::Emitter& out, Entity entity)
+    {
+        if (entity.HasComponent<HierarchyComponent>())
+        {
+
+            out << YAML::Key << "HierarchyComponent";
+            out << YAML::BeginMap; // TagComponent
+
+            auto& hc = entity.GetComponent<HierarchyComponent>();
+            out << YAML::Key << "Parent" << YAML::Value << hc.Parent;
+            out << YAML::Key << "First" << YAML::Value << hc.First;
+            out << YAML::Key << "Prev" << YAML::Value << hc.Prev;
+            out << YAML::Key << "Next" << YAML::Value << hc.Next;
+
+            out << YAML::EndMap; // TagComponent
+        }
+
+    }
+
+    template <>
     void ComponentSerializer::SerializeComponent<TransformComponent>(YAML::Emitter& out, Entity entity)
     {
         if (entity.HasComponent<TransformComponent>())

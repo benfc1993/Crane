@@ -127,6 +127,8 @@ namespace Crane {
             idMap[uuid] = newEntity;
         }
 
+        CopyComponent<HierarchyComponent>(dstSceneReg, srcSceneReg, idMap);
+
         CopyComponent(AllComponents{}, dstSceneReg, srcSceneReg, idMap);
 
         return newScene;
@@ -142,6 +144,7 @@ namespace Crane {
     {
         Entity entity = { m_Registry.create(), this };
         entity.AddComponent<IdComponent>(uuid);
+        entity.AddComponent<HierarchyComponent>();
         auto& tag = entity.AddComponent<TagComponent>();
         tag.Tag = name.empty() ? "Entity" : name;
         entity.AddComponent<TransformComponent>();
@@ -152,7 +155,13 @@ namespace Crane {
 
     void Scene::DestroyEntity(Entity entity)
     {
+        m_EntityMap.erase(entity.GetUUID());
         m_Registry.destroy(entity);
+    }
+
+    bool Scene::EntityExists(UUID uuid)
+    {
+        return m_EntityMap.find(uuid) != m_EntityMap.end();
     }
 
     void Scene::DuplicateEntity(Entity entity)
@@ -459,6 +468,11 @@ namespace Crane {
 
     template<>
     void Scene::OnComponentAdded<IdComponent>(Entity entity, IdComponent& component)
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded<HierarchyComponent>(Entity entity, HierarchyComponent& component)
     {
     }
 

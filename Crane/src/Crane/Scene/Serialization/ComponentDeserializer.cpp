@@ -3,6 +3,7 @@
 #include "ComponentDeserializer.h"
 
 #include "Crane/Scene/Components.h"
+#include "Crane/Core/UUID.h"
 
 #include "Crane/Serialization/YamlDecoders.h"
 
@@ -19,6 +20,23 @@ namespace Crane {
         transformComponent.Position = node["Position"].as<glm::vec3>();
         transformComponent.Rotation = node["Rotation"].as<glm::vec3>();
         transformComponent.Scale = node["Scale"].as<glm::vec3>();
+    }
+
+    template <>
+    void ComponentDeserializer::DeserializeComponent<HierarchyComponent>(YAML::Node& data, Entity& entity)
+    {
+        YAML::Node node = data["HierarchyComponent"];
+        if (!node) return;
+
+        auto& hc = entity.AddOrReplaceComponent<HierarchyComponent>();
+        if (node["Parent"])
+            hc.Parent = UUID(node["Parent"].as<uint64_t>());
+        if (node["First"])
+            hc.First = UUID(node["First"].as<uint64_t>());
+        if (node["Prev"])
+            hc.Prev = UUID(node["Prev"].as<uint64_t>());
+        if (node["Next"])
+            hc.Next = UUID(node["Next"].as<uint64_t>());
     }
 
     template <>

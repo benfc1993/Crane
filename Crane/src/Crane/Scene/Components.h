@@ -26,6 +26,18 @@ namespace Crane
         IdComponent(const IdComponent&) = default;
     };
 
+    struct HierarchyComponent
+    {
+        UUID Parent = UUID(0);
+        UUID First = UUID(0);
+        UUID Prev = UUID(0);
+        UUID Next = UUID(0);
+
+        HierarchyComponent() = default;
+        HierarchyComponent(const HierarchyComponent&) = default;
+
+    };
+
     struct TagComponent
     {
         std::string Tag;
