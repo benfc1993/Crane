@@ -306,9 +306,11 @@ namespace Crane
                         tc.Rotation += deltaRotation;
                         tc.Scale = scale;
                     }
-
+                    else
+                    {
+                        m_CanPick = m_ViewportHovered;
+                    }
                 }
-
             }
 
             ImGui::End();
@@ -317,10 +319,8 @@ namespace Crane
 
         m_Panels.OnImGuiRender();
 
-
-
         ImGui::End();
-        m_CanPick = m_ViewportHovered;
+
     }
 
     void EditorLayer::OnOverlayRender()

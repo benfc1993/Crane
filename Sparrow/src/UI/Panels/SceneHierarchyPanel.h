@@ -43,6 +43,11 @@ namespace Crane {
         template<typename T, typename ContentFn>
         void ComponentDrawer(Entity& entity, std::string title, const ContentFn& contentFn, bool canDelete = true)
         {
+            ComponentDrawer<T>(entity, nullptr, title, contentFn, canDelete);
+        }
+        template<typename T, typename ContentFn>
+        void ComponentDrawer(Entity& entity, Ref<Scene> scene, std::string title, const ContentFn& contentFn, bool canDelete = true)
+        {
             const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap;
             if (entity.HasComponent<T>())
             {

@@ -52,8 +52,10 @@ namespace Crane
 
     struct TransformComponent
     {
+        glm::vec3 WorldPosition{ 0.0f };
         glm::vec3 Position{ 0.0f };
         glm::vec3 Rotation{ 0.0f };
+        glm::vec3 WorldScale{ 1.0f };
         glm::vec3 Scale{ 1.0f };
 
         TransformComponent() = default;
@@ -62,9 +64,9 @@ namespace Crane
         glm::mat4 Transform() const
         {
             glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-            return glm::translate(glm::mat4(1.0f), Position)
+            return glm::translate(glm::mat4(1.0f), WorldPosition)
                 * rotation
-                * glm::scale(glm::mat4(1.0f), Scale);
+                * glm::scale(glm::mat4(1.0f), WorldScale);
 
 
         }

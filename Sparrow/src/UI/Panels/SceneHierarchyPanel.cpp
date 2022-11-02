@@ -96,8 +96,6 @@ namespace Crane
 
         if (entityAction == EntityAction::Move)
         {
-            CR_WARN("ToActOn: {0}", toActOn);
-            CR_TRACE("ToMove: {0}", toMove);
             Entity parent = m_ActiveScene->GetEntityByUUID(toActOn);
             Entity child = m_ActiveScene->GetEntityByUUID(toMove);
             Hierarchy::Move(m_ActiveScene, child, parent);
@@ -346,16 +344,54 @@ namespace Crane
         }
 
         ComponentDrawer<TransformComponent>(
-            entity, "Transform", [&]()
+            entity, m_ActiveScene, "Transform", [&]()
         {
             auto& transform = entity.GetComponent<TransformComponent>();
+            auto& hc = entity.GetComponent<HierarchyComponent>();
 
             glm::vec2 test = { 1.0f, 0.0f };
-            Drawers::Vector("Position", transform.Position);
+            static bool local = false;
+
+            ImGui::Checkbox("Local", &local);
+            if (hc.Parent == 0)
+                if (local)
+                {
+                    Drawers::Vector("Local Position", transform.Position);
+                    Drawers::Vector("Local Scale", transform.Scale);
+                }
+                else
+                {
+                    Drawers::Vector("Position", transform.Position);
+                    Drawers::Vector("Scale", transform.Scale);
+                }
+            else
+            {
+                if (local)
+                {
+                    Drawers::Vector("Local Position", transform.Position);
+                    Drawers::Vector("Local Scale", transform.Scale);
+                }
+                else
+                {
+                    Entity parent = m_ActiveScene->GetEntityByUUID(hc.Parent);
+                    auto& parentTransform = parent.GetComponent<TransformComponent>();
+
+                    glm::vec3 parentPosition = parentTransform.WorldPosition;
+                    glm::vec3 worldPosition = transform.WorldPosition;
+                    Drawers::Vector("Position", worldPosition);
+                    transform.Position = worldPosition - parentPosition;
+
+                    glm::vec3 parentScale = parentTransform.WorldScale;
+                    glm::vec3 worldScale = transform.WorldScale;
+                    Drawers::Vector("Scale", worldScale);
+                    transform.Scale = worldScale / parentScale;
+
+                }
+            }
+
             glm::vec3 rotation = glm::degrees(transform.Rotation);
             Drawers::Vector("Rotation", rotation);
             transform.Rotation = glm::radians(rotation);
-            Drawers::Vector("Scale", transform.Scale);
         },
             false);
 

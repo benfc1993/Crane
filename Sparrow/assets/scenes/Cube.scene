@@ -2,71 +2,38 @@ Scene:
   Name: Untitled
   FilePath: assets/scenes/Cube.scene
 Entities:
-  - Entity: 6919364969697287934
+  - Entity: 12829984455450302587
     TagComponent:
-      Tag: Entity
-    HierarchyComponent:
-      Parent: 0
-      First: 8605688591870603252
-      Prev: 0
-      Next: 0
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 14948043079478639404
-    TagComponent:
-      Tag: GC
-    HierarchyComponent:
-      Parent: 12829984455450302587
-      First: 0
-      Prev: 12012691860128107949
-      Next: 0
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-  - Entity: 5937376109484499236
-    TagComponent:
-      Tag: Left
+      Tag: Right
     HierarchyComponent:
       Parent: 0
       First: 0
       Prev: 0
       Next: 0
     TransformComponent:
-      Position: [-0.349999994, 0, 0.349999994]
-      Rotation: [0, -0.785398245, 0]
+      Position: [0.349999994, 0, 0.349999994]
+      Rotation: [0, 0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.136837065, 0.772151887, 0.635438561, 1]
+      Color: [0.104862124, 0.654008448, 0.605349779, 1]
       Texture: ""
       TilingFactor: 1
-    ScriptComponent:
-      FullName: Sandbox.Player
-  - Entity: 11581802434867503407
+  - Entity: 8605688591870603252
     TagComponent:
-      Tag: Second Camera
+      Tag: Top
     HierarchyComponent:
       Parent: 0
       First: 0
       Prev: 0
       Next: 0
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveVerticalFov: 0.785398185
-        PerspectiveNearClip: 0.00100000005
-        PerspectiveFarClip: 1000
-        OrthographicSize: 10
-        OrthographicNearClip: -1
-        OrthographicFarClip: 1
-      Primary: false
-      FixedAspectRatio: false
+      Position: [0, 0.500000238, 0]
+      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
+      Scale: [0.999999881, 0.999999285, 0.996328115]
+    SpriteRendererComponent:
+      Color: [0.144759551, 0.729957819, 0.603526056, 1]
+      Texture: ""
+      TilingFactor: 1
   - Entity: 3327796764114754579
     TagComponent:
       Tag: Camera
@@ -90,59 +57,44 @@ Entities:
         OrthographicFarClip: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 8605688591870603252
+  - Entity: 11581802434867503407
     TagComponent:
-      Tag: Top
-    HierarchyComponent:
-      Parent: 6919364969697287934
-      First: 0
-      Prev: 0
-      Next: 0
-    TransformComponent:
-      Position: [0, 0.500000238, 0]
-      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
-      Scale: [0.999999881, 0.999999285, 0.996328115]
-    SpriteRendererComponent:
-      Color: [0.144759551, 0.729957819, 0.603526056, 1]
-      Texture: ""
-      TilingFactor: 1
-  - Entity: 12829984455450302587
-    TagComponent:
-      Tag: Right
+      Tag: Second Camera
     HierarchyComponent:
       Parent: 0
-      First: 16873184990387075181
+      First: 0
       Prev: 0
       Next: 0
     TransformComponent:
-      Position: [0.349999994, 0, 0.349999994]
-      Rotation: [0, 0.785398245, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.104862124, 0.654008448, 0.605349779, 1]
-      Texture: ""
-      TilingFactor: 1
-  - Entity: 12012691860128107949
-    TagComponent:
-      Tag: 3
-    HierarchyComponent:
-      Parent: 12829984455450302587
-      First: 0
-      Prev: 16873184990387075181
-      Next: 14948043079478639404
-    TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 16873184990387075181
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveVerticalFov: 0.785398185
+        PerspectiveNearClip: 0.00100000005
+        PerspectiveFarClip: 1000
+        OrthographicSize: 10
+        OrthographicNearClip: -1
+        OrthographicFarClip: 1
+      Primary: false
+      FixedAspectRatio: false
+  - Entity: 5937376109484499236
     TagComponent:
-      Tag: 2
+      Tag: Left
     HierarchyComponent:
-      Parent: 12829984455450302587
+      Parent: 0
       First: 0
       Prev: 0
-      Next: 12012691860128107949
+      Next: 0
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Position: [-0.349999994, 0, 0.349999994]
+      Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.136837065, 0.772151887, 0.635438561, 1]
+      Texture: ""
+      TilingFactor: 1
+    ScriptComponent:
+      FullName: Sandbox.Player

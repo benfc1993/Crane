@@ -227,9 +227,55 @@ namespace Crane {
         StopPhysics();
     }
 
+    void ChildTransforms(TransformComponent transform, UUID current, Scene* scene)
+    {
+        auto& curr = current;
+        while (curr != 0)
+        {
+            Entity child = scene->GetEntityByUUID(curr);
+            auto& childHc = child.GetComponent<HierarchyComponent>();
+            auto& childTransform = child.GetComponent<TransformComponent>();
+
+            childTransform.WorldPosition = transform.WorldPosition + childTransform.Position;
+            childTransform.WorldScale = transform.WorldScale * childTransform.Scale;
+
+            curr = childHc.Next;
+        }
+    }
+
     void Scene::OnUpdateEditor(Time time, EditorCamera& camera)
     {
         Renderer2D::BeginScene(camera);
+
+        {
+            auto view = m_Registry.view<TransformComponent, HierarchyComponent>();
+            for (auto e : view)
+            {
+                Entity parent = { e, this };
+                auto& transform = parent.GetComponent<TransformComponent>();
+                auto& hc = parent.GetComponent<HierarchyComponent>();
+
+                if (hc.Parent != 0) continue;
+
+                transform.WorldPosition = transform.Position;
+                transform.WorldScale = transform.Scale;
+
+                if (hc.First != 0)
+                {
+                    auto curr = hc.First;
+                    auto parentTransform = transform;
+                    while (curr != 0)
+                    {
+                        Entity child = GetEntityByUUID(curr);
+                        auto& childHc = child.GetComponent<HierarchyComponent>();
+                        ChildTransforms(parentTransform, curr, this);
+                        curr = childHc.First;
+                        parentTransform = child.GetComponent<TransformComponent>();
+                    }
+                }
+            }
+        }
+
         Render(time);
         Renderer2D::EndScene();
     }
@@ -256,6 +302,28 @@ namespace Crane {
             ScriptEngine::OnUpdateEntity(entity, time.DeltaTime());
         });
 
+        {
+            auto view = m_Registry.view<TransformComponent, HierarchyComponent>();
+            for (auto e : view)
+            {
+                Entity parent = { e, this };
+                auto& transform = parent.GetComponent<TransformComponent>();
+                auto& hc = parent.GetComponent<HierarchyComponent>();
+
+                if (hc.First != 0)
+                {
+                    auto curr = hc.First;
+                    while (curr != 0)
+                    {
+                        Entity child = GetEntityByUUID(curr);
+                        auto& childHc = child.GetComponent<HierarchyComponent>();
+                        auto& childTransform = child.GetComponent<TransformComponent>();
+                        childTransform.Position += transform.Position;
+                        curr = childHc.Next;
+                    }
+                }
+            }
+        }
 
 
         UpdatePhysics(time);
