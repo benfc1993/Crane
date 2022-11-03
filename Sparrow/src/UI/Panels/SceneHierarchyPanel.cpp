@@ -600,6 +600,9 @@ namespace Crane
                 ImGui::EndCombo();
             }
 
+            Ref<ScriptClass> script = ScriptEngine::GetScript(component.FullName);
+            script->GetFields();
+
 
         });
     }

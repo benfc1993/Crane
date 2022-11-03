@@ -54,7 +54,6 @@ namespace Crane
     {
         glm::vec3 WorldPosition{ 0.0f };
         glm::vec3 Position{ 0.0f };
-        glm::vec3 WorldRotation{ 0.0f };
         glm::vec3 Rotation{ 0.0f };
         glm::vec3 WorldScale{ 1.0f };
         glm::vec3 Scale{ 1.0f };

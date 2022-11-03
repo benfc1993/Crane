@@ -230,10 +230,16 @@ namespace Crane {
 		return s_Data->SceneContext;
 	}
 
-	std::unordered_map<std::string, Crane::Ref<Crane::ScriptClass>> ScriptEngine::GetScripts()
+	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetScripts()
 	{
 		return s_Data->EntityClasses;
 	}
+
+	Ref<ScriptClass> ScriptEngine::GetScript(const std::string& fullName)
+	{
+		return s_Data->EntityClasses[fullName];
+	}
+
 
 	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className)
 	{
@@ -250,6 +256,16 @@ namespace Crane {
 	MonoMethod* ScriptClass::GetMethod(const std::string& methodName, int argCount)
 	{
 		return mono_class_get_method_from_name(m_MonoClass, methodName.c_str(), argCount);
+	}
+
+	void ScriptClass::GetFields()
+	{
+		void* itter = nullptr;
+		while (MonoClassField* field = mono_class_get_fields(m_MonoClass, &itter))
+		{
+			const char* name = mono_field_get_name(field);
+			CR_SCR_INFO("Field name: {0}", name);
+		}
 	}
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)

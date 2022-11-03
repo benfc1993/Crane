@@ -7,6 +7,7 @@
 
 extern "C" {
     typedef struct _MonoClass MonoClass;
+    typedef struct _MonoClassField MonoClassField;
     typedef struct _MonoObject MonoObject;
     typedef struct _MonoMethod MonoMethod;
     typedef struct _MonoAssembly MonoAssembly;
@@ -33,6 +34,8 @@ namespace Crane {
                 fullName = m_ClassName;
             return fullName;
         }
+
+        void GetFields();
 
 
     private:
@@ -78,6 +81,8 @@ namespace Crane {
         static Scene* GetSceneContext();
 
         static std::unordered_map<std::string, Crane::Ref<Crane::ScriptClass>> GetScripts();
+        static Crane::Ref<Crane::ScriptClass> GetScript(const std::string& fullName);
+
         static bool ScriptClassExists(const std::string& fullClassName);
     private:
         static void InitMono();
