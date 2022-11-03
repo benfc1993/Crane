@@ -310,16 +310,19 @@ namespace Crane {
                 auto& transform = parent.GetComponent<TransformComponent>();
                 auto& hc = parent.GetComponent<HierarchyComponent>();
 
+                if (hc.Parent != 0) continue;
+
                 if (hc.First != 0)
                 {
                     auto curr = hc.First;
+                    auto parentTransform = transform;
                     while (curr != 0)
                     {
                         Entity child = GetEntityByUUID(curr);
                         auto& childHc = child.GetComponent<HierarchyComponent>();
-                        auto& childTransform = child.GetComponent<TransformComponent>();
-                        childTransform.Position += transform.Position;
-                        curr = childHc.Next;
+                        ChildTransforms(parentTransform, curr, this);
+                        curr = childHc.First;
+                        parentTransform = child.GetComponent<TransformComponent>();
                     }
                 }
             }
@@ -464,8 +467,8 @@ namespace Crane {
 
                 b2Body* body = (b2Body*)rb2d.RuntimeBody;
                 const auto& position = body->GetPosition();
-                transform.Position.x = position.x;
-                transform.Position.y = position.y;
+                transform.WorldPosition.x = position.x;
+                transform.WorldPosition.y = position.y;
                 transform.Rotation.z = body->GetAngle();
             }
         }

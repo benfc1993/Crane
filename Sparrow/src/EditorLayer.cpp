@@ -262,12 +262,13 @@ namespace Crane
                 ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
             }
 
+            m_CanPick = false;
 
             //Gizmos
-            // if (m_ActiveScene->GetState() == SceneState::Edit)
             if (m_SceneState == SceneState::Edit)
             {
                 Entity selectedEntity = m_Panels.GetSelectedEntity();
+                bool usingGuizmo = m_GizmoType != -1 && (ImGuizmo::IsUsing() || ImGuizmo::IsOver());
                 if (selectedEntity && m_GizmoType != -1)
                 {
                     ImGuizmo::SetOrthographic(false);
@@ -295,22 +296,34 @@ namespace Crane
                     ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
                         (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
 
-                    if (ImGuizmo::IsUsing())
+
+
+                    if (usingGuizmo)
                     {
-                        m_CanPick = false;
+
+                        glm::vec3 parentPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+                        glm::vec3 parentScale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+                        auto& hc = selectedEntity.GetComponent<HierarchyComponent>();
+
+                        if (hc.Parent != 0)
+                        {
+                            Entity parent = m_ActiveScene->GetEntityByUUID(hc.Parent);
+                            auto& parentTransform = parent.GetComponent<TransformComponent>();
+                            parentPosition = parentTransform.WorldPosition;
+                            parentScale = parentTransform.WorldScale;
+                        }
+
                         glm::vec3 position, rotation, scale;
                         Math::DecomposeTransform(transform, position, rotation, scale);
 
                         glm::vec3 deltaRotation = rotation - tc.Rotation;
-                        tc.Position = position;
+                        tc.Position = position - parentPosition;
                         tc.Rotation += deltaRotation;
-                        tc.Scale = scale;
-                    }
-                    else
-                    {
-                        m_CanPick = m_ViewportHovered;
+                        tc.Scale = scale / parentScale;
                     }
                 }
+                m_CanPick = m_ViewportHovered && !usingGuizmo;
             }
 
             ImGui::End();
@@ -371,10 +384,10 @@ namespace Crane
                 {
                     auto [transformC, box] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
 
-                    glm::vec3 position = transformC.Position + glm::vec3(box.Offset, -projectionCollider.z);
+                    glm::vec3 position = transformC.WorldPosition + glm::vec3(box.Offset, -projectionCollider.z);
                     glm::vec3 scale = transformC.Scale * glm::vec3(box.Size * 2.0f, 1.0f);
 
-                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.Position)
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.WorldPosition)
                         * glm::rotate(glm::mat4(1.0f), transformC.Rotation.z, glm::vec3(0, 0, 1))
                         * glm::translate(glm::mat4(1.0f), glm::vec3(box.Offset, -projectionCollider.z))
                         * glm::scale(glm::mat4(1.0f), scale);

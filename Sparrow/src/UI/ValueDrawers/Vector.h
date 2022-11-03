@@ -21,7 +21,7 @@ namespace Crane {
         };
 
         template<typename T>
-        void Vector(const std::string& label, T& vector, VectorOptions options = VectorOptions())
+        bool Vector(const std::string& label, T& vector, VectorOptions options = VectorOptions())
         {
             ImGuiIO& io = ImGui::GetIO();
             int fontCount = io.Fonts->Fonts.Size;
@@ -49,7 +49,7 @@ namespace Crane {
 
             float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
             ImVec2 buttonSize = { lineHeight + 0.5f, lineHeight };
-
+            bool onChange = false;
             for (int i = 0; i < dimensions; i++)
             {
                 ImGui::PushFont(boldFont);
@@ -62,7 +62,8 @@ namespace Crane {
                 std::string label = "##" + labels[i];
 
                 ImGui::SameLine();
-                ImGui::DragFloat(label.c_str(), &vector[i], options.step, options.min, options.max, options.fmt.c_str());
+                if (ImGui::DragFloat(label.c_str(), &vector[i], options.step, options.min, options.max, options.fmt.c_str()))
+                    onChange = true;
                 ImGui::PopItemWidth();
                 if (i != dimensions - 1)
                     ImGui::SameLine();
@@ -71,6 +72,8 @@ namespace Crane {
             ImGui::PopStyleVar();
             ImGui::Spacing();
             ImGui::PopID();
+
+            return onChange;
         }
 
         template <typename T>
