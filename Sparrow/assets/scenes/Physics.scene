@@ -1,6 +1,6 @@
 Scene:
   Name: Untitled
-  FilePath: /home/ben/Projects/crane/Sparrow/assets/scenes/Physics.scene
+  FilePath: /home/ben/projects/crane/Sparrow/assets/scenes/Physics.scene
 Entities:
   - Entity: 1702513007149386243
     TagComponent:
@@ -161,6 +161,8 @@ Entities:
       Color: [0, 0.83544302, 1, 1]
       Texture: ""
       TilingFactor: 1
+    ScriptComponent:
+      FullName: Sandbox.Player
     RigidBody2DComponent:
       Type: Dynamic
       FixedRotation: false

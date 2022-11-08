@@ -78,7 +78,6 @@ namespace Crane {
 				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
-				CR_CORE_TRACE("{}.{}", nameSpace, name);
 			}
 		}
 	}
@@ -108,6 +107,7 @@ namespace Crane {
 		LoadAssembly("Resources/Scripts/Crane-ScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("Crane", "Entity");
@@ -213,7 +213,7 @@ namespace Crane {
 				else
 					fullName = name;
 				s_Data->EntityClasses[fullName] = CreateRef<ScriptClass>(nSpace, name);
-				CR_CORE_TRACE("{}.{}", nSpace, name);
+				CR_CORE_TRACE("{}", fullName);
 			}
 		}
 	}
@@ -230,6 +230,11 @@ namespace Crane {
 		return s_Data->SceneContext;
 	}
 
+	MonoImage* ScriptEngine::GetAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
+	}
+
 	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetScripts()
 	{
 		return s_Data->EntityClasses;
@@ -237,7 +242,8 @@ namespace Crane {
 
 	Ref<ScriptClass> ScriptEngine::GetScript(const std::string& fullName)
 	{
-		return s_Data->EntityClasses[fullName];
+		if (s_Data->EntityClasses.find(fullName) == s_Data->EntityClasses.end()) return nullptr;
+		return s_Data->EntityClasses.at(fullName);
 	}
 
 
@@ -290,7 +296,7 @@ namespace Crane {
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		if (m_OnUpdateMethod == nullptr) return;
+		if (m_OnCreateMethod == nullptr) return;
 		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 

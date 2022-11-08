@@ -11,6 +11,7 @@ extern "C" {
     typedef struct _MonoObject MonoObject;
     typedef struct _MonoMethod MonoMethod;
     typedef struct _MonoAssembly MonoAssembly;
+    typedef struct _MonoImage MonoImage;
 }
 
 
@@ -79,6 +80,7 @@ namespace Crane {
         static void OnUpdateEntity(Entity entity, float ts);
 
         static Scene* GetSceneContext();
+        static MonoImage* GetAssemblyImage();
 
         static std::unordered_map<std::string, Crane::Ref<Crane::ScriptClass>> GetScripts();
         static Crane::Ref<Crane::ScriptClass> GetScript(const std::string& fullName);

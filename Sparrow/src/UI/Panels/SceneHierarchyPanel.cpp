@@ -576,12 +576,10 @@ namespace Crane
         {
             auto& component = entity.GetComponent<ScriptComponent>();
 
-
             std::string currentScript = component.FullName;
             if (ImGui::BeginCombo("Script", component.ScriptName.c_str()))
             {
                 auto scriptMap = ScriptEngine::GetScripts();
-                std::string scripts[scriptMap.size()];
                 for (auto script : scriptMap)
                 {
                     std::string fullName = script.second->GetFullName();
@@ -601,7 +599,7 @@ namespace Crane
             }
 
             Ref<ScriptClass> script = ScriptEngine::GetScript(component.FullName);
-            script->GetFields();
+            // script->GetFields();
 
 
         });

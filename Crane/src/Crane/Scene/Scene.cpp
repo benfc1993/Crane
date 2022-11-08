@@ -295,7 +295,6 @@ namespace Crane {
             nsc.Instance->OnUpdate(time);
         });
 
-        // UpdateScripts
         m_Registry.view<ScriptComponent>().each([=](auto e, auto& sc)
         {
             Entity entity = { e, this };
@@ -327,7 +326,6 @@ namespace Crane {
                 }
             }
         }
-
 
         UpdatePhysics(time);
 

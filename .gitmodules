@@ -1,10 +1,11 @@
 [submodule "Crane/vendor/spdlog"]
 	path = Crane/vendor/spdlog
 	url = git@github.com:gabime/spdlog.git
-
+	branch = master
 [submodule "Crane/vendor/imgui"]
 	path = Crane/vendor/imgui
 	url = git@github.com:benfc1993/imgui.git
+	branch = docking
 [submodule "Crane/vendor/glm"]
 	path = Crane/vendor/glm
 	url = git@github.com:g-truc/glm.git

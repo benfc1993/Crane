@@ -51,7 +51,7 @@ struct VertexOutput
 
 layout (location = 0) in VertexOutput Input;
 layout (location = 3) in flat float v_TextureIndex;
-layout (location = 4) in flat int v_EntityID;
+layout (location = 4) in flat int v_EntityId;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
@@ -98,6 +98,6 @@ void main()
 	if (texColor.a == 0.0)
 		discard;
 
-	o_Color = texColor;
-	o_EntityID = v_EntityID;
+	o_color = texColor;
+	o_EntityId = v_EntityId;
 }
