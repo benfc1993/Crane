@@ -3,8 +3,8 @@ project "Crane-ScriptCore"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/Sparrow/Resources/Scripts")
-	objdir ("%{wks.location}/Sparrow/Resources/Scripts/Intermediates")
+	targetdir ("../Sparrow/Resources/Scripts")
+	objdir ("../Sparrow/Resources/Scripts/Intermediates")
 
 	files
 	{

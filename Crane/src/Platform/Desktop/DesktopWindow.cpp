@@ -63,7 +63,7 @@ namespace Crane
         m_Context->Init();
 
         glfwSetWindowUserPointer(m_Window, &m_Data);
-        SetVSync(true);
+        SetVSync(false);
 
         glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified) {
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

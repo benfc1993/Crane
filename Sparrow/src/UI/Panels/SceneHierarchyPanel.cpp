@@ -516,8 +516,8 @@ namespace Crane
         {
             auto& component = entity.GetComponent<BoxCollider2DComponent>();
 
-            Drawers::Vector("Offset", component.Offset);
             Drawers::Vector("Size", component.Size);
+            Drawers::Vector("Offset", component.Offset);
             ImGui::DragFloat("Density", &component.Density, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Friction", &component.Friction, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Restitution", &component.Restitution, 0.1f, 0.0f, 1.0f);
@@ -599,7 +599,7 @@ namespace Crane
             }
 
             Ref<ScriptClass> script = ScriptEngine::GetScript(component.FullName);
-            // script->GetFields();
+            script->GetFields();
 
 
         });

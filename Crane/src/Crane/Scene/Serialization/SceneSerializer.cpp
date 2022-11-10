@@ -113,8 +113,6 @@ namespace Crane {
                 DeserializeComponents(AllComponents{}, entity, deserializedEntity);
 
                 ComponentDeserializer::DeserializeComponent<HierarchyComponent>(entity, deserializedEntity);
-
-                CR_CORE_TRACE("Deserialized Entity Id = {0}, Name = {1}", uuid, name);
             }
         }
 

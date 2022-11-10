@@ -51,37 +51,34 @@ namespace Crane {
             const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap;
             if (entity.HasComponent<T>())
             {
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+                ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
-                bool opened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", title.c_str());
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+                float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+                ImGui::Separator();
+                bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, "%s", title.c_str());
+                ImGui::PopStyleVar();
+                ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
+                std::string popupName = "ComponentSettings" + std::to_string(typeid(T).hash_code());
+
+                if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
+                {
+                    ImGui::OpenPopup(popupName.c_str());
+                }
 
                 bool removeComponent = false;
-                if (canDelete)
+                if (ImGui::BeginPopup(popupName.c_str()))
                 {
-                    ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
-                    float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-                    ImGui::SameLine(contentRegionAvail.x - lineHeight * 0.5f);
+                    if (ImGui::MenuItem("Remove component"))
+                        removeComponent = true;
 
-                    if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
-                    {
-                        ImGui::OpenPopup("ComponentSettings");
-                    }
-
-
-                    if (ImGui::BeginPopup("ComponentSettings"))
-                    {
-                        if (ImGui::MenuItem("Remove Component"))
-                            removeComponent = true;
-                        ImGui::EndPopup();
-                    }
+                    ImGui::EndPopup();
                 }
-                ImGui::PopStyleVar(2);
 
-                if (opened)
+                if (open)
                 {
                     contentFn();
-                    ImGui::Separator();
                     ImGui::TreePop();
                 }
 

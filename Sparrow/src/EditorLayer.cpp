@@ -165,7 +165,7 @@ namespace Crane
         ImGuiStyle& style = ImGui::GetStyle();
 
         float minWindowSize = style.WindowMinSize.x;
-        style.WindowMinSize.x = 370.0f;
+        style.WindowMinSize.x = 150.0f;
 
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
@@ -236,7 +236,7 @@ namespace Crane
             m_ViewportHovered = ImGui::IsWindowHovered();
             bool imGuiInteracting = ImGui::IsAnyItemActive() || ImGui::IsAnyItemFocused();
 
-            Application::Get().GetImGuiLayer()->ShouldBlockEvents((!m_ViewportFocused && !m_ViewportHovered) || imGuiInteracting);
+            Application::Get().GetImGuiLayer()->ShouldBlockEvents(!m_ViewportHovered || imGuiInteracting);
 
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 

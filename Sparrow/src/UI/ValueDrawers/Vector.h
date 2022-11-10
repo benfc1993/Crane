@@ -41,7 +41,7 @@ namespace Crane {
                 {0.11f, 0.7f, 0.86f, 1.0f}
             };
 
-            ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+            ImGui::PushMultiItemsWidths(dimensions, ImGui::CalcItemWidth());
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
             ImVec4 color = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -110,8 +110,7 @@ namespace Crane {
                 {0.11f, 0.7f, 0.86f, 1.0f}
             };
 
-            ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+            ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
             ImVec4 color = { 0.0f, 0.0f, 0.0f, 0.0f };
 

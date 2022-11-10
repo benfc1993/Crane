@@ -6,6 +6,7 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/mono-config.h"
+#include "mono/metadata/attrdefs.h"
 
 namespace Crane {
 
@@ -90,6 +91,9 @@ namespace Crane {
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
+		MonoAssembly* AppAssembly = nullptr;
+		MonoImage* AppAssemblyImage = nullptr;
+
 		ScriptClass EntityClass;
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
@@ -105,12 +109,13 @@ namespace Crane {
 
 		InitMono();
 		LoadAssembly("Resources/Scripts/Crane-ScriptCore.dll");
-		LoadAssemblyClasses(s_Data->CoreAssembly);
+		LoadAppAssembly("Resources/SandboxProject/Bin/SandboxProject.dll");
+		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
-		s_Data->EntityClass = ScriptClass("Crane", "Entity");
+		s_Data->EntityClass = ScriptClass("Crane", "Entity", true);
 	}
 
 	void ScriptEngine::Shutdown()
@@ -149,6 +154,13 @@ namespace Crane {
 		Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 	}
 
+	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filePath)
+	{
+		s_Data->AppAssembly = Utils::LoadMonoAssembly(filePath);
+		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+		Utils::PrintAssemblyTypes(s_Data->AppAssembly);
+	}
+
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
 	{
 		s_Data->SceneContext = scene;
@@ -185,37 +197,36 @@ namespace Crane {
 		instance->InvokeOnUpdate(ts);
 	}
 
-	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	void ScriptEngine::LoadAssemblyClasses()
 	{
 		s_Data->EntityClasses.clear();
 
-		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-		MonoClass* entityClass = mono_class_from_name(image, "Crane", "Entity");
+		MonoClass* entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "Crane", "Entity");
 
 		for (int32_t i = 0; i < numTypes; i++)
 		{
 			uint32_t cols[MONO_TYPEDEF_SIZE];
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-			const char* nSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-			MonoClass* monoClass = mono_class_from_name(image, nSpace, name);
+			const char* nSpace = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
+			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nSpace, name);
 			if (monoClass == entityClass)
 				continue;
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
-			if (isEntity)
-			{
-				std::string fullName;
-				if (strlen(nSpace) != 0)
-					fullName = fmt::format("{}.{}", nSpace, name);
-				else
-					fullName = name;
-				s_Data->EntityClasses[fullName] = CreateRef<ScriptClass>(nSpace, name);
-				CR_CORE_TRACE("{}", fullName);
-			}
+			if (!isEntity)
+				continue;
+
+			std::string fullName;
+			if (strlen(nSpace) != 0)
+				fullName = fmt::format("{}.{}", nSpace, name);
+			else
+				fullName = name;
+			s_Data->EntityClasses[fullName] = CreateRef<ScriptClass>(nSpace, name);
 		}
+
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
@@ -247,11 +258,10 @@ namespace Crane {
 	}
 
 
-	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className)
+	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore)
+		: m_ClassNamespace(classNamespace), m_ClassName(className)
 	{
-		m_ClassNamespace = classNamespace;
-		m_ClassName = className;
-		m_MonoClass = mono_class_from_name(s_Data->CoreAssemblyImage, classNamespace.c_str(), className.c_str());
+		m_MonoClass = mono_class_from_name(isCore ? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, classNamespace.c_str(), className.c_str());
 	}
 
 	MonoObject* ScriptClass::Instantiate()
@@ -266,11 +276,16 @@ namespace Crane {
 
 	void ScriptClass::GetFields()
 	{
-		void* itter = nullptr;
-		while (MonoClassField* field = mono_class_get_fields(m_MonoClass, &itter))
+		void* iterator = nullptr;
+		while (MonoClassField* field = mono_class_get_fields(m_MonoClass, &iterator))
 		{
-			const char* name = mono_field_get_name(field);
-			CR_SCR_INFO("Field name: {0}", name);
+			const char* fieldName = mono_field_get_name(field);
+			uint32_t flags = mono_field_get_flags(field);
+			if (flags & MONO_FIELD_ATTR_PUBLIC)
+			{
+				MonoType* type = mono_field_get_type(field);
+				CR_CORE_WARN("{} {}", m_ClassName, fieldName);
+			}
 		}
 	}
 

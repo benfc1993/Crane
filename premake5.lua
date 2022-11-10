@@ -11,6 +11,10 @@ workspace "Crane"
 		"Release",
 		"Dist"
 	}
+	flags
+	{
+		"MultiProcessorCompile"
+	}
 
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -38,4 +42,4 @@ include "Crane"
 
 group "Misc"
 	include "Sandbox"
-include "Crane"
+group ""

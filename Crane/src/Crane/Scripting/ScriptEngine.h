@@ -20,7 +20,7 @@ namespace Crane {
     {
     public:
         ScriptClass() = default;
-        ScriptClass(const std::string& classNamespace, const std::string& className);
+        ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore = false);
 
         MonoObject* Instantiate();
         MonoMethod* GetMethod(const std::string& methodName, int argCount);
@@ -72,6 +72,7 @@ namespace Crane {
         static void Shutdown();
 
         static void LoadAssembly(const std::filesystem::path& filePath);
+        static void LoadAppAssembly(const std::filesystem::path& filePath);
 
         static void OnRuntimeStart(Scene* scene);
         static void OnRuntimeStop();
@@ -90,7 +91,7 @@ namespace Crane {
         static void InitMono();
         static void ShutdownMono();
 
-        static void LoadAssemblyClasses(MonoAssembly* assembly);
+        static void LoadAssemblyClasses();
         static MonoObject* InstantiateClass(MonoClass* monoClass);
 
         friend class ScriptClass;
