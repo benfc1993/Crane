@@ -598,6 +598,8 @@ namespace Crane
                 ImGui::EndCombo();
             }
 
+            if (component.FullName == "") return;
+
             Ref<ScriptClass> script = ScriptEngine::GetScript(component.FullName);
             script->GetFields();
 

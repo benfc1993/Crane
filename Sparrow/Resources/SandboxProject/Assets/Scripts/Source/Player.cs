@@ -16,7 +16,6 @@ namespace Sandbox
 
         void OnUpdate(float ts)
         {
-            Debug.Log($"ts: {ts}");
             Vector2 velocity = Vector2.zero;
 
             if (Input.IsKeyDown(KeyCode.W))

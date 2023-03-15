@@ -17,12 +17,23 @@
         "options": {
           "cwd": "${workspaceFolder}"
         },
-        "problemMatcher": ["$gcc"],
         "group": {
           "kind": "build",
           "isDefault": true
         }
       }
+    ]
+  },
+  "settings": {
+    "triggerTaskOnSave.tasks": {
+      "build": ["*.cs"]
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "gruntfuggly.triggertaskonsave",
+      "ms-dotnettools.csharp",
+      "kreativ-software.csharpextensions"
     ]
   }
 }
