@@ -600,20 +600,56 @@ namespace Crane
 
             if (component.FullName == "") return;
 
+            bool sceneRunning = m_ActiveScene->IsRunning();
             Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-            if (scriptInstance)
+            if (sceneRunning)
             {
-                const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+                if (scriptInstance)
+                {
+                    const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+
+                    for (const auto& [name, field] : fields)
+                    {
+                        if (field.Type == ScriptFieldType::Float)
+                        {
+
+                            float data = scriptInstance->GetFieldValue<float>(name);
+                            if (ImGui::DragFloat(name.c_str(), &data))
+                            {
+                                scriptInstance->SetFieldValue(name, data);
+                            }
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                if (!entity) return;
+
+                Ref<ScriptClass> script = ScriptEngine::GetScript(component.FullName);
+
+                const auto& fields = script->GetFields();
+
+                auto& instancedFields = ScriptEngine::GetScriptFieldMap(entity);
 
                 for (const auto& [name, field] : fields)
                 {
+                    bool fieldValueSet = instancedFields.find(name) != instancedFields.end();
+
                     if (field.Type == ScriptFieldType::Float)
                     {
-
-                        float data = scriptInstance->GetFieldValue<float>(name);
+                        float data = fieldValueSet ? instancedFields.at(name).GetValue<float>() : 0.0f;
                         if (ImGui::DragFloat(name.c_str(), &data))
                         {
-                            scriptInstance->SetFieldValue(name, data);
+                            if (fieldValueSet)
+                                instancedFields.at(name).SetValue<float>(data);
+                            else
+                            {
+                                ScriptFieldInstance& fieldInstance = instancedFields[name];
+                                fieldInstance.Field = field;
+                                fieldInstance.SetValue(data);
+                            }
                         }
                     }
                 }

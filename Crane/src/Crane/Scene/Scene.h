@@ -64,11 +64,13 @@ namespace Crane {
         {
             return m_Registry.view<Components...>();
         }
+
+        bool IsRunning() const { return m_Running; }
     private:
         void SetupPhysics();
         void StopPhysics();
     private:
-
+        bool m_Running = false;
         entt::registry m_Registry;
         uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
         std::string m_FilePath;

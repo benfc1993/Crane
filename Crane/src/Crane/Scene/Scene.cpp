@@ -195,6 +195,7 @@ namespace Crane {
 
     void Scene::OnRuntimeStart()
     {
+        m_Running = true;
         SetupPhysics();
 
         ScriptEngine::OnRuntimeStart(this);
@@ -214,6 +215,7 @@ namespace Crane {
 
     void Scene::OnRuntimeStop()
     {
+        m_Running = false;
         StopPhysics();
     }
 

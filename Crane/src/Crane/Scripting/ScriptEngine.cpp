@@ -159,6 +159,8 @@ namespace Crane {
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
 
+		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
+
 		Scene* SceneContext = nullptr;
 	};
 
@@ -246,6 +248,14 @@ namespace Crane {
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[sc.FullName], uuid);
 			s_Data->EntityInstances[uuid] = instance;
 
+			CR_CORE_ASSERT(s_Data->EntityScriptFields.find(uuid) != s_Data->EntityScriptFields.end());
+			const ScriptFieldMap& fields = s_Data->EntityScriptFields.at(uuid);
+
+			for (const auto& [name, fieldInstance] : fields)
+			{
+				instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+			}
+
 			instance->InvokeOnCreate();
 		}
 	}
@@ -320,6 +330,13 @@ namespace Crane {
 	{
 		if (s_Data->EntityClasses.find(fullName) == s_Data->EntityClasses.end()) return nullptr;
 		return s_Data->EntityClasses.at(fullName);
+	}
+
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
+	{
+		CR_CORE_ASSERT(entity);
+
+		return s_Data->EntityScriptFields[entity.GetUUID()];
 	}
 
 	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entityId)

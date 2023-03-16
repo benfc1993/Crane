@@ -5,7 +5,7 @@ namespace Sandbox
 {
     public class Player : Entity
     {
-        public float speed = 20.0f;
+        public float speed = 0.0f;
         private RigidBody2DComponent rigidBody;
 
         void OnCreate()
