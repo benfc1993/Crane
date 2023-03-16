@@ -95,8 +95,8 @@ namespace Crane {
         particle.LifeRemaining = particle.LifeTime;
 
         particle.Velocity = particleData.Velocity;
-        particle.Velocity.x += (particle.Velocity.x * particleData.VelocityVariation.x * (((float)Random::Float() * 2.0f) - 1.0f));
-        particle.Velocity.y += (particle.Velocity.y * particleData.VelocityVariation.y * (((float)Random::Float() * 2.0f) - 1.0f));
+        particle.Velocity.x += (particle.Velocity.x * particleData.VelocityVariation * (((float)Random::Float() * 2.0f) - 1.0f));
+        particle.Velocity.y += (particle.Velocity.y * particleData.VelocityVariation * (((float)Random::Float() * 2.0f) - 1.0f));
 
         particle.EntityId = particleData.EntityId;
 

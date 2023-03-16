@@ -368,7 +368,7 @@ namespace Crane
 
             if (hc.Parent == 0)
             {
-                Drawers::Vector("Position", transform.Position);
+                Drawers::Vector("Position", transform.WorldPosition);
                 Drawers::Vector("Scale", transform.Scale);
             }
             else

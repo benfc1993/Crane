@@ -237,5 +237,5 @@ namespace Crane
     using AllComponents =
         ComponentGroup<TransformComponent, SpriteRendererComponent,
         CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
-        RigidBody2DComponent, BoxCollider2DComponent, CircleColliderComponent>;
+        RigidBody2DComponent, BoxCollider2DComponent, CircleColliderComponent, ParticleSystemComponent>;
 }

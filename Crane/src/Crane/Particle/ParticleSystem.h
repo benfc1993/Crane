@@ -11,7 +11,8 @@ namespace Crane {
     struct ParticleData
     {
         glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
-        glm::vec3 Velocity = { 0.420f, 0.370f, 0.0f }, VelocityVariation = { 0.5f, 0.5f, 0.0f };
+        glm::vec3 Velocity = { 0.420f, 0.370f, 0.0f };
+        float VelocityVariation = 0.5f;
         glm::vec4 ColorBegin = { 0.8f, 0.2f, 0.3f, 1.0f };
         glm::vec4 ColorEnd = { 0.036f, 0.044f, 0.054f, 0.059f };
         float SizeBegin = 0.2f, SizeEnd = 0.75f;

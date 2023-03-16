@@ -497,7 +497,7 @@ namespace Crane {
             {
                 auto [particleSystem, transform] = view.get<ParticleSystemComponent, TransformComponent>(entity);
 
-                particleSystem.Data.Position = transform.Position;
+                particleSystem.Data.Position = transform.WorldPosition;
 
                 for (int i = 0; i < particleSystem.Data.BurstSize; i++)
                 {

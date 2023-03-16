@@ -154,7 +154,7 @@ namespace Crane {
         particleSystemComponent.Data.SizeEnd = node["SizeEnd"].as<float>();
         particleSystemComponent.Data.SizeVariation = node["SizeVariation"].as<float>();
         particleSystemComponent.Data.Velocity = node["Velocity"].as<glm::vec3>();
-        particleSystemComponent.Data.VelocityVariation = node["VelocityVariation"].as<glm::vec3>();
+        particleSystemComponent.Data.VelocityVariation = node["VelocityVariation"].as<float>();
     }
 
     template <>
