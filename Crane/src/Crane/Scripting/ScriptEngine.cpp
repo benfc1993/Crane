@@ -10,6 +10,29 @@
 
 namespace Crane {
 
+	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap =
+	{
+		{ "System.Boolean", ScriptFieldType::Bool },
+		{ "System.Single", ScriptFieldType::Float },
+		{ "System.Double", ScriptFieldType::Double },
+		{ "System.String", ScriptFieldType::String },
+		{ "System.Char", ScriptFieldType::Char },
+		{ "System.Byte", ScriptFieldType::Byte },
+		{ "System.Int16", ScriptFieldType::Short },
+		{ "System.Int32", ScriptFieldType::Int },
+		{ "System.Int64", ScriptFieldType::Long },
+		{ "System.UByte", ScriptFieldType::UByte },
+		{ "System.UInt16", ScriptFieldType::UShort },
+		{ "System.UInt32", ScriptFieldType::UInt },
+		{ "System.UInt64", ScriptFieldType::ULong },
+
+		{ "Crane.Vector2", ScriptFieldType::Vector2 },
+		{ "Crane.Vector3", ScriptFieldType::Vector3 },
+		{ "Crane.Vector4", ScriptFieldType::Vector4 },
+
+		{ "Crane.Entity", ScriptFieldType::Entity },
+	};
+
 	namespace Utils {
 		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
 		{
@@ -80,6 +103,44 @@ namespace Crane {
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
 			}
+		}
+
+		ScriptFieldType MonoTypeToScriptFieldType(MonoType* monoType)
+		{
+			std::string typeName = mono_type_get_name(monoType);
+			CR_INFO(typeName);
+
+			auto type = s_ScriptFieldTypeMap.find(typeName);
+
+			if (type == s_ScriptFieldTypeMap.end())
+				return ScriptFieldType::None;
+
+			return type->second;
+		}
+
+		const char* ScriptFieldTypeToString(ScriptFieldType fieldType)
+		{
+			switch (fieldType)
+			{
+			case ScriptFieldType::Float: return "Float";
+			case ScriptFieldType::Double: return "Double";
+			case ScriptFieldType::Bool: return "Bool";
+			case ScriptFieldType::Char: return "Char";
+			case ScriptFieldType::String: return "String";
+			case ScriptFieldType::Byte: return "Byte";
+			case ScriptFieldType::Short: return "Short";
+			case ScriptFieldType::Int: return "Int";
+			case ScriptFieldType::Long: return "Long";
+			case ScriptFieldType::UByte: return "UByte";
+			case ScriptFieldType::UInt: return "UInt";
+			case ScriptFieldType::UShort: return "UShort";
+			case ScriptFieldType::ULong: return "ULong";
+			case ScriptFieldType::Vector2: return "Vector2";
+			case ScriptFieldType::Vector3: return "Vector3";
+			case ScriptFieldType::Vector4: return "Vector4";
+			case ScriptFieldType::Entity: return "Entity";
+			}
+			return "<Invalid>";
 		}
 	}
 
@@ -224,8 +285,12 @@ namespace Crane {
 				fullName = fmt::format("{}.{}", nSpace, name);
 			else
 				fullName = name;
-			s_Data->EntityClasses[fullName] = CreateRef<ScriptClass>(nSpace, name);
+			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nSpace, name);
+			s_Data->EntityClasses[fullName] = scriptClass;
+			scriptClass->SetFields();
 		}
+
+		auto& enitiyClasses = s_Data->EntityClasses;
 
 	}
 
@@ -257,6 +322,42 @@ namespace Crane {
 		return s_Data->EntityClasses.at(fullName);
 	}
 
+	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entityId)
+	{
+		auto it = s_Data->EntityInstances.find(entityId);
+
+		if (it == s_Data->EntityInstances.end())
+			return nullptr;
+
+		return it->second;
+	}
+
+	bool ScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const ScriptField& field = it->second;
+		mono_field_get_value(m_Instance, field.ClassField, buffer);
+		return true;
+
+	}
+
+	bool ScriptInstance::SetFieldValueInternal(const std::string& name, const void* value)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const ScriptField& field = it->second;
+		mono_field_set_value(m_Instance, field.ClassField, (void*)value);
+		return true;
+
+	}
+
 
 	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore)
 		: m_ClassNamespace(classNamespace), m_ClassName(className)
@@ -274,7 +375,7 @@ namespace Crane {
 		return mono_class_get_method_from_name(m_MonoClass, methodName.c_str(), argCount);
 	}
 
-	void ScriptClass::GetFields()
+	void ScriptClass::SetFields()
 	{
 		void* iterator = nullptr;
 		while (MonoClassField* field = mono_class_get_fields(m_MonoClass, &iterator))
@@ -284,7 +385,9 @@ namespace Crane {
 			if (flags & MONO_FIELD_ATTR_PUBLIC)
 			{
 				MonoType* type = mono_field_get_type(field);
-				CR_CORE_WARN("{} {}", m_ClassName, fieldName);
+				ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(type);
+				const char* typeName = Utils::ScriptFieldTypeToString(fieldType);
+				m_Fields[fieldName] = { fieldType, fieldName, field };
 			}
 		}
 	}

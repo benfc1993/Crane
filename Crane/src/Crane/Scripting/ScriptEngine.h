@@ -12,10 +12,27 @@ extern "C" {
     typedef struct _MonoMethod MonoMethod;
     typedef struct _MonoAssembly MonoAssembly;
     typedef struct _MonoImage MonoImage;
+    typedef struct _MonoClassField MonoClassField;
 }
 
 
 namespace Crane {
+
+    enum class ScriptFieldType
+    {
+        None = 0,
+        Float, Vector2, Vector3, Vector4,
+        Int, UInt, Bool, Char, String, Double, Short, Long, Byte,
+        UShort, ULong, UByte, Entity
+    };
+
+    struct ScriptField
+    {
+        ScriptFieldType Type;
+        std::string Name;
+        MonoClassField* ClassField;
+    };
+
     class ScriptClass
     {
     public:
@@ -36,14 +53,20 @@ namespace Crane {
             return fullName;
         }
 
-        void GetFields();
+        void SetFields();
 
+
+        const std::map<std::string, ScriptField>& GetFields() const { return m_Fields; }
 
     private:
         std::string m_ClassNamespace;
         std::string m_ClassName;
 
+        std::map<std::string, ScriptField> m_Fields;
+
         MonoClass* m_MonoClass = nullptr;
+
+        friend class ScriptEngine;
     };
 
     class ScriptInstance
@@ -54,6 +77,26 @@ namespace Crane {
         void InvokeOnCreate();
         void InvokeOnUpdate(float ts);
 
+        Ref<ScriptClass> GetScriptClass() { return m_ScriptClass; }
+        template<typename T>
+        T GetFieldValue(const std::string& name)
+        {
+            bool sucess = GetFieldValueInternal(name, s_FieldValueBuffer);
+            if (!sucess)
+                return T();
+
+            return *(T*)s_FieldValueBuffer;
+        }
+
+        template<typename T>
+        void SetFieldValue(const std::string& name, const T& value)
+        {
+            bool sucess = SetFieldValueInternal(name, &value);
+        }
+
+    private:
+        bool GetFieldValueInternal(const std::string& name, void* buffer);
+        bool SetFieldValueInternal(const std::string& name, const void* value);
     private:
         Ref<ScriptClass> m_ScriptClass;
 
@@ -62,6 +105,7 @@ namespace Crane {
         MonoMethod* m_OnCreateMethod = nullptr;
         MonoMethod* m_OnUpdateMethod = nullptr;
 
+        inline static char s_FieldValueBuffer[8];
     };
 
     class ScriptEngine
@@ -87,6 +131,7 @@ namespace Crane {
         static Crane::Ref<Crane::ScriptClass> GetScript(const std::string& fullName);
 
         static bool ScriptClassExists(const std::string& fullClassName);
+        static Ref<ScriptInstance> GetEntityScriptInstance(UUID entityId);
     private:
         static void InitMono();
         static void ShutdownMono();
