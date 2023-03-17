@@ -15,7 +15,7 @@
 
 namespace Crane
 {
-        ImGuiLayer::ImGuiLayer() : Layer("ImGui Layer")
+        ImGuiLayer::ImGuiLayer(): Layer("ImGui Layer")
         {
         }
 
@@ -77,8 +77,8 @@ namespace Crane
                 if (m_ShouldBlockEvents)
                 {
                         ImGuiIO& io = ImGui::GetIO();
+                        // event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard; // IMGUI don't block keyboard events
                         event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-                        event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
                 }
         }
 

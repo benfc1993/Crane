@@ -3,6 +3,7 @@
 #include "ComponentSerializer.h"
 
 #include "Crane/Scene/Components.h"
+#include "Crane/Scripting/ScriptEngine.h"
 
 #include "Crane/Serialization/YamlOperators.h"
 
@@ -226,10 +227,58 @@ namespace Crane {
         if (entity.HasComponent<ScriptComponent>())
         {
             auto& sc = entity.GetComponent<ScriptComponent>();
+
             out << YAML::Key << "ScriptComponent";
-            out << YAML::BeginMap;
+            out << YAML::BeginMap; // ScriptComponent
             out << YAML::Key << "FullName" << YAML::Value << sc.FullName;
-            out << YAML::EndMap;
+
+            auto& fieldInstances = ScriptEngine::GetScriptFieldMap(entity);
+            if (fieldInstances.size() > 0)
+            {
+                out << YAML::Key << "Fields";
+                out << YAML::BeginSeq; // Fields
+
+                for (const auto& [name, fieldInstance] : fieldInstances)
+                {
+                    out << YAML::BeginMap;
+                    out << YAML::Key << "Name" << YAML::Value << name;
+                    out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(fieldInstance.Field.Type);
+                    out << YAML::Key << "Value" << YAML::Value;
+
+                    ScriptFieldInstance& scriptField = fieldInstances.at(name);
+
+#define FIELD_TYPE(FieldType, Type) case ScriptFieldType::FieldType:\
+                    out << scriptField.GetValue<Type>(); \
+                    break
+
+                    switch (fieldInstance.Field.Type)
+                    {
+                        FIELD_TYPE(Float, float);
+                        FIELD_TYPE(Double, double);
+                        FIELD_TYPE(Bool, bool);
+                        FIELD_TYPE(Char, char);
+                        FIELD_TYPE(Byte, int8_t);
+                        FIELD_TYPE(Short, int16_t);
+                        FIELD_TYPE(Int, int32_t);
+                        FIELD_TYPE(Long, int64_t);
+                        FIELD_TYPE(UByte, uint8_t);
+                        FIELD_TYPE(UShort, uint16_t);
+                        FIELD_TYPE(UInt, uint32_t);
+                        FIELD_TYPE(ULong, uint64_t);
+                        FIELD_TYPE(Vector2, glm::vec2);
+                        FIELD_TYPE(Vector3, glm::vec3);
+                        FIELD_TYPE(Vector4, glm::vec4);
+                        FIELD_TYPE(Entity, UUID);
+                    }
+#undef FIELD_TYPE
+                    out << YAML::EndMap;
+                }
+
+                out << YAML::EndSeq; // Fields
+            }
+
+
+            out << YAML::EndMap; // ScriptComponent
         }
     }
 

@@ -118,30 +118,6 @@ namespace Crane {
 			return type->second;
 		}
 
-		const char* ScriptFieldTypeToString(ScriptFieldType fieldType)
-		{
-			switch (fieldType)
-			{
-			case ScriptFieldType::Float: return "Float";
-			case ScriptFieldType::Double: return "Double";
-			case ScriptFieldType::Bool: return "Bool";
-			case ScriptFieldType::Char: return "Char";
-			case ScriptFieldType::String: return "String";
-			case ScriptFieldType::Byte: return "Byte";
-			case ScriptFieldType::Short: return "Short";
-			case ScriptFieldType::Int: return "Int";
-			case ScriptFieldType::Long: return "Long";
-			case ScriptFieldType::UByte: return "UByte";
-			case ScriptFieldType::UInt: return "UInt";
-			case ScriptFieldType::UShort: return "UShort";
-			case ScriptFieldType::ULong: return "ULong";
-			case ScriptFieldType::Vector2: return "Vector2";
-			case ScriptFieldType::Vector3: return "Vector3";
-			case ScriptFieldType::Vector4: return "Vector4";
-			case ScriptFieldType::Entity: return "Entity";
-			}
-			return "<Invalid>";
-		}
 	}
 
 	struct ScriptEngineData

@@ -4,6 +4,7 @@
 
 #include "Crane/Scene/Components.h"
 #include "Crane/Core/UUID.h"
+#include "Crane/Scripting/ScriptEngine.h"
 
 #include "Crane/Serialization/YamlDecoders.h"
 
@@ -162,7 +163,50 @@ namespace Crane {
     {
         YAML::Node node = data["ScriptComponent"];
         if (!node) return;
-        entity.AddComponent<ScriptComponent>(node["FullName"].as<std::string>());
+        auto& sc = entity.AddComponent<ScriptComponent>(node["FullName"].as<std::string>());
+
+        auto fields = node["Fields"];
+        if (fields)
+        {
+            Ref<ScriptClass> scriptClass = ScriptEngine::GetScript(sc.FullName);
+            auto& fieldInstances = ScriptEngine::GetScriptFieldMap(entity);
+            const auto& scriptFields = scriptClass->GetFields();
+
+
+            for (auto field : fields)
+            {
+                std::string name = field["Name"].as <std::string>();
+                ScriptFieldInstance& scriptFieldInstance = fieldInstances[name];
+                scriptFieldInstance.Field = scriptFields.at(name);
+
+                ScriptFieldType type = Utils::StringToScriptFieldType(field["Type"].as<std::string>());
+
+#define FIELD_TYPE(FieldType, Type) case ScriptFieldType::FieldType: \
+                scriptFieldInstance.SetValue(field["Value"].as<Type>()); \
+                break
+
+                switch (type)
+                {
+                    FIELD_TYPE(Float, float);
+                    FIELD_TYPE(Double, double);
+                    FIELD_TYPE(Bool, bool);
+                    FIELD_TYPE(Char, char);
+                    FIELD_TYPE(Byte, int8_t);
+                    FIELD_TYPE(Short, int16_t);
+                    FIELD_TYPE(Int, int32_t);
+                    FIELD_TYPE(Long, int64_t);
+                    FIELD_TYPE(UByte, uint8_t);
+                    FIELD_TYPE(UShort, uint16_t);
+                    FIELD_TYPE(UInt, uint32_t);
+                    FIELD_TYPE(ULong, uint64_t);
+                    FIELD_TYPE(Vector2, glm::vec2);
+                    FIELD_TYPE(Vector3, glm::vec3);
+                    FIELD_TYPE(Vector4, glm::vec4);
+                    FIELD_TYPE(Entity, int64_t);
+                }
+            }
+
+        }
 
         return;
     }

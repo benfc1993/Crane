@@ -15,7 +15,7 @@ namespace Crane
 {
     extern const std::filesystem::path s_AssetPath = "assets";
 
-    EditorLayer::EditorLayer() : Layer("EditorLayer")
+    EditorLayer::EditorLayer(): Layer("EditorLayer")
     {
         m_EditorSettings->Deserialize();
     }
