@@ -32,13 +32,15 @@ namespace Crane
         spec.Height = 720;
         m_Framebuffer = Framebuffer::Create(spec);
 
-        if (m_EditorSettings->Get()->CurrentScenePath.empty())
+        auto scenePath = Project::GetActive()->GetScenePath();
+
+        if (scenePath.empty())
         {
             NewScene();
         }
         else
         {
-            LoadScene(m_EditorSettings->Get()->CurrentScenePath);
+            LoadScene(scenePath);
         }
 
         m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
@@ -548,9 +550,6 @@ namespace Crane
                 m_ActiveScene = m_EditorScene;
                 m_Panels.SetActiveScene(m_ActiveScene);
             }
-
-            m_EditorSettings->Get()->CurrentScenePath = path;
-
         }
     }
     void EditorLayer::SaveScene()

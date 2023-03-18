@@ -11,7 +11,7 @@
 #include "EditorLayer.h"
 
 namespace Crane {
-    class Sparrow : public Application
+    class Sparrow: public Application
     {
     public:
         Sparrow(ApplicationSpecification& specification)
@@ -29,6 +29,9 @@ namespace Crane {
         spec.Name = "Sandbox";
         spec.WorkingDirectory = ".";
         spec.CommandLineArgs = args;
+
+        // Project::New("SandboxProject", "/home/ben/projects/SandboxProject/")->Save("/home/ben/projects/SandboxProject/SandboxProject.crproj");
+        Project::Load("/home/ben/projects/SandboxProject/SandboxProject.crproj");
         return new Sparrow(spec);
     }
 }

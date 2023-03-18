@@ -6,16 +6,17 @@
 
 namespace Crane {
 
-    static const std::filesystem::path s_AssetPath = "assets";
+    static std::filesystem::path s_AssetPath = "assets";
 
     static float padding = 16.0f;
     static float thumbnailSize = 50.0f;
 
     ContentBrowserPanel::ContentBrowserPanel(void* editor, bool isRequired)
-        : m_Editor(editor), m_CurrentDirectory(s_AssetPath), Panel(isRequired)
+        : m_Editor(editor), m_CurrentDirectory(Project::GetActive()->GetAssetsPath()), Panel(isRequired)
     {
         m_DirectoryIcon = Texture2D::Create("Resources/icons/contentBrowser/DirectoryIcon.png");
         m_FileIcon = Texture2D::Create("Resources/icons/contentBrowser/FileIcon.png");
+        s_AssetPath = Project::GetActive()->GetAssetsPath();
     }
 
 
@@ -101,7 +102,7 @@ namespace Crane {
 
         ImGui::SameLine();
 
-        ImGui::Text("%s", m_CurrentDirectory.string().c_str());
+        ImGui::Text("%s", m_CurrentDirectory.string().erase(0, s_AssetPath.parent_path().string().length()).c_str());
 
         if (ImGui::BeginTable("thumbnails", columnCount, ImGuiTableFlags_ScrollY))
         {
@@ -130,14 +131,23 @@ namespace Crane {
                     }
                     else
                     {
-                        ((EditorLayer*)m_Editor)->LoadScene(path);
+                        auto extension = path.extension();
+                        if (extension == ".scene")
+                        {
+                            ((EditorLayer*)m_Editor)->LoadScene(path);
+                        }
+                        else if (extension == ".cs")
+                        {
+                            //TODO: Open vscode file
+                            // system(fmt::format("code {}", path).c_str());
+                        }
                     }
                 }
 
                 if (ImGui::BeginDragDropSource())
                 {
                     std::string filePath = relativePath.string();
-                    ImGui::SetDragDropPayload("CONTENT_BROWSER_FILE", (void*)relativePath.c_str(), relativePath.string().length() + 1);
+                    ImGui::SetDragDropPayload("CONTENT_BROWSER_FILE", (void*)path.c_str(), path.string().length() + 1);
                     ImGui::Text("%s", filename.c_str());
                     ImGui::EndDragDropSource();
                 }

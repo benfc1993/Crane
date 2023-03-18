@@ -7,7 +7,6 @@ namespace Crane {
 
     struct EditorSettingsData
     {
-        std::string CurrentScenePath;
         bool ShowColiders = true;
 
         EditorSettingsData() = default;

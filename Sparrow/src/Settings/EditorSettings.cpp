@@ -29,7 +29,6 @@ namespace Crane {
         YAML::Emitter out;
         out << YAML::BeginMap;
         out << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap; // Scene
-        out << YAML::Key << "CurrentScenePath" << YAML::Value << s_Data->CurrentScenePath;
         out << YAML::Key << "ShowColliders" << YAML::Value << s_Data->ShowColiders;
 
         out << YAML::EndMap;
@@ -53,7 +52,6 @@ namespace Crane {
         }
         YAML::Node settings = data["Settings"];
 
-        s_Data->CurrentScenePath = settings["CurrentScenePath"].as<std::string>();
         s_Data->ShowColiders = settings["ShowColliders"].as<bool>();
         return true;
     }

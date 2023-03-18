@@ -148,7 +148,7 @@ namespace Crane {
 
 		InitMono();
 		LoadAssembly("Resources/Scripts/Crane-ScriptCore.dll");
-		LoadAppAssembly("Resources/SandboxProject/Bin/SandboxProject.dll");
+		LoadAppAssembly("/home/ben/projects/SandboxProject/Bin/SandboxProject.dll");
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
