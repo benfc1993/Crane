@@ -200,6 +200,15 @@ namespace Crane
                 {
                     OpenScene();
                 }
+
+                if (ImGui::MenuItem("New Project"))
+                {
+                    //TODO: Provide form for name and location
+                    Project::New("NewProject", "/home/ben/projects");
+                    LoadScene(Project::GetActive()->GetScenePath());
+                    m_Panels.OnProjectChanged();
+                }
+
                 if (ImGui::MenuItem("Exit"))
                     Application::Get().Close();
                 ImGui::EndMenu();

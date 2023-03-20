@@ -32,9 +32,16 @@ namespace Crane {
             return m_Config.ProjectRootDir / m_Config.AssetDir;
         }
 
+        std::filesystem::path GetAssemblyPath()
+        {
+            return m_Config.ProjectRootDir / m_Config.AssemblyPath;
+        }
+
         static Ref<Project> New(const std::string& projectName, const std::filesystem::path& filepath);
         static Ref<Project> Load(const std::filesystem::path& filepath);
         static bool Save(const std::filesystem::path& filepath);
+
+        static int CreatCodeProject(const std::string& projectName, const std::filesystem::path& filepath);
 
         ProjectConfig& GetConfig() { return m_Config; }
         static Ref<Project> GetActive() { return s_ActiveProject; }

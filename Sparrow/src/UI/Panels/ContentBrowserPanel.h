@@ -9,11 +9,12 @@
 #include <filesystem>
 
 namespace Crane {
-    class ContentBrowserPanel : public Panel
+    class ContentBrowserPanel: public Panel
     {
     public:
         ContentBrowserPanel(void* editorLayer, bool isRequired = false);
         virtual void OnImGuiRender() override;
+        virtual void OnProjectChanged() override;
     private:
         void DrawDirectoryTree(std::filesystem::path path);
         void DrawDirectoryThumbnails();

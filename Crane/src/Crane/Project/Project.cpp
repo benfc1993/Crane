@@ -1,25 +1,26 @@
 #include "crpch.h"
 #include "Project.h"
 #include "ProjectSerialiser.h"
+#include <sys/wait.h> 
 
 namespace Crane {
 
     Project::Project(const std::string& projectName, const std::filesystem::path& filepath)
     {
         auto ext = filepath.extension();
-        CR_CORE_INFO("Project ext: {}", ext == "");
         m_Config.Name = projectName.c_str();
-        m_Config.ProjectRootDir = ext == "" ? filepath.string() : filepath.parent_path().string();
+        m_Config.ProjectRootDir = filepath.string();
         m_Config.AssetDir = "Assets";
-        m_Config.AssemblyPath = fmt::format("Bin/{}.dll", projectName);
-        m_Config.StartScene = "Physics.scene";
+        m_Config.AssemblyPath = fmt::format("bin/{}.dll", projectName);
+        m_Config.StartScene = "default.scene";
     }
 
 
     Ref<Project> Project::New(const std::string& projectName, const std::filesystem::path& filepath)
     {
-        std::filesystem::path rootDir = filepath.parent_path();
+        std::filesystem::path rootDir = filepath / projectName;
         s_ActiveProject = CreateRef<Project>(projectName, rootDir);
+        CreatCodeProject(projectName, filepath);
         return s_ActiveProject;
     }
 
@@ -45,6 +46,23 @@ namespace Crane {
         return serialiser.Serialize(filepath);
     }
 
+    int Project::CreatCodeProject(const std::string& projectName, const std::filesystem::path& filepath)
+    {
+        int status;
+        auto pid = fork();
+
+        if (pid == 0)
+        {
+            execl("/bin/bash", "bash", "-c", fmt::format("./Resources/InitialProject/setupProject.sh {} {} {}", filepath, projectName, (std::filesystem::current_path() / "Resources/InitialProject/initialFiles").c_str()).c_str(), nullptr);
+            exit(EXIT_FAILURE);
+        }
+        else if (pid < 0)
+            status = -1;
+        else
+            if (waitpid(pid, &status, 0) != pid)
+                status = -1;
+        return status;
+    }
 }
 
 

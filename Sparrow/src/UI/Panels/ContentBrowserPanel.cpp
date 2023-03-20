@@ -19,6 +19,12 @@ namespace Crane {
         s_AssetPath = Project::GetActive()->GetAssetsPath();
     }
 
+    void ContentBrowserPanel::OnProjectChanged()
+    {
+        m_CurrentDirectory = Project::GetActive()->GetAssetsPath();
+        s_AssetPath = Project::GetActive()->GetAssetsPath();
+    }
+
 
     void ContentBrowserPanel::OnImGuiRender()
     {

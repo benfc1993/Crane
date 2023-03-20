@@ -19,6 +19,14 @@ namespace Crane {
             }
         }
 
+        void OnProjectChanged()
+        {
+            for (auto panel : m_Panels)
+            {
+                panel->OnProjectChanged();
+            }
+        }
+
 
 
         template <typename T, typename ...Args>

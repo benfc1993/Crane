@@ -1,6 +1,7 @@
 #include "crpch.h"
 #include "ScriptEngine.h"
 #include "ScriptGlue.h"
+#include "Crane/Project/Project.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
@@ -146,9 +147,10 @@ namespace Crane {
 	{
 		s_Data = new ScriptEngineData();
 
+
 		InitMono();
-		LoadAssembly("Resources/Scripts/Crane-ScriptCore.dll");
-		LoadAppAssembly("/home/ben/projects/SandboxProject/Bin/SandboxProject.dll");
+		LoadAssembly("Resources/Scripts/CraneScriptCore.dll");
+		LoadAppAssembly(Project::GetActive()->GetAssemblyPath());
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();

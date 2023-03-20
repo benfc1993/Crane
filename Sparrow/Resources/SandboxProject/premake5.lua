@@ -1,5 +1,3 @@
-local CraneRootDir = '../../../'
-
 workspace "Sandbox"
 	architecture "x86_64"
 	startproject "SandboxProject"
@@ -32,12 +30,6 @@ project "SandboxProject"
 		"Assets/Scripts/Properties/**.c",
     }
 
-    links
-    {
-        "Crane-ScriptCore"
-    }
-
-
 	filter "configurations:Debug"
 		optimize "Off"
 		symbols "Default"
@@ -49,7 +41,3 @@ project "SandboxProject"
 	filter "configurations:Dist"
 		optimize "Full"
 		symbols "Off"
-
-group "Crane"
-    include(CraneRootDir .. '/Crane-ScriptCore')
-group ""

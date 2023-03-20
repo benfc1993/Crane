@@ -30,8 +30,8 @@ namespace Crane {
         spec.WorkingDirectory = ".";
         spec.CommandLineArgs = args;
 
-        // Project::New("SandboxProject", "/home/ben/projects/SandboxProject/")->Save("/home/ben/projects/SandboxProject/SandboxProject.crproj");
-        Project::Load("/home/ben/projects/SandboxProject/SandboxProject.crproj");
+        Project::Load("/home/ben/projects/NewProject/NewProject.crproj");
+
         return new Sparrow(spec);
     }
 }

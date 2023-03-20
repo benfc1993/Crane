@@ -8,9 +8,10 @@ namespace Crane {
     class Panel
     {
     public:
-        Panel(bool isRequired = false) : m_Required(isRequired) {}
+        Panel(bool isRequired = false): m_Required(isRequired) {}
         bool IsRequired() { return m_Required; }
         virtual void OnImGuiRender() = 0;
+        virtual void OnProjectChanged() {};
 
         void SetIndex(int index) { m_Index = index; }
 
