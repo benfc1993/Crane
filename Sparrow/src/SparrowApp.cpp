@@ -10,28 +10,29 @@
 
 #include "EditorLayer.h"
 
-namespace Crane {
-    class Sparrow: public Application
-    {
-    public:
-        Sparrow(ApplicationSpecification& specification)
-            :Application(specification)
-        {
-            PushLayer(new EditorLayer());
-        }
+namespace Crane
+{
+	class Sparrow: public Application
+	{
+	public:
+		Sparrow(ApplicationSpecification& specification)
+			: Application(specification)
+		{
+			PushLayer(new EditorLayer());
+		}
 
-        ~Sparrow() {}
-    };
+		~Sparrow() {}
+	};
 
-    Application* CreateApplication(ApplicationCommandLineArgs args)
-    {
-        ApplicationSpecification spec;
-        spec.Name = "Sandbox";
-        spec.WorkingDirectory = ".";
-        spec.CommandLineArgs = args;
+	Application* CreateApplication(ApplicationCommandLineArgs args)
+	{
+		ApplicationSpecification spec;
+		spec.Name = "Sandbox";
+		spec.WorkingDirectory = ".";
+		spec.CommandLineArgs = args;
 
-        Project::Load("/home/ben/projects/NewProject/NewProject.crproj");
+		Project::Load("/home/ben/projects/NewProject/NewProject.crproj");
 
-        return new Sparrow(spec);
-    }
+		return new Sparrow(spec);
+	}
 }

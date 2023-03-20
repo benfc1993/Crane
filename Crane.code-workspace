@@ -1,255 +1,264 @@
+﻿{"folders": [
 {
-  "folders": [
+"path": "Crane"
+},
+{
+"path": "Crane/vendor/Box2D"
+},
+{
+"path": "Crane/vendor/GLAD"
+},
+{
+"path": "Crane/vendor/GLFW"
+},
+{
+"path": "Crane/vendor/imgui"
+},
+{
+"path": "Crane/vendor/yaml-cpp"
+},
+{
+"path": "Sandbox"
+},
+{
+"path": "Sparrow"
+},
+{"path":"Crane-ScriptCore"}],
+"tasks": {
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Premake",
+			"command": "cd ${workspaceFolder}/../scripts && ./setup.sh",
+			"args": [],
+			"group": "none",
+			"detail": "Premake: Create build files",
+			"problemMatcher": []
+		},
+		{
+			"type": "cppbuild",
+			"label": "build debug",
+			"command": "/usr/bin/make",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in debug config"
+		},
+		{
+			"type": "cppbuild",
+			"label": "build release",
+			"command": "/usr/bin/make",
+			"args": [
+				"config=release"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in release config"
+		},
+		{
+			"type": "cppbuild",
+			"label": "build dist",
+			"command": "/usr/bin/make",
+			"args": [
+				"config=dist",
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.."
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: make in distribution config"
+		},
+		{
+			"type": "shell",
+			"label": "build script core",
+			"command": "/usr/bin/bash",
+			"args": [
+				"${workspaceFolder:Crane-ScriptCore}/build.sh",
+			],
+			"group": "build",
+			"detail": "compiler: make in distribution config"
+		}
+	]
+},
+"launch": {"version": "0.2.0",
+  "configurations": [
     {
-      "path": "Crane"
-    },
-    {
-      "path": "Crane/vendor/Box2D"
-    },
-    {
-      "path": "Crane/vendor/GLAD"
-    },
-    {
-      "path": "Crane/vendor/GLFW"
-    },
-    {
-      "path": "Crane/vendor/imgui"
-    },
-    {
-      "path": "Crane/vendor/yaml-cpp"
-    },
-    {
-      "path": "Sandbox"
-    },
-    {
-      "path": "Sparrow"
-    },
-    { "path": "Crane-ScriptCore" }
-  ],
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "type": "shell",
-        "label": "Premake",
-        "command": "cd ${workspaceFolder}/../scripts && ./setup.sh",
-        "args": [],
-        "group": "none",
-        "detail": "Premake: Create build files",
-        "problemMatcher": []
-      },
-      {
-        "type": "cppbuild",
-        "label": "build debug",
-        "command": "/usr/bin/make",
-        "args": [],
-        "options": {
-          "cwd": "${workspaceFolder}/.."
+      "name": "Debug - Sandbox",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sandbox}/../bin/Debug-linux-x86_64/Sandbox/Sandbox", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sandbox}",
+      "environment": [{"name": "config", "value": "Debug"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         },
-        "problemMatcher": ["$gcc"],
-        "group": "build",
-        "detail": "compiler: make in debug config"
-      },
-      {
-        "type": "cppbuild",
-        "label": "build release",
-        "command": "/usr/bin/make",
-        "args": ["config=release"],
-        "options": {
-          "cwd": "${workspaceFolder}/.."
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build debug"
+    },
+    {
+      "name": "Release - Sandbox",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sandbox}/../bin/Release-linux-x86_64/Sandbox/Sandbox", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sandbox}",
+      "environment": [{"name": "config", "value": "Release"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         },
-        "problemMatcher": ["$gcc"],
-        "group": "build",
-        "detail": "compiler: make in release config"
-      },
-      {
-        "type": "cppbuild",
-        "label": "build dist",
-        "command": "/usr/bin/make",
-        "args": ["config=dist"],
-        "options": {
-          "cwd": "${workspaceFolder}/.."
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build release"
+    },
+    {
+      "name": "Dist - Sandbox",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sandbox}/../bin/Dist-linux-x86_64/Sandbox/Sandbox", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sandbox}",
+      "environment": [{"name": "config", "value": "Dist"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         },
-        "problemMatcher": ["$gcc"],
-        "group": "build",
-        "detail": "compiler: make in distribution config"
-      },
-      {
-        "type": "shell",
-        "label": "build script core",
-        "command": "/usr/bin/bash",
-        "args": ["${workspaceFolder:Crane-ScriptCore}/build.sh"],
-        "group": "build",
-        "detail": "compiler: make in distribution config"
-      }
-    ]
-  },
-  "launch": {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Debug - Sandbox",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sandbox}/../bin/Debug-linux-x86_64/Sandbox/Sandbox",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sandbox}",
-        "environment": [{ "name": "config", "value": "Debug" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build debug"
-      },
-      {
-        "name": "Release - Sandbox",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sandbox}/../bin/Release-linux-x86_64/Sandbox/Sandbox",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sandbox}",
-        "environment": [{ "name": "config", "value": "Release" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build release"
-      },
-      {
-        "name": "Dist - Sandbox",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sandbox}/../bin/Dist-linux-x86_64/Sandbox/Sandbox",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sandbox}",
-        "environment": [{ "name": "config", "value": "Dist" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build dist"
-      },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build dist"
+    },
 
-      {
-        "name": "Debug - Sparrow",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sparrow}/../bin/Debug-linux-x86_64/Sparrow/Sparrow",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sparrow}",
-        "environment": [{ "name": "config", "value": "Debug" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build debug"
-      },
-      {
-        "name": "Release - Sparrow",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sparrow}/../bin/Release-linux-x86_64/Sparrow/Sparrow",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sparrow}",
-        "environment": [{ "name": "config", "value": "Release" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build release"
-      },
-      {
-        "name": "Dist - Sparrow",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder:Sparrow}/../bin/Dist-linux-x86_64/Sparrow/Sparrow",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder:Sparrow}",
-        "environment": [{ "name": "config", "value": "Dist" }],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          },
-          {
-            "description": "Set Disassembly Flavor to Intel",
-            "text": "-gdb-set disassembly-flavor intel",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "build dist"
-      }
-    ]
-  },
-  "settings": {
-    "editor.defaultFormatter": "ms-vscode.cpptools",
-    "editor.formatOnSave": true,
-    "C_Cpp.formatting": "vcFormat",
-    "C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "newLine",
-    "C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "newLine",
-    "C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
-    "C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
-    "githubPullRequests.fileListLayout": "tree",
-    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
-    "C_Cpp.intelliSenseCacheSize": 0
-  }
+        {
+      "name": "Debug - Sparrow",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sparrow}/../bin/Debug-linux-x86_64/Sparrow/Sparrow", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sparrow}",
+      "environment": [{"name": "config", "value": "Debug"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build debug"
+    },
+    {
+      "name": "Release - Sparrow",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sparrow}/../bin/Release-linux-x86_64/Sparrow/Sparrow", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sparrow}",
+      "environment": [{"name": "config", "value": "Release"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build release"
+    },
+    {
+      "name": "Dist - Sparrow",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder:Sparrow}/../bin/Dist-linux-x86_64/Sparrow/Sparrow", 
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder:Sparrow}",
+      "environment": [{"name": "config", "value": "Dist"}],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build dist"
+    },
+  ]
+},
+"settings": {
+	"editor.defaultFormatter": "ms-vscode.cpptools",
+	"editor.formatOnSave": true,
+	"C_Cpp.formatting": "vcFormat",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "newLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "newLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+	"C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
+	"githubPullRequests.fileListLayout": "tree",
+	"C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
+	"C_Cpp.intelliSenseCacheSize": 0
+}
 }

@@ -38,11 +38,11 @@ touch nuget.config
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" >> nuget.config
 echo "<configuration>" >> nuget.config
 echo "    <packageSources>" >> nuget.config
-echo "<add key=\"crane-pcakges\" value=\"/home/ben/projects/crane/Crane-ScriptCore/Source/bin/Debug\" />" >> nuget.config
+echo "<add key=\"crane-pcakges\" value=\"$3/../../../../Crane-ScriptCore/Source/bin/Debug\" />" >> nuget.config
 echo "    </packageSources>" >> nuget.config
 echo "</configuration>" >> nuget.config
 dotnet nuget locals all --clear
-dotnet restore Assets/Scripts
+dotnet restore
 cd Assets/Scripts
 dotnet add package CraneScriptCore
 
@@ -66,4 +66,4 @@ cp -r $3/.vscode .vscode
 echo "Building assembly"
 echo "----||----"
 # build
-dotnet build $2.sln -o bin
+dotnet build Assets/Scripts$2.csproj -o bin
