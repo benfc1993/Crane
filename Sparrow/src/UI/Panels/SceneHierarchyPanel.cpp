@@ -58,7 +58,10 @@ namespace Crane
 
 		ImGui::EndGroup();
 		ImVec2 region = ImGui::GetContentRegionAvail();
-		ImGui::InvisibleButton("bg", region, ImGuiButtonFlags_AllowItemOverlap);
+		if (ImGui::InvisibleButton("bg", region, ImGuiButtonFlags_AllowItemOverlap | ImGuiButtonFlags_MouseButtonRight))
+		{
+			ImGui::OpenPopup("hp");
+		}
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -69,6 +72,18 @@ namespace Crane
 				ImGui::EndDragDropTarget();
 			}
 		}
+
+		if (ImGui::BeginPopup("hp"))
+		{
+			if (ImGui::MenuItem("Create Entity"))
+			{
+				Entity entity = m_ActiveScene->CreateEntity("Entity");
+				m_SelectionContext = entity;
+			}
+
+			ImGui::EndPopup();
+		}
+
 		if (entityAction == EntityAction::Delete)
 		{
 			Entity entity = m_ActiveScene->GetEntityByUUID(toActOn);
@@ -123,16 +138,7 @@ namespace Crane
 			m_EditingEntity = {};
 		}
 
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
-		{
-			if (ImGui::MenuItem("Create Entity"))
-			{
-				Entity entity = m_ActiveScene->CreateEntity("Entity");
-				m_SelectionContext = entity;
-			}
 
-			ImGui::EndPopup();
-		}
 
 		ImGui::End();
 
@@ -368,7 +374,7 @@ namespace Crane
 
 			if (hc.Parent == 0)
 			{
-				Drawers::Vector("Position", transform.WorldPosition);
+				Drawers::Vector("Position", transform.Position);
 				Drawers::Vector("Scale", transform.Scale);
 			}
 			else

@@ -61,7 +61,7 @@ echo "  AssemblyPath: bin/NewProject.dll" >> $2.crproj
 echo "  StartScene: default.scene" >> $2.crproj
 
 # add vscode tasks
-cp -r $3/.vscode .vscode
+cp -r $3/vscode .vscode
 
 echo "Building assembly"
 echo "----||----"

@@ -591,22 +591,54 @@ namespace Crane
     {
         m_SceneState = SceneState::Play;
 
+
+        uint64_t selectedId = -1;
+        auto selectedEntity = m_Panels.GetSelectedEntity();
+
+        if (!selectedEntity.IsNull())
+        {
+            selectedId = selectedEntity.GetUUID();
+        }
+
         m_ActiveScene = Scene::Copy(m_EditorScene);
 
         m_ActiveScene->OnViewportResized(m_ViewportSize.x, m_ViewportSize.y);
         m_ActiveScene->OnRuntimeStart();
         m_ActiveScene->SetState(SceneState::Play);
+
         m_Panels.SetActiveScene(m_ActiveScene);
+
+
+        if (selectedId != -1)
+        {
+            m_Panels.SetSelectedEntity(m_ActiveScene->GetEntityByUUID(selectedId));
+        }
     }
 
     void EditorLayer::OnSceneStop()
     {
+
         m_SceneState = SceneState::Edit;
         m_ActiveScene->OnRuntimeStop();
 
+        uint64_t selectedId = -1;
+        auto selectedEntity = m_Panels.GetSelectedEntity();
+
+        if (!selectedEntity.IsNull())
+        {
+            selectedId = selectedEntity.GetUUID();
+        }
+
         m_ActiveScene = m_EditorScene;
         m_ActiveScene->SetState(SceneState::Edit);
+
         m_Panels.SetActiveScene(m_ActiveScene);
+
+        if (selectedId != -1)
+        {
+            m_Panels.SetSelectedEntity(m_ActiveScene->GetEntityByUUID(selectedId));
+        }
+
     }
 
     void EditorLayer::OnSimulateStart()

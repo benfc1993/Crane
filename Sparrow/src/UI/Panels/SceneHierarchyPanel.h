@@ -22,10 +22,10 @@ namespace Crane {
         Moving = 5
     };
 
-    class SceneHierarchyPanel : public Panel
+    class SceneHierarchyPanel: public Panel
     {
     public:
-        SceneHierarchyPanel(bool isRequired = false) : Panel(isRequired) {}
+        SceneHierarchyPanel(bool isRequired = false): Panel(isRequired) {}
         SceneHierarchyPanel(const Ref<Scene>& scene, bool isRequired = false);
 
         virtual void SetActiveScene(const Ref<Scene>& scene) override;
