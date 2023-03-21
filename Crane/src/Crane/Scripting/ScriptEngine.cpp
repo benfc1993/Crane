@@ -2,12 +2,14 @@
 #include "ScriptEngine.h"
 #include "ScriptGlue.h"
 #include "Crane/Project/Project.h"
+#include "Crane/Core/Application.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/mono-config.h"
 #include "mono/metadata/attrdefs.h"
+#include "filewatch.h"
 
 namespace Crane {
 
@@ -128,9 +130,14 @@ namespace Crane {
 
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
+		std::string CoreAssemblyPath;
 
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
+		std::string AppAssemblyPath;
+
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+		bool AssemblyReloadPending = false;
 
 		ScriptClass EntityClass;
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -143,14 +150,30 @@ namespace Crane {
 
 	static ScriptEngineData* s_Data = nullptr;
 
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+
+		if (!s_Data->AssemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_Data->AssemblyReloadPending = true;
+
+			Application::Get().SubmitToMainThread([]() {
+				s_Data->AppAssemblyFileWatcher.reset();
+				ScriptEngine::ReloadAssembly();
+			});
+		}
+	}
+
 	void ScriptEngine::Init()
 	{
 		s_Data = new ScriptEngineData();
+		s_Data->CoreAssemblyPath = "Resources/Scripts/CraneScriptCore.dll";
+		s_Data->AppAssemblyPath = Project::GetActive()->GetAssemblyPath();
 
 
 		InitMono();
-		LoadAssembly("Resources/Scripts/CraneScriptCore.dll");
-		LoadAppAssembly(Project::GetActive()->GetAssemblyPath());
+		LoadAssembly(s_Data->CoreAssemblyPath);
+		LoadAppAssembly(s_Data->AppAssemblyPath);
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
@@ -199,7 +222,27 @@ namespace Crane {
 	{
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filePath);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+
+		s_Data->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(s_Data->AppAssemblyPath, OnAppAssemblyFileSystemEvent);
+		s_Data->AssemblyReloadPending = false;
+
 		Utils::PrintAssemblyTypes(s_Data->AppAssembly);
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		// mono_domain_set(mono_get_root_domain(), false);
+
+		// mono_domain_unload(s_Data->AppDomain);
+
+		LoadAssembly(s_Data->CoreAssemblyPath);
+		LoadAppAssembly(s_Data->AppAssemblyPath);
+		LoadAssemblyClasses();
+
+		ScriptGlue::RegisterComponents();
+		ScriptGlue::RegisterFunctions();
+
+		s_Data->EntityClass = ScriptClass("Crane", "Entity", true);
 	}
 
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
@@ -226,12 +269,11 @@ namespace Crane {
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[sc.FullName], uuid);
 			s_Data->EntityInstances[uuid] = instance;
 
-			CR_CORE_ASSERT(s_Data->EntityScriptFields.find(uuid) != s_Data->EntityScriptFields.end());
-			const ScriptFieldMap& fields = s_Data->EntityScriptFields.at(uuid);
-
-			for (const auto& [name, fieldInstance] : fields)
+			if (s_Data->EntityScriptFields.find(uuid) != s_Data->EntityScriptFields.end())
 			{
-				instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+				const ScriptFieldMap& fieldMap = s_Data->EntityScriptFields.at(uuid);
+				for (const auto& [name, fieldInstance] : fieldMap)
+					instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
 			}
 
 			instance->InvokeOnCreate();

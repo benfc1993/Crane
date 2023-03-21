@@ -18,6 +18,7 @@ project "Sparrow"
 		"%{wks.location}/Crane/vendor/spdlog/include",
 		"%{wks.location}/Crane/src",
 		"%{wks.location}/Crane/vendor",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}",
