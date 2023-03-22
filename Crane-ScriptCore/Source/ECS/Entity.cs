@@ -30,6 +30,13 @@ namespace Crane
             T component = new T() { entity = this };
             return component;
         }
+
+        public Entity FindEntityByName(string name)
+        {
+            ulong entityID = InternalCalls.Entity_FindEntityByName(name);
+            if (entityID == 0) return null;
+            return new Entity(entityID);
+        }
     }
 
 }

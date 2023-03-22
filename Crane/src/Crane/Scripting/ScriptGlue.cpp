@@ -43,6 +43,20 @@ namespace Crane {
         CR_CORE_ASSERT(s_EntityHasComponentFunctions.find(type) != s_EntityHasComponentFunctions.end());
         return s_EntityHasComponentFunctions.at(type)(entity);
     }
+
+    static uint64_t Entity_FindEntityByName(MonoString* name)
+    {
+        char* cStr = mono_string_to_utf8(name);
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->FindEntityByName(cStr);
+        mono_free(cStr);
+
+        if (!entity)
+            return 0;
+
+        return entity.GetUUID();
+    }
 #pragma endregion
 
 #pragma region TransformComponent
@@ -182,6 +196,7 @@ namespace Crane {
         CR_ADD_INTERNAL_CALL(Print_Vector);
 
         CR_ADD_INTERNAL_CALL(Entity_HasComponent);
+        CR_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 
         CR_ADD_INTERNAL_CALL(TransformComponent_GetPosition);
         CR_ADD_INTERNAL_CALL(TransformComponent_SetPosition);

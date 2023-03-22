@@ -57,6 +57,7 @@ namespace Crane {
         Entity GetPrimaryCameraEntity();
 
         Entity GetEntityByUUID(UUID uuid);
+        Entity FindEntityByName(std::string_view name);
         bool EntityExists(UUID uuid);
 
         template<typename ...Components>

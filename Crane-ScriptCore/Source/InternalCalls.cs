@@ -15,6 +15,9 @@ namespace Crane
         internal extern static bool Entity_HasComponent(ulong id, Type componentType);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_FindEntityByName(string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string TransformComponent_GetPosition(ulong entityID, out Vector3 position);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

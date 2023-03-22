@@ -178,6 +178,7 @@ namespace Crane {
         return {};
     }
 
+        for (auto entity : view)
 
     Entity Scene::GetPrimaryCameraEntity()
     {
