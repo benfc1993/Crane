@@ -175,6 +175,7 @@ namespace Crane {
 		LoadAssembly(s_Data->CoreAssemblyPath);
 		LoadAppAssembly(s_Data->AppAssemblyPath);
 		LoadAssemblyClasses();
+		SetScriptFields();
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
@@ -238,6 +239,7 @@ namespace Crane {
 		LoadAssembly(s_Data->CoreAssemblyPath);
 		LoadAppAssembly(s_Data->AppAssemblyPath);
 		LoadAssemblyClasses();
+		SetScriptFields();
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
@@ -273,11 +275,33 @@ namespace Crane {
 			{
 				const ScriptFieldMap& fieldMap = s_Data->EntityScriptFields.at(uuid);
 				for (const auto& [name, fieldInstance] : fieldMap)
+				{
+					if (fieldInstance.Field.Type == ScriptFieldType::Script) continue;
 					instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+				}
 			}
 
-			instance->InvokeOnCreate();
 		}
+	}
+
+	void ScriptEngine::OnInstantiateScript(Entity entity)
+	{
+		const UUID uuid = entity.GetUUID();
+		Ref<ScriptInstance> instance = s_Data->EntityInstances.at(uuid);
+
+		if (s_Data->EntityScriptFields.find(uuid) == s_Data->EntityScriptFields.end()) return;
+
+		const ScriptFieldMap& fieldMap = s_Data->EntityScriptFields.at(uuid);
+
+		for (auto [name, fieldInstance] : fieldMap)
+		{
+			if (fieldInstance.Field.Type != ScriptFieldType::Script) continue;
+			uint64_t valueUUID = fieldInstance.GetValue<uint64_t>();
+			Ref<ScriptInstance> valueInstance = s_Data->EntityInstances[valueUUID];
+			instance->SetFieldValueInternal(name, valueInstance->GetScriptInstance());
+		}
+		instance->InvokeConstructor(uuid);
+		instance->InvokeOnCreate();
 	}
 
 	void ScriptEngine::OnUpdateEntity(Entity entity, float ts)
@@ -322,6 +346,14 @@ namespace Crane {
 
 		auto& enitiyClasses = s_Data->EntityClasses;
 
+	}
+
+	void ScriptEngine::SetScriptFields()
+	{
+		for (const auto& script : s_Data->EntityClasses)
+		{
+			script.second->SetScriptFields();
+		}
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
@@ -423,10 +455,31 @@ namespace Crane {
 			{
 				MonoType* type = mono_field_get_type(field);
 				ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(type);
+
 				const char* typeName = Utils::ScriptFieldTypeToString(fieldType);
 				m_Fields[fieldName] = { fieldType, fieldName, field };
 			}
 		}
+	}
+
+	void ScriptClass::SetScriptFields()
+	{
+		for (auto& [name, field] : m_Fields)
+		{
+
+			if (field.Type != ScriptFieldType::None) continue;
+			MonoType* monoType = mono_field_get_type(field.ClassField);
+			std::string typeName = mono_type_get_name(monoType);
+			CR_INFO(typeName);
+
+			if (s_Data->EntityClasses.find(typeName) != s_Data->EntityClasses.end())
+			{
+				CR_INFO("Entity Class");
+				field.Type = ScriptFieldType::Script;
+				field.ScriptName = typeName;
+			}
+		}
+
 	}
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
@@ -442,11 +495,12 @@ namespace Crane {
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+	}
 
-		{
-			void* param = &uuid;
-			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
-		}
+	void ScriptInstance::InvokeConstructor(UUID uuid)
+	{
+		void* param = &uuid;
+		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
 	}
 
 	void ScriptInstance::InvokeOnCreate()

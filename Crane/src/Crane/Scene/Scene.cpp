@@ -178,7 +178,19 @@ namespace Crane {
         return {};
     }
 
+    Entity Scene::FindEntityByName(std::string_view name)
+    {
+        auto view = m_Registry.view <TagComponent>();
         for (auto entity : view)
+        {
+            auto& tagComponent = view.get<TagComponent>(entity);
+            if (tagComponent.Tag == name)
+                return Entity{ entity, this };
+        }
+
+        return {};
+    }
+
 
     Entity Scene::GetPrimaryCameraEntity()
     {
@@ -201,17 +213,34 @@ namespace Crane {
 
         ScriptEngine::OnRuntimeStart(this);
 
-        auto view = m_Registry.view <ScriptComponent>();
-        for (auto e : view)
         {
-            Entity entity = { e, this };
-            const auto sc = entity.GetComponent<ScriptComponent>();
-
-            if (ScriptEngine::ScriptClassExists(sc.FullName))
+            auto view = m_Registry.view <ScriptComponent>();
+            for (auto e : view)
             {
-                ScriptEngine::OnCreateEntity(entity);
+                Entity entity = { e, this };
+                const auto sc = entity.GetComponent<ScriptComponent>();
+
+                if (ScriptEngine::ScriptClassExists(sc.FullName))
+                {
+                    //Instantiate script component
+                    ScriptEngine::OnCreateEntity(entity);
+                }
             }
         }
+
+        {
+            auto view = m_Registry.view <ScriptComponent>();
+            for (auto e : view)
+            {
+                if (ScriptEngine::ScriptClassExists(sc.FullName))
+                {
+                    //Assign Script Fields and Call constructor
+                    Entity entity = { e, this };
+                    ScriptEngine::OnInstantiateScript(entity);
+                }
+            }
+        }
+
     }
 
     void Scene::OnRuntimeStop()

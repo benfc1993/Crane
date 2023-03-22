@@ -12,7 +12,7 @@ namespace Crane {
     public:
 
         Entity() {}
-        Entity(entt::entity entity, Scene* scene) : m_EntityHandle(entity), m_Scene(scene) {};
+        Entity(entt::entity entity, Scene* scene): m_EntityHandle(entity), m_Scene(scene) {};
         Entity(const Entity& other) = default;
 
         template <typename T, typename ...Args>

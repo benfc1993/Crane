@@ -266,12 +266,12 @@ namespace Crane
 
 		ImGui::PopStyleVar();
 
-		if (ImGui::IsItemClicked())
+		if (ImGui::IsMouseReleased(0) && ImGui::IsItemHovered(ImGuiHoveredFlags_None) && entityAction == EntityAction::None)
 		{
 			m_SelectionContext = entity;
 		}
 
-		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && entityAction == EntityAction::None)
 		{
 			m_EditingEntity = entity;
 		}
@@ -655,6 +655,42 @@ namespace Crane
 								ScriptFieldInstance& fieldInstance = instancedFields[name];
 								fieldInstance.Field = field;
 								fieldInstance.SetValue(data);
+							}
+						}
+					}
+					if (field.Type == ScriptFieldType::Script)
+					{
+						uint64_t data = fieldValueSet ? instancedFields.at(name).GetValue<uint64_t>() : 0;
+						char buffer[256];
+						memset(buffer, 0, sizeof(buffer));
+						if (data)
+						{
+							const auto name = m_ActiveScene->GetEntityByUUID(data).GetName();
+							strcpy(buffer, name.c_str());
+						}
+						else
+						{
+							strcpy(buffer, field.ScriptName.c_str());
+						}
+						ImGui::Text(field.Name.c_str());
+						ImGui::InputText("##", buffer, sizeof(buffer), ImGuiInputTextFlags_ReadOnly);
+
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
+							{
+								const UUID test = toMove;
+								Entity addingEntity = m_ActiveScene->GetEntityByUUID(test);
+								const std::string scriptName = addingEntity.GetComponent<ScriptComponent>().ScriptName;
+
+								if (field.ScriptName == scriptName)
+								{
+									ScriptFieldInstance& fieldInstance = instancedFields[name];
+									fieldInstance.SetValue <uint64_t>(toMove);
+								}
+
+								entityAction = EntityAction::None;
+								ImGui::EndDragDropTarget();
 							}
 						}
 					}

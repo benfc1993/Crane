@@ -23,7 +23,7 @@ namespace Crane {
 		None = 0,
 		Float, Vector2, Vector3, Vector4,
 		Int, UInt, Bool, Char, String, Double, Short, Long, Byte,
-		UShort, ULong, UByte, Entity
+		UShort, ULong, UByte, Entity, Script
 	};
 
 	struct ScriptField
@@ -31,6 +31,7 @@ namespace Crane {
 		ScriptFieldType Type;
 		std::string Name;
 		MonoClassField* ClassField;
+		std::string ScriptName = "";
 	};
 
 	struct ScriptFieldInstance
@@ -87,7 +88,9 @@ namespace Crane {
 		}
 
 		void SetFields();
+		void SetScriptFields();
 
+		MonoClass* GetClass() const { return m_MonoClass; }
 
 		const std::map<std::string, ScriptField>& GetFields() const { return m_Fields; }
 
@@ -107,10 +110,13 @@ namespace Crane {
 	public:
 		ScriptInstance(Ref<ScriptClass> scriptClass, UUID uuid);
 
+		void InvokeConstructor(UUID uuid);
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
 
 		Ref<ScriptClass> GetScriptClass() { return m_ScriptClass; }
+		MonoObject* GetScriptInstance() { return m_Instance; }
+
 		template<typename T>
 		T GetFieldValue(const std::string& name)
 		{
@@ -162,6 +168,7 @@ namespace Crane {
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
 
+		static void OnInstantiateScript(Entity entity);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, float ts);
 
@@ -180,6 +187,8 @@ namespace Crane {
 
 		static void LoadAssemblyClasses();
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
+
+		static void SetScriptFields();
 
 		friend class ScriptClass;
 	};
@@ -206,8 +215,8 @@ namespace Crane {
 			case ScriptFieldType::Vector3: return "Vector3";
 			case ScriptFieldType::Vector4: return "Vector4";
 			case ScriptFieldType::Entity: return "Entity";
+			case ScriptFieldType::Script: return "Script";
 			}
-			CR_CORE_ASSERT(false, "Unknown ScriptFieldType");
 			return "None";
 		}
 
@@ -230,6 +239,7 @@ namespace Crane {
 			if (fieldType == "Vector3") return ScriptFieldType::Vector3;
 			if (fieldType == "Vector4") return ScriptFieldType::Vector4;
 			if (fieldType == "Entity") return ScriptFieldType::Entity;
+			if (fieldType == "Script") return ScriptFieldType::Script;
 			return ScriptFieldType::None;
 		}
 	}

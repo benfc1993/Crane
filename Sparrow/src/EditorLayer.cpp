@@ -557,6 +557,7 @@ namespace Crane
             {
                 m_EditorScene = newScene;
                 m_ActiveScene = m_EditorScene;
+                m_ActiveScene->SetFilePath(path);
                 m_Panels.SetActiveScene(m_ActiveScene);
             }
         }

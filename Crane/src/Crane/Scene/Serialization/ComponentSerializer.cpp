@@ -269,6 +269,7 @@ namespace Crane {
                         FIELD_TYPE(Vector3, glm::vec3);
                         FIELD_TYPE(Vector4, glm::vec4);
                         FIELD_TYPE(Entity, UUID);
+                        FIELD_TYPE(Script, UUID);
                     }
 #undef FIELD_TYPE
                     out << YAML::EndMap;

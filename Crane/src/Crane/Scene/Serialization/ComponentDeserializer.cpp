@@ -202,7 +202,8 @@ namespace Crane {
                     FIELD_TYPE(Vector2, glm::vec2);
                     FIELD_TYPE(Vector3, glm::vec3);
                     FIELD_TYPE(Vector4, glm::vec4);
-                    FIELD_TYPE(Entity, int64_t);
+                    FIELD_TYPE(Entity, uint64_t);
+                    FIELD_TYPE(Script, uint64_t);
                 }
             }
 
