@@ -289,17 +289,19 @@ namespace Crane {
 		const UUID uuid = entity.GetUUID();
 		Ref<ScriptInstance> instance = s_Data->EntityInstances.at(uuid);
 
-		if (s_Data->EntityScriptFields.find(uuid) == s_Data->EntityScriptFields.end()) return;
-
-		const ScriptFieldMap& fieldMap = s_Data->EntityScriptFields.at(uuid);
-
-		for (auto [name, fieldInstance] : fieldMap)
+		if (s_Data->EntityScriptFields.find(uuid) != s_Data->EntityScriptFields.end())
 		{
-			if (fieldInstance.Field.Type != ScriptFieldType::Script) continue;
-			uint64_t valueUUID = fieldInstance.GetValue<uint64_t>();
-			Ref<ScriptInstance> valueInstance = s_Data->EntityInstances[valueUUID];
-			instance->SetFieldValueInternal(name, valueInstance->GetScriptInstance());
+			const ScriptFieldMap& fieldMap = s_Data->EntityScriptFields.at(uuid);
+
+			for (auto [name, fieldInstance] : fieldMap)
+			{
+				if (fieldInstance.Field.Type != ScriptFieldType::Script) continue;
+				uint64_t valueUUID = fieldInstance.GetValue<uint64_t>();
+				Ref<ScriptInstance> valueInstance = s_Data->EntityInstances[valueUUID];
+				instance->SetFieldValueInternal(name, valueInstance->GetScriptInstance());
+			}
 		}
+
 		instance->InvokeConstructor(uuid);
 		instance->InvokeOnCreate();
 	}

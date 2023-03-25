@@ -38,7 +38,7 @@ touch nuget.config
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" >> nuget.config
 echo "<configuration>" >> nuget.config
 echo "    <packageSources>" >> nuget.config
-echo "<add key=\"crane-pcakges\" value=\"$3/../../../../Crane-ScriptCore/Source/bin/Debug\" />" >> nuget.config
+echo "<add key=\"crane-packages\" value=\"$3/../../../../Crane-ScriptCore/Source/bin/Debug\" />" >> nuget.config
 echo "    </packageSources>" >> nuget.config
 echo "</configuration>" >> nuget.config
 dotnet nuget locals all --clear

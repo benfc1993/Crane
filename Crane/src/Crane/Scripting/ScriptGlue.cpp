@@ -26,13 +26,21 @@ namespace Crane {
         CR_SCR_INFO(CString);
         mono_free(CString);
     }
-
-    static void Print_Vector(glm::vec3* vector)
-    {
-        CR_CORE_WARN("Vector: ({0}, {1}, {2})", vector->x, vector->y, vector->z);
-    }
 #pragma region Entity
     static bool Entity_HasComponent(UUID entityId, MonoReflectionType* componentType)
+    {
+        CR_CORE_INFO(entityId);
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->GetEntityByUUID(entityId);
+        CR_CORE_ASSERT(entity);
+
+        MonoType* type = mono_reflection_type_get_type(componentType);
+        if (s_EntityHasComponentFunctions.find(type) == s_EntityHasComponentFunctions.end()) return false;
+        return true;
+    }
+
+    static bool Entity_HasComponentClass(UUID entityId, MonoReflectionType* componentType)
     {
         Scene* scene = ScriptEngine::GetSceneContext();
         CR_CORE_ASSERT(scene);
@@ -40,8 +48,23 @@ namespace Crane {
         CR_CORE_ASSERT(entity);
 
         MonoType* type = mono_reflection_type_get_type(componentType);
-        CR_CORE_ASSERT(s_EntityHasComponentFunctions.find(type) != s_EntityHasComponentFunctions.end());
-        return s_EntityHasComponentFunctions.at(type)(entity);
+
+        auto sc = scene->GetEntityByUUID(entityId).GetComponent<ScriptComponent>();
+
+        return sc.ScriptName == mono_type_get_name(type);
+    }
+
+    static MonoObject* Entity_GetComponentClass(UUID entityId, MonoReflectionType* componentType)
+    {
+        if (!Entity_HasComponentClass(entityId, componentType)) return nullptr;
+
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->GetEntityByUUID(entityId);
+        CR_CORE_ASSERT(entity);
+
+        auto sc = ScriptEngine::GetEntityScriptInstance(entityId);
+        return sc->GetScriptInstance();
     }
 
     static uint64_t Entity_FindEntityByName(MonoString* name)
@@ -56,6 +79,39 @@ namespace Crane {
             return 0;
 
         return entity.GetUUID();
+    }
+
+    static uint64_t Entity_GetParent(UUID entityId)
+    {
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->GetEntityByUUID(entityId);
+        CR_CORE_ASSERT(entity);
+
+        UUID parent = entity.GetComponent<HierarchyComponent>().Parent;
+
+        return parent;
+    }
+
+    static uint64_t Entity_GetChild(UUID entityId)
+    {
+        CR_CORE_INFO(entityId);
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->GetEntityByUUID(entityId);
+        CR_CORE_ASSERT(entity);
+
+        return entity.GetComponent<HierarchyComponent>().First;
+    }
+    static uint64_t Entity_GetSibling(UUID entityId)
+    {
+        CR_CORE_INFO(entityId);
+        Scene* scene = ScriptEngine::GetSceneContext();
+        CR_CORE_ASSERT(scene);
+        Entity entity = scene->GetEntityByUUID(entityId);
+        CR_CORE_ASSERT(entity);
+
+        return entity.GetComponent<HierarchyComponent>().Next;
     }
 #pragma endregion
 
@@ -193,10 +249,14 @@ namespace Crane {
     void ScriptGlue::RegisterFunctions()
     {
         CR_ADD_INTERNAL_CALL(Print);
-        CR_ADD_INTERNAL_CALL(Print_Vector);
 
         CR_ADD_INTERNAL_CALL(Entity_HasComponent);
         CR_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+        CR_ADD_INTERNAL_CALL(Entity_GetParent);
+        CR_ADD_INTERNAL_CALL(Entity_GetChild);
+        CR_ADD_INTERNAL_CALL(Entity_GetSibling);
+        CR_ADD_INTERNAL_CALL(Entity_HasComponentClass);
+        CR_ADD_INTERNAL_CALL(Entity_GetComponentClass);
 
         CR_ADD_INTERNAL_CALL(TransformComponent_GetPosition);
         CR_ADD_INTERNAL_CALL(TransformComponent_SetPosition);

@@ -7,6 +7,7 @@ namespace Crane
         public Entity entity { get; internal set; }
     }
 
+
     public class TransformComponent : Component
     {
         public Vector3 position
@@ -63,6 +64,8 @@ namespace Crane
 
     public class CameraComponent : Component
     {
-
     }
+
+    public class ScriptComponent : Component { }
+
 }

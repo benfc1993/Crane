@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace Crane
 {
@@ -9,13 +10,23 @@ namespace Crane
         internal extern static string Print(string msg);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static string Print_Vector(ref Vector3 param);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(ulong id, Type componentType);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool Entity_FindEntityByName(string name);
+        internal extern static bool Entity_HasComponentClass(ulong id, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static T Entity_GetComponentClass<T>(ulong id, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_FindEntityByName(string name);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_GetParent(ulong id);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_GetChild(ulong id);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_GetSibling(ulong id);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string TransformComponent_GetPosition(ulong entityID, out Vector3 position);

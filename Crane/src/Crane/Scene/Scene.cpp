@@ -232,10 +232,12 @@ namespace Crane {
             auto view = m_Registry.view <ScriptComponent>();
             for (auto e : view)
             {
+                Entity entity = { e, this };
+                const auto sc = entity.GetComponent<ScriptComponent>();
+
                 if (ScriptEngine::ScriptClassExists(sc.FullName))
                 {
                     //Assign Script Fields and Call constructor
-                    Entity entity = { e, this };
                     ScriptEngine::OnInstantiateScript(entity);
                 }
             }
