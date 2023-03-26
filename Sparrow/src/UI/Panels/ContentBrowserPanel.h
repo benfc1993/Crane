@@ -9,22 +9,22 @@
 #include <filesystem>
 
 namespace Crane {
-    class ContentBrowserPanel: public Panel
-    {
-    public:
-        ContentBrowserPanel(void* editorLayer, bool isRequired = false);
-        virtual void OnImGuiRender() override;
-        virtual void OnProjectChanged() override;
-    private:
-        void DrawDirectoryTree(std::filesystem::path path);
-        void DrawDirectoryThumbnails();
-    private:
-        std::filesystem::path m_CurrentDirectory;
-        float m_ViewSize = 0.0f;
+	class ContentBrowserPanel: public Panel
+	{
+	public:
+		ContentBrowserPanel(void* editorLayer, bool isRequired = false);
+		virtual void OnImGuiRender() override;
+		virtual void OnProjectChanged() override;
+	private:
+		void DrawDirectoryTree(std::filesystem::path path);
+		void DrawDirectoryThumbnails();
+	private:
+		std::filesystem::path m_CurrentDirectory;
+		float m_ViewSize = 0.0f;
 
-        Ref<Texture2D> m_DirectoryIcon;
-        Ref<Texture2D> m_FileIcon;
+		Ref<Texture2D> m_DirectoryIcon;
+		Ref<Texture2D> m_FileIcon;
 
-        void* m_Editor;
-    };
+		void* m_Editor;
+	};
 }

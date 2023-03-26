@@ -250,7 +250,9 @@ namespace Crane
 			toMove = entity.GetUUID();
 			entityAction = EntityAction::Moving;
 
-			ImGui::SetDragDropPayload("ENTITY", NULL, 0);
+			const uint64_t id = entity.GetUUID();
+
+			ImGui::SetDragDropPayload("ENTITY", &id, sizeof(uint64_t));
 			ImGui::Text("%s", entity.GetName().c_str());
 			ImGui::EndDragDropSource();
 		}

@@ -4,6 +4,7 @@
 #include "Crane/Core/Window.h"
 #include "Crane/Core/LayerStack.h"
 #include "Crane/Events/ApplicationEvent.h"
+#include "Crane/AssetsSystem/AssetRegistry.h"
 #include "Crane/ImGui/ImGuiLayer.h"
 
 namespace Crane
@@ -52,6 +53,9 @@ namespace Crane
 
 		void SubmitToMainThread(std::function<void()> func);
 		void ExecuteMainThreadQueue();
+
+		Ref<AssetRegistry> GetAssetRegistry() { return m_AssetRegistry; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
@@ -69,6 +73,7 @@ namespace Crane
 
 		std::vector<std::function<void()> > m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
+		Ref<AssetRegistry> m_AssetRegistry = nullptr;
 
 	private:
 		static Application* s_Instance;

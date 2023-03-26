@@ -5,23 +5,23 @@
 namespace Crane {
 
 
-    struct EditorSettingsData
-    {
-        bool ShowColiders = true;
+	struct EditorSettingsData
+	{
+		bool ShowColiders = true;
 
-        EditorSettingsData() = default;
-    };
+		EditorSettingsData() = default;
+	};
 
 
-    class EditorSettings
-    {
-    public:
-        EditorSettings();
-        ~EditorSettings();
-        static void Serialize();
-        static bool Deserialize();
+	class EditorSettings
+	{
+	public:
+		EditorSettings();
+		~EditorSettings();
+		static void Serialise();
+		static bool Deserialise();
 
-        static EditorSettingsData* Get();
+		static EditorSettingsData* Get();
 
-    };
+	};
 }

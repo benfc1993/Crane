@@ -6,53 +6,53 @@
 
 namespace Crane {
 
-    static EditorSettingsData* s_Data;
-    const std::string s_EditorSettingsFilePath = "assets/settings/editor.settings";
+	static EditorSettingsData* s_Data;
+	const std::string s_EditorSettingsFilePath = "assets/settings/editor.settings";
 
-    EditorSettings::EditorSettings()
-    {
-        s_Data = new EditorSettingsData();
-    }
+	EditorSettings::EditorSettings()
+	{
+		s_Data = new EditorSettingsData();
+	}
 
-    EditorSettings::~EditorSettings()
-    {
-        delete s_Data;
-    }
+	EditorSettings::~EditorSettings()
+	{
+		delete s_Data;
+	}
 
-    EditorSettingsData* EditorSettings::Get()
-    {
-        return s_Data;
-    }
+	EditorSettingsData* EditorSettings::Get()
+	{
+		return s_Data;
+	}
 
-    void EditorSettings::Serialize()
-    {
-        YAML::Emitter out;
-        out << YAML::BeginMap;
-        out << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap; // Scene
-        out << YAML::Key << "ShowColliders" << YAML::Value << s_Data->ShowColiders;
+	void EditorSettings::Serialise()
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Settings" << YAML::Value << YAML::BeginMap; // Scene
+		out << YAML::Key << "ShowColliders" << YAML::Value << s_Data->ShowColiders;
 
-        out << YAML::EndMap;
-        out << YAML::EndMap;
+		out << YAML::EndMap;
+		out << YAML::EndMap;
 
-        std::ofstream fout(s_EditorSettingsFilePath.c_str());
-        fout << out.c_str();
-    }
+		std::ofstream fout(s_EditorSettingsFilePath.c_str());
+		fout << out.c_str();
+	}
 
-    bool EditorSettings::Deserialize()
-    {
-        std::ifstream stream(s_EditorSettingsFilePath.c_str());
-        std::stringstream strStream;
-        strStream << stream.rdbuf();
+	bool EditorSettings::Deserialise()
+	{
+		std::ifstream stream(s_EditorSettingsFilePath.c_str());
+		std::stringstream strStream;
+		strStream << stream.rdbuf();
 
-        YAML::Node data = YAML::Load(strStream.str());
-        if (!data["Settings"])
-        {
-            CR_INFO("No scene");
-            return false;
-        }
-        YAML::Node settings = data["Settings"];
+		YAML::Node data = YAML::Load(strStream.str());
+		if (!data["Settings"])
+		{
+			CR_INFO("No scene");
+			return false;
+		}
+		YAML::Node settings = data["Settings"];
 
-        s_Data->ShowColiders = settings["ShowColliders"].as<bool>();
-        return true;
-    }
+		s_Data->ShowColiders = settings["ShowColliders"].as<bool>();
+		return true;
+	}
 }
