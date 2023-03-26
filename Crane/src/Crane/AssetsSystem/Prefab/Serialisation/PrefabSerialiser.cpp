@@ -16,13 +16,13 @@ namespace Crane {
 			auto child = scene->GetEntityByUUID(current);
 
 			auto sceneSerialiser = SceneSerialiser(scene);
-			sceneSerialiser.SerialiseEntity(out, child);
 
 			auto hc = child.GetComponent<HierarchyComponent>();
 			if (hc.First != 0)
 			{
 				SerialiseChildren(scene, child, out);
 			}
+			sceneSerialiser.SerialiseEntity(out, child);
 			current = child.GetComponent<HierarchyComponent>().Next;
 		}
 	}

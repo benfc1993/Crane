@@ -179,6 +179,10 @@ namespace Crane {
 							//TODO: Open vscode file
 							// system(fmt::format("code {}", path).c_str());
 						}
+						else if (extension == ".prefab")
+						{
+							//TODO: Open prefab window
+						}
 					}
 				}
 

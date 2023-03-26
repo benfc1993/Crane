@@ -35,13 +35,13 @@ namespace Crane {
 			}
 		}
 
-		// auto prefabPath = PrefabSerialiser::SerialisePrefab(scene, entity, dirPath / fileName);
+		auto prefabPath = PrefabSerialiser::SerialisePrefab(scene, entity, dirPath / fileName);
 
-		// auto assetHandle = entity.GetComponent<PrefabComponent>().AssetHandle;
+		auto assetHandle = entity.GetComponent<PrefabComponent>().AssetHandle;
 
-		// Application::Get().GetAssetRegistry()->RegisterAsset(assetHandle, Asset(entity.GetName(), prefabPath));
+		Application::Get().GetAssetRegistry()->RegisterAsset(assetHandle, Asset(entity.GetName(), prefabPath));
 
-		// auto asset = Application::Get().GetAssetRegistry()->GetAsset(assetHandle);
+		auto asset = Application::Get().GetAssetRegistry()->GetAsset(assetHandle);
 	}
 
 }

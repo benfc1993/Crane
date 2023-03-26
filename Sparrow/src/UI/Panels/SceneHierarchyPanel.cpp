@@ -37,8 +37,7 @@ namespace Crane
 		std::string hName = "Hierarchy###" + std::to_string(m_Index);
 		ImGui::Begin(hName.c_str());
 
-
-		if (entityAction != EntityAction::Moving && entityAction != EntityAction::Move)
+		if (!ImGui::IsWindowHovered() || (entityAction != EntityAction::Moving && entityAction != EntityAction::Move))
 		{
 			toActOn = UUID(0);
 			toMove = UUID(0);
