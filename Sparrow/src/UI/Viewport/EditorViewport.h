@@ -9,30 +9,27 @@
 #include <imgui/imgui_internal.h>
 
 namespace Crane {
-    class EditorViewport: public Viewport
-    {
-    public:
-        EditorViewport(std::string name, Ref<Scene> scene, EditorLayer* editorLayer);
-        virtual void OnImGuiRender() override;
-        virtual void OnUpdate(Time time) override;
-        virtual void OnEvent(Event& event) override;
-        void OnOverlayRender();
-        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+	class EditorViewport: public Viewport
+	{
+	public:
+		EditorViewport(std::string name, Ref<Scene> scene, EditorLayer* editorLayer);
+		virtual void OnImGuiRender() override;
+		virtual void OnUpdate(Time time) override;
+		virtual void OnEvent(Event& event) override;
+		void OnOverlayRender();
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool HandleInput(KeyPressedEvent& event);
 
-        virtual void SetSelectedEntity(Entity entity) override
-        {
-            m_SelectedEntity = entity;
-        }
-        virtual Entity GetSelectedEntity() const override { return m_SelectedEntity; }
+	private:
+		EditorCamera m_camera;
 
-    private:
-        EditorCamera m_camera;
+		EditorLayer* m_editorLayer;
+		Ref<ImGuizmoLayer> m_imGuizmoLayer;
 
-        EditorLayer* m_editorLayer;
-        Ref<ImGuizmoLayer> m_imGuizmoLayer;
+		Entity m_HoveredEntity;
 
-        Entity m_HoveredEntity;
+		bool m_CanPick = false;
 
-        bool m_CanPick = false;
-    };
+		int m_GizmoType = -1;
+	};
 }
