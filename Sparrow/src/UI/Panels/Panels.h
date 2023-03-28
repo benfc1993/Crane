@@ -43,6 +43,11 @@ namespace Crane {
             panel->SetActiveScene(m_ActiveScene);
         }
 
+        void Push(Ref<Panel>& panel)
+        {
+            AddPanel(panel);
+        }
+
         void RemovePanel(const int index)
         {
             auto panel = m_Panels[index];
@@ -58,6 +63,8 @@ namespace Crane {
                 panel->SetActiveScene(m_ActiveScene);
             }
         };
+
+        Ref<Scene> GetActiveScene() { return m_ActiveScene; }
 
         void SetSelectedEntity(Entity entity)
         {

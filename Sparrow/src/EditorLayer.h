@@ -13,10 +13,11 @@
 #include "UI/Panels/SettingsPanel/SettingsPanel.h"
 #include "UI/Panels/ContentBrowserPanel.h"
 #include "UI/ToolBars/SceneToolbar.h"
+#include "UI/Viewport/Viewports.h"
 
 namespace Crane {
 
-    class EditorLayer : public Layer
+    class EditorLayer: public Layer
     {
     public:
         EditorLayer();
@@ -35,9 +36,11 @@ namespace Crane {
         void OnSimulateStop();
 
         void LoadScene(const std::filesystem::path& path);
+
+        Panels* GetPanels() { return &m_Panels; }
+        Ref<EditorSettings> GetSettings() { return m_EditorSettings; }
     private:
         bool OnKeyPressed(KeyPressedEvent& e);
-        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
         void NewScene();
         void OpenScene();
@@ -52,24 +55,26 @@ namespace Crane {
 
         Ref<Scene> m_ActiveScene = nullptr;
         Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
-        Entity m_CameraEntity;
-        Entity m_SecondCameraEntity;
-        Entity m_HoveredEntity;
+        // Entity m_CameraEntity;
+        // Entity m_SecondCameraEntity;
+        // Entity m_HoveredEntity;
 
-        bool m_PrimaryCamera = true;
+        // bool m_PrimaryCamera = true;
 
-        bool m_CanPick = true;
+        // bool m_CanPick = true;
 
-        EditorCamera m_EditorCamera;
+        // EditorCamera m_EditorCamera;
 
         glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
         glm::vec2 m_ViewportBounds[2];
 
-        bool m_ViewportFocused = false, m_ViewportHovered = false;
+        // bool m_ViewportFocused = false, m_ViewportHovered = false;
 
         SceneState m_SceneState = SceneState::Edit;
 
         Ref<EditorSettings> m_EditorSettings = CreateRef<EditorSettings>();
+
+        Viewports m_Viewports;
 
         //Panels
         Panels m_Panels;

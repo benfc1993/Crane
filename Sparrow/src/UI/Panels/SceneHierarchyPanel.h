@@ -32,7 +32,10 @@ namespace Crane {
 
         virtual void OnImGuiRender() override;
 
-        virtual void SetSelectedEntity(Entity entity) override { m_SelectionContext = entity; }
+        virtual void SetSelectedEntity(Entity entity) override
+        {
+            m_SelectionContext = entity;
+        }
         virtual Entity GetSelectedEntity() const override { return m_SelectionContext; }
 
     private:
