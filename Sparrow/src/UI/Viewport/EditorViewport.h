@@ -5,8 +5,6 @@
 #include "EditorLayer.h"
 #include "Crane/Camera/EditorCamera.h"
 
-#include <imgui/imgui.h>
-#include <imgui/imgui_internal.h>
 
 namespace Crane {
 	class EditorViewport: public Viewport
@@ -21,6 +19,9 @@ namespace Crane {
 		bool HandleInput(KeyPressedEvent& event);
 
 	private:
+		void DrawImGuizmo(Entity selectedEntity);
+
+	private:
 		EditorCamera m_camera;
 
 		EditorLayer* m_editorLayer;
@@ -30,6 +31,7 @@ namespace Crane {
 
 		bool m_CanPick = false;
 
-		int m_GizmoType = -1;
+		int m_GizmoType = 7;
+		int m_GizmoSpace = 0;
 	};
 }

@@ -8,7 +8,11 @@
 #include "Crane/Math/Math.h"
 
 #include <glm/gtc/type_ptr.hpp>
+
 #include <ImGuizmo.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+
 
 namespace Crane {
 
@@ -95,9 +99,7 @@ namespace Crane {
 	void EditorViewport::OnImGuiRender()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_Name.c_str());
-
-
+		ImGui::Begin(m_Name.c_str(), 0, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
 
 		auto viewportOffset = ImGui::GetWindowPos();
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
@@ -141,74 +143,28 @@ namespace Crane {
 			ImGui::GetCurrentContext()->NavWindowingToggleLayer = false;
 		}
 
-		//Gizmos
-		Entity selectedEntity = GetSelectedEntity();
 
 		m_CanPick = m_ViewportHovered;
 
+		Entity selectedEntity = GetSelectedEntity();
+
 		if (selectedEntity)
 		{
-
-			bool usingGuizmo = m_GizmoType != -1 && (ImGuizmo::IsUsing() || ImGuizmo::IsOver());
-			if (selectedEntity && m_GizmoType != -1)
-			{
-				ImGuizmo::SetOrthographic(false);
-				ImGuizmo::SetDrawlist();
-				ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-				// Edit camera
-				const glm::mat4& cameraProjection = m_camera.GetProjection();
-				const glm::mat4& cameraView = m_camera.GetViewMatrix();
-
-				//Entity transform
-				auto& tc = selectedEntity.GetComponent<TransformComponent>();
-				glm::mat4 transform = tc.Transform();
-
-				// Snapping
-				bool snap = Input::IsKeyPressed(Key::LeftControl);
-				float translationSnapValue = 0.1f;
-				float rotationSnapValue = 45.0f;
-				float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? rotationSnapValue : translationSnapValue;
-
-				float snapValues[3] = { snapValue, snapValue, snapValue };
-
-				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
-
-
-
-				if (usingGuizmo)
-				{
-
-					glm::vec3 parentPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-					glm::vec3 parentScale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-					auto& hc = selectedEntity.GetComponent<HierarchyComponent>();
-
-					if (hc.Parent != 0)
-					{
-						Entity parent = m_Scene->GetEntityByUUID(hc.Parent);
-						auto& parentTransform = parent.GetComponent<TransformComponent>();
-						parentPosition = parentTransform.WorldPosition;
-						parentScale = parentTransform.WorldScale;
-					}
-
-					glm::vec3 position, rotation, scale;
-					Math::DecomposeTransform(transform, position, rotation, scale);
-
-					glm::vec3 deltaRotation = rotation - tc.Rotation;
-					tc.Position = position - parentPosition;
-					tc.Rotation += deltaRotation;
-					tc.Scale = scale / parentScale;
-				}
-				m_CanPick = m_ViewportHovered && !usingGuizmo;
-
-
-
-				// bool usingGuizmo = m_imGuizmoLayer->OnUpdate(selectedEntity, m_ViewportBounds[0], m_ViewportBounds[1]);
-				// m_CanPick = m_ViewportHovered && !usingGuizmo;
-			}
+			DrawImGuizmo(selectedEntity);
 		}
+
+		ImGui::PushID(1);
+		ImGui::BeginMenuBar();
+		if (m_GizmoType != ImGuizmo::SCALE)
+		{
+			if (ImGui::RadioButton("Local", m_GizmoSpace == ImGuizmo::LOCAL))
+				m_GizmoSpace = ImGuizmo::LOCAL;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("World", m_GizmoSpace == ImGuizmo::WORLD))
+				m_GizmoSpace = ImGuizmo::WORLD;
+		}
+		ImGui::EndMenuBar();
+		ImGui::PopID();
 
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -291,6 +247,67 @@ namespace Crane {
 
 	}
 
+	void EditorViewport::DrawImGuizmo(Entity selectedEntity)
+	{
+
+
+		bool usingGuizmo = m_GizmoType != -1 && (ImGuizmo::IsUsing() || ImGuizmo::IsOver());
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+			// Edit camera
+			const glm::mat4& cameraProjection = m_camera.GetProjection();
+			const glm::mat4& cameraView = m_camera.GetViewMatrix();
+
+			//Entity transform
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.Transform();
+
+			// Snapping
+			bool snap = Input::IsKeyPressed(Key::LeftControl);
+			float translationSnapValue = 0.1f;
+			float rotationSnapValue = 45.0f;
+			float snapValue = m_GizmoType == ImGuizmo::OPERATION::ROTATE ? rotationSnapValue : translationSnapValue;
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, (ImGuizmo::MODE)m_GizmoSpace, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+
+
+
+			if (usingGuizmo)
+			{
+
+				glm::vec3 parentPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+				glm::vec3 parentScale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+				auto& hc = selectedEntity.GetComponent<HierarchyComponent>();
+
+				if (hc.Parent != 0)
+				{
+					Entity parent = m_Scene->GetEntityByUUID(hc.Parent);
+					auto& parentTransform = parent.GetComponent<TransformComponent>();
+					parentPosition = parentTransform.WorldPosition;
+					parentScale = parentTransform.WorldScale;
+				}
+
+				glm::vec3 position, rotation, scale;
+				Math::DecomposeTransform(transform, position, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.Position = position - parentPosition;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale / parentScale;
+			}
+		}
+		m_CanPick = m_ViewportHovered && !usingGuizmo;
+	}
+
+
 	void EditorViewport::OnEvent(Event& event)
 	{
 		auto dispatcher = EventDispatcher(event);
@@ -301,7 +318,7 @@ namespace Crane {
 
 	bool EditorViewport::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
-		if (!m_CanPick || Input::IsKeyPressed(Key::LeftAlt)) return false;
+		if (!m_CanPick || !m_ViewportHovered || Input::IsKeyPressed(Key::LeftAlt)) return false;
 		if (e.getMouseButton() == 0)
 		{
 			m_editorLayer->GetPanels()->SetSelectedEntity(m_HoveredEntity);
@@ -313,9 +330,6 @@ namespace Crane {
 	{
 		switch (event.GetKeyCode())
 		{
-		case Key::Q:
-			m_GizmoType = -1;
-			return true;
 		case Key::W:
 			m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 			return true;
@@ -324,6 +338,9 @@ namespace Crane {
 			return true;
 		case Key::R:
 			m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			return true;
+		case Key::Q:
+			m_GizmoSpace = m_GizmoSpace == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
 			return true;
 
 		}

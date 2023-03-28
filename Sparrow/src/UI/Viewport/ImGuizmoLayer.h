@@ -3,15 +3,12 @@
 #include "Crane/Camera/EditorCamera.h"
 #include "Crane/Scene/Entity.h"
 
-#include <imgui/imgui.h>
-#include <ImGuizmo.h>
-
 namespace Crane {
 	class ImGuizmoLayer
 	{
 	public:
 		ImGuizmoLayer(EditorCamera camera, Ref<Scene> scene): m_camera(camera), m_scene(scene) {}
-		bool OnUpdate(Entity selectedEntity, glm::vec2 viewportBoundsMin, glm::vec2 viewportBoundsMax);
+		std::function<void(Entity selectedEntity, glm::vec2 viewportBoundsMin, glm::vec2 viewportBoundsMax)> OnUpdate();
 
 	private:
 		void HandleInput();
