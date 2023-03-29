@@ -60,20 +60,7 @@ namespace Crane {
 			m_Framebuffer->ClearAttachment(1, -1);
 		}
 
-		auto sceneState = m_Scene->GetState();
-
-		switch (sceneState)
-		{
-		case SceneState::Edit:
-			m_Scene->OnUpdateEditor(time, m_camera);
-			break;
-		case SceneState::Play:
-			m_Scene->OnUpdateRuntime(time);
-			break;
-		case SceneState::Simulate:
-			m_Scene->OnUpdateSimulation(time, m_camera);
-			break;
-		}
+		m_ActiveScene->Render(time, m_camera);
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -85,7 +72,7 @@ namespace Crane {
 		int mouseX = (int)mx;
 		int mouseY = (int)my;
 
-		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+		if (m_ViewportHovered && mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_Scene.get());
@@ -305,6 +292,13 @@ namespace Crane {
 			}
 		}
 		m_CanPick = m_ViewportHovered && !usingGuizmo;
+	}
+
+	void EditorViewport::OnSceneStateChanged(Ref<Scene> scene)
+	{
+		m_Scene = scene;
+		m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 	}
 
 

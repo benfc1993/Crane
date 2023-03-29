@@ -14,6 +14,7 @@ namespace Crane {
 		virtual void OnImGuiRender() override;
 		virtual void OnUpdate(Time time) override;
 		virtual void OnEvent(Event& event) override;
+		virtual void OnSceneStateChanged(Ref<Scene> scene) override;
 		void OnOverlayRender();
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool HandleInput(KeyPressedEvent& event);

@@ -13,6 +13,7 @@ namespace Crane {
 		virtual void OnImGuiRender() {}
 		virtual void OnUpdate(Time time) {}
 		virtual void OnEvent(Event& event) {}
+		virtual void OnSceneStateChanged(Ref<Scene> scene) {}
 		void SetIndex(int index) { m_Index = index; }
 
 
@@ -36,5 +37,8 @@ namespace Crane {
 
 		Entity m_SelectedEntity;
 		int m_Index = -1;
+
+		friend class Viewports;
+
 	};
 }

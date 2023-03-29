@@ -9,83 +9,85 @@
 class b2World;
 
 namespace Crane {
-    class Entity;
+	class Entity;
 
-    enum class SceneState
-    {
-        Edit = 0, Play = 1, Simulate = 2
-    };
+	enum class SceneState
+	{
+		Edit = 0, Play = 1, Simulate = 2
+	};
 
-    class Scene
-    {
-    public:
-        Scene();
-        ~Scene();
+	class Scene
+	{
+	public:
+		Scene();
+		~Scene();
 
-        static Ref<Scene> Copy(Ref<Scene> other);
+		static Ref<Scene> Copy(Ref<Scene> other);
 
-        Entity CreateEntity(const std::string& name = std::string());
-        Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
-        void DestroyEntity(Entity entity);
+		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
+		void DestroyEntity(Entity entity);
 
-        entt::registry& Reg() { return m_Registry; }
+		entt::registry& Reg() { return m_Registry; }
 
-        void OnUpdateEditor(Time time, EditorCamera& camera);
+		void OnUpdateEditor(Time time);
 
-        void OnUpdateRuntime(Time time);
+		void OnUpdateRuntime(Time time);
 
-        void OnUpdateSimulation(Time time, EditorCamera& camera);
-        void UpdatePhysics(Time time);
+		void OnUpdateSimulation(Time time);
+		void UpdatePhysics(Time time);
 
-        void Render(Time time);
+		void Render(Time time, EditorCamera& camera);
+		void Render(Time time, Camera* camera, glm::mat4 cameraTransform);
 
-        void OnRuntimeStart();
-        void OnRuntimeStop();
-        void OnSumulatePhysicsStart();
-        void OnSumulatePhysicsStop();
+		void OnRuntimeStart();
+		void OnRuntimeStop();
+		void OnSumulatePhysicsStart();
+		void OnSumulatePhysicsStop();
 
-        void OnViewportResized(uint32_t width, uint32_t height);
+		void OnViewportResized(uint32_t width, uint32_t height);
 
-        void SetFilePath(const std::string& filePath) { m_FilePath = filePath; }
-        std::string GetFilePath() { return m_FilePath; }
+		void SetFilePath(const std::string& filePath) { m_FilePath = filePath; }
+		std::string GetFilePath() { return m_FilePath; }
 
-        SceneState GetState() const { return m_State; }
-        void SetState(SceneState state) { m_State = state; }
+		SceneState GetState() const { return m_State; }
+		void SetState(SceneState state) { m_State = state; }
 
-        void DuplicateEntity(Entity entity);
+		void DuplicateEntity(Entity entity);
 
-        Entity GetPrimaryCameraEntity();
+		Entity GetPrimaryCameraEntity();
 
-        Entity GetEntityByUUID(UUID uuid);
-        Entity FindEntityByName(std::string_view name);
-        bool EntityExists(UUID uuid);
+		Entity GetEntityByUUID(UUID uuid);
+		Entity FindEntityByName(std::string_view name);
+		bool EntityExists(UUID uuid);
 
-        template<typename ...Components>
-        auto GetAllEntitiesWith()
-        {
-            return m_Registry.view<Components...>();
-        }
+		template<typename ...Components>
+		auto GetAllEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
 
-        bool IsRunning() const { return m_Running; }
-    private:
-        void SetupPhysics();
-        void StopPhysics();
-    private:
-        bool m_Running = false;
-        entt::registry m_Registry;
-        uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
-        std::string m_FilePath;
+		bool IsRunning() const { return m_Running; }
+	private:
+		void SetupPhysics();
+		void StopPhysics();
+		void RenderSprites(Time time);
+	private:
+		bool m_Running = false;
+		entt::registry m_Registry;
+		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+		std::string m_FilePath;
 
-        std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
-        SceneState m_State = SceneState::Edit;
+		SceneState m_State = SceneState::Edit;
 
-        b2World* m_PhysicsWorld = nullptr;
+		b2World* m_PhysicsWorld = nullptr;
 
-        friend class Entity;
-        friend class SceneSerializer;
+		friend class Entity;
+		friend class SceneSerializer;
 
-        template<typename T>
-        void OnComponentAdded(Entity entity, T& component);
-    };
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
+	};
 }

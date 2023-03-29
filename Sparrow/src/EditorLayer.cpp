@@ -5,6 +5,7 @@
 #include "Platform/OpenGL/Shader/OpenGLShader.h"
 #include "Crane/Math/Math.h"
 #include "UI/Viewport/EditorViewport.h"
+#include "UI/Viewport/RuntimeViewport.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -39,8 +40,8 @@ namespace Crane
 		}
 
 
-		m_Viewports.AddViewport<EditorViewport>("Viewport", m_ActiveScene, (EditorLayer*)this);
-		// m_Viewports.AddViewport<EditorViewport>("Prefab", CreateRef<Scene>(), (EditorLayer*)this);
+		m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
+		m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
 
 		m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 
@@ -66,6 +67,18 @@ namespace Crane
 
 	void EditorLayer::OnUpdate(Time time)
 	{
+		switch (m_SceneState)
+		{
+		case SceneState::Edit:
+			m_ActiveScene->OnUpdateEditor(time);
+			break;
+		case SceneState::Simulate:
+			m_ActiveScene->OnUpdateSimulation(time);
+			break;
+		case SceneState::Play:
+			m_ActiveScene->OnUpdateRuntime(time);
+			break;
+		}
 		m_Viewports.OnUpdate(time);
 	}
 
@@ -82,8 +95,8 @@ namespace Crane
 		if (opt_fullscreen)
 		{
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(viewport->WorkPos);
-			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowPos(viewport->Pos);
+			ImGui::SetNextWindowSize(viewport->Size);
 			ImGui::SetNextWindowViewport(viewport->ID);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -101,13 +114,13 @@ namespace Crane
 
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		ImGui::Begin("Dockspace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
-		ImGui::ShowDemoWindow();
 
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
 
+		ImGui::ShowDemoWindow();
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -336,6 +349,7 @@ namespace Crane
 
 		m_Panels.SetActiveScene(m_ActiveScene);
 
+		m_Viewports.OnSceneStateChanged(m_ActiveScene);
 
 		if (selectedId != -1)
 		{
@@ -362,6 +376,8 @@ namespace Crane
 
 		m_Panels.SetActiveScene(m_ActiveScene);
 
+		m_Viewports.OnSceneStateChanged(m_ActiveScene);
+
 		if (selectedId != -1)
 		{
 			m_Panels.SetSelectedEntity(m_ActiveScene->GetEntityByUUID(selectedId));
@@ -371,10 +387,15 @@ namespace Crane
 
 	void EditorLayer::OnSimulateStart()
 	{
+
+
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
 		m_SceneState = SceneState::Simulate;
+
+		uint64_t selectedId = -1;
+		auto selectedEntity = m_Panels.GetSelectedEntity();
 
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 
@@ -382,16 +403,34 @@ namespace Crane
 		m_ActiveScene->OnSumulatePhysicsStart();
 		m_ActiveScene->SetState(SceneState::Simulate);
 		m_Panels.SetActiveScene(m_ActiveScene);
+
+		m_Viewports.OnSceneStateChanged(m_ActiveScene);
+
+		if (!selectedEntity.IsNull())
+		{
+			selectedId = selectedEntity.GetUUID();
+		}
 	}
 
 	void EditorLayer::OnSimulateStop()
 	{
+
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnSumulatePhysicsStop();
+
+		uint64_t selectedId = -1;
+		auto selectedEntity = m_Panels.GetSelectedEntity();
 
 		m_ActiveScene = m_EditorScene;
 		m_ActiveScene->SetState(SceneState::Edit);
 		m_Panels.SetActiveScene(m_ActiveScene);
+
+		m_Viewports.OnSceneStateChanged(m_ActiveScene);
+
+		if (!selectedEntity.IsNull())
+		{
+			selectedId = selectedEntity.GetUUID();
+		}
 	}
 
 	void EditorLayer::OnDuplicateEntity()
