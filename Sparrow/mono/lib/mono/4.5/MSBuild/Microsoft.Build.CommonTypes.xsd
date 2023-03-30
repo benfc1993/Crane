@@ -1376,7 +1376,7 @@ elementFormDefault="qualified">
                 <xs:extension base="msb:TaskType">
                     <xs:attribute name="BuildAssemblyName" use="required" />
                     <xs:attribute name="BuildAssemblyPath" use="required" />
-                    <xs:attribute name="ShouldGenerateSerializer" use="required" />
+                    <xs:attribute name="ShouldGenerateSerialiser" use="required" />
                     <xs:attribute name="DelaySign" />
                     <xs:attribute name="KeyContainer" />
                     <xs:attribute name="KeyFile" />

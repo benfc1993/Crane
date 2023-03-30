@@ -21,6 +21,7 @@ namespace Crane {
 		bool HandleInput(KeyPressedEvent& event);
 
 	private:
+		glm::vec2 GetMousePosition();
 		void DrawImGuizmo(Entity selectedEntity);
 
 	private:

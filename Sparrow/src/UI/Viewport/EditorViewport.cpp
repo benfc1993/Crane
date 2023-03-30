@@ -34,6 +34,20 @@ namespace Crane {
 		ImGui::DestroyContext();
 	}
 
+	glm::vec2 EditorViewport::GetMousePosition()
+	{
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+
+		my = viewportSize.y - my;
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
+		return { mouseX, mouseY };
+	}
+
 	void EditorViewport::OnUpdate(Time time)
 	{
 		CR_PROFILE_FUNCTION();
@@ -67,19 +81,13 @@ namespace Crane {
 
 		m_ActiveScene->Render(time, m_camera);
 
-		auto [mx, my] = ImGui::GetMousePos();
-		mx -= m_ViewportBounds[0].x;
-		my -= m_ViewportBounds[0].y;
-
+		auto mousePos = GetMousePosition();
 		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
 
-		my = viewportSize.y - my;
-		int mouseX = (int)mx;
-		int mouseY = (int)my;
 
-		if (m_ViewportHovered && mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+		if (m_ViewportHovered && mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x < (int)viewportSize.x && mousePos.y < (int)viewportSize.y)
 		{
-			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			int pixelData = m_Framebuffer->ReadPixel(1, mousePos.x, mousePos.y);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_Scene.get());
 		}
 
@@ -100,7 +108,6 @@ namespace Crane {
 		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
-		m_ViewportHovered = ImGui::IsWindowHovered();
 		bool imGuiInteracting = ImGui::IsAnyItemActive() || ImGui::IsAnyItemFocused();
 
 		if (m_ViewportFocused && m_editorLayer->GetPanels()->GetActiveScene() != m_Scene)
@@ -116,6 +123,8 @@ namespace Crane {
 
 		uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
 		ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		m_ViewportHovered = ImGui::IsItemHovered();
+
 		// CR_CORE_INFO("Image: {} - {}", m_ViewportSize.x, m_ViewportSize.y);
 
 		if (ImGui::BeginDragDropTarget())
@@ -124,7 +133,20 @@ namespace Crane {
 			{
 				const std::filesystem::path path = std::filesystem::path((char*)payload->Data);
 
-				// m_EditorLayer::LoadScene(std::filesystem::path(s_AssetPath) / path);
+				auto extension = path.extension();
+
+				if (extension == ".scene")
+				{
+					m_editorLayer->LoadScene(path);
+				}
+
+				if (extension == ".prefab")
+				{
+					auto prefab = PrefabSerialiser::DeserialisePrefab(path, m_ActiveScene, true);
+					if (prefab)
+						m_editorLayer->GetPanels()->SetSelectedEntity(prefab);
+				}
+
 				ImGui::EndDragDropTarget();
 			}
 		}

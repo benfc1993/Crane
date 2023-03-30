@@ -54,7 +54,7 @@ namespace Crane {
 	}
 
 
-	bool PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene)
+	Entity PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition)
 	{
 		std::unordered_map<UUID, UUID> entityIdConversions;
 		std::vector<Entity> DeserialisedEntities;
@@ -67,8 +67,10 @@ namespace Crane {
 		if (!data["Prefab"])
 		{
 			CR_CORE_INFO("No prefab");
-			return false;
+			return {};
 		}
+
+		Entity parentEntity;
 
 		auto entities = data["Prefab"]["Entities"];
 		if (entities)
@@ -93,7 +95,14 @@ namespace Crane {
 					hc.First = entityIdConversions.at(hc.First);
 				}
 
-				if (hc.Parent != 0)
+				if (hc.Parent == 0 && resetPosition)
+				{
+					parentEntity = entity;
+					auto& tc = entity.GetComponent<TransformComponent>();
+
+					tc.Position = { 0.0f, 0.0f, 0.0f };
+				}
+				else
 				{
 					hc.Parent = entityIdConversions.at(hc.Parent);
 				}
@@ -111,6 +120,6 @@ namespace Crane {
 			}
 		}
 
-		return true;
+		return parentEntity;
 	}
 }

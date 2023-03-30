@@ -86,7 +86,7 @@ namespace Crane {
 		b2World* m_PhysicsWorld = nullptr;
 
 		friend class Entity;
-		friend class SceneSerializer;
+		friend class SceneSerialiser;
 
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

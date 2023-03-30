@@ -18,11 +18,11 @@ namespace Crane
 
 	EditorLayer::EditorLayer(): Layer("EditorLayer")
 	{
-		m_EditorSettings->Deserialize();
+		m_EditorSettings->Deserialise();
 	}
 	EditorLayer::~EditorLayer()
 	{
-		m_EditorSettings->Serialize();
+		m_EditorSettings->Serialise();
 	}
 
 	void EditorLayer::OnAttach()
@@ -292,12 +292,12 @@ namespace Crane
 		if (!path.empty())
 		{
 			Ref<Scene> newScene = CreateRef<Scene>();
-			SceneSerializer serializer(newScene);
-			if (serializer.Deserialize(path))
+			SceneSerialiser serialiser(newScene);
+			if (serialiser.Deserialise(s_AssetPath / path))
 			{
 				m_EditorScene = newScene;
 				m_ActiveScene = m_EditorScene;
-				m_ActiveScene->SetFilePath(path);
+				m_ActiveScene->SetFilePath(s_AssetPath / path);
 				m_Panels.SetActiveScene(m_ActiveScene);
 			}
 		}
@@ -309,8 +309,8 @@ namespace Crane
 
 		if (fileExists == 0)
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(m_ActiveScene->GetFilePath());
+			SceneSerialiser serialiser(m_ActiveScene);
+			serialiser.Serialise(m_ActiveScene->GetFilePath());
 		}
 		else
 		{
@@ -322,8 +322,8 @@ namespace Crane
 		std::string filePath = FileDialogs::SaveFile();
 		if (!filePath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(filePath);
+			SceneSerialiser serialiser(m_ActiveScene);
+			serialiser.Serialise(filePath);
 			m_ActiveScene->SetFilePath(filePath);
 		}
 	}
