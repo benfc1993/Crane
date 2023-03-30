@@ -6,6 +6,7 @@
 #include "Crane/Math/Math.h"
 #include "UI/Viewport/EditorViewport.h"
 #include "UI/Viewport/RuntimeViewport.h"
+#include "UI/Viewport/PrefabViewport.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -28,6 +29,8 @@ namespace Crane
 	void EditorLayer::OnAttach()
 	{
 
+		//TODO: Populate asset registry from asset dir
+
 		auto scenePath = Project::GetActive()->GetScenePath();
 
 		if (scenePath.empty())
@@ -40,8 +43,9 @@ namespace Crane
 		}
 
 
-		m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
-		m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
+		// m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
+		// m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
+		m_Viewports.AddViewport<PrefabViewport>(this, "test", UUID(2200605418022896195));
 
 		m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 

@@ -21,7 +21,6 @@ namespace Crane {
 		m_editorLayer = editorLayer;
 		m_camera = EditorCamera();
 
-
 		FramebufferSpecification spec;
 		spec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
 		spec.Width = 1280;
@@ -124,8 +123,6 @@ namespace Crane {
 		uint64_t textureId = m_Framebuffer->GetColorAttachmentRendererId();
 		ImGui::Image(reinterpret_cast<void*>(textureId), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		m_ViewportHovered = ImGui::IsItemHovered();
-
-		// CR_CORE_INFO("Image: {} - {}", m_ViewportSize.x, m_ViewportSize.y);
 
 		if (ImGui::BeginDragDropTarget())
 		{

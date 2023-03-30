@@ -27,6 +27,7 @@ namespace Crane {
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
+		void UpdatePrefab(UUID prefabHandle);
 
 		entt::registry& Reg() { return m_Registry; }
 

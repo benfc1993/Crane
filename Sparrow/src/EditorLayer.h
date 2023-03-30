@@ -17,30 +17,31 @@
 
 namespace Crane {
 
-    class EditorLayer: public Layer
-    {
-    public:
-        EditorLayer();
-        virtual ~EditorLayer() override;
-        virtual void OnAttach() override;
-        virtual void OnDetach() override;
+	class EditorLayer: public Layer
+	{
+	public:
+		EditorLayer();
+		virtual ~EditorLayer() override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
 
-        virtual void OnUpdate(Time time) override;
-        virtual void OnImGuiRender() override;
-        void OnOverlayRender();
-        virtual void OnEvent(Event& event) override;
+		virtual void OnUpdate(Time time) override;
+		virtual void OnImGuiRender() override;
+		void OnOverlayRender();
+		virtual void OnEvent(Event& event) override;
 
-        void OnScenePlay();
-        void OnSceneStop();
-        void OnSimulateStart();
-        void OnSimulateStop();
+		void OnScenePlay();
+		void OnSceneStop();
+		void OnSimulateStart();
+		void OnSimulateStop();
 
-        void LoadScene(const std::filesystem::path& path);
+		void LoadScene(const std::filesystem::path& path);
 
-        Panels* GetPanels() { return &m_Panels; }
-        Ref<EditorSettings> GetSettings() { return m_EditorSettings; }
-    private:
-        bool OnKeyPressed(KeyPressedEvent& e);
+		Panels* GetPanels() { return &m_Panels; }
+		Ref<EditorSettings> GetSettings() { return m_EditorSettings; }
+
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
 
 		void NewScene();
 		void OpenScene();
@@ -53,8 +54,10 @@ namespace Crane {
 		Ref<VertexArray> m_TriangleVertexArray;
 		Ref<Framebuffer> m_Framebuffer;
 
-    Ref<Scene> m_ActiveScene = nullptr;
-    Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
+		Ref<Scene> m_ActiveScene = nullptr;
+		Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
+
+		bool m_EditingPrefab = false;
 
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 		glm::vec2 m_ViewportBounds[2];
@@ -63,12 +66,12 @@ namespace Crane {
 
 		Ref<EditorSettings> m_EditorSettings = CreateRef<EditorSettings>();
 
-    Viewports m_Viewports;
+		Viewports m_Viewports;
 
-    //Panels
-    Panels m_Panels;
-    Ref<SettingsPanel> m_SettingsPanel = nullptr;
-    // RenderStatsPanel m_RenderStatsPanel;
+		//Panels
+		Panels m_Panels;
+		Ref<SettingsPanel> m_SettingsPanel = nullptr;
+		// RenderStatsPanel m_RenderStatsPanel;
 
 		//Global State
 		bool m_ShowSettings = false;

@@ -6,6 +6,7 @@
 #include "ScriptableEntity.h"
 #include "Crane/Renderer/Renderer2D.h"
 #include "Crane/Scripting/ScriptEngine.h"
+#include "Crane/AssetsSystem/Prefab/Serialisation/PrefabSerialiser.h"
 
 #include "Entity.h"
 
@@ -203,6 +204,20 @@ namespace Crane {
 		}
 
 		return {};
+	}
+
+	void Scene::UpdatePrefab(UUID prefabHandle)
+	{
+		auto test = CreateRef<Scene>();
+		Entity prefabEntity = PrefabSerialiser::DeserialisePrefab(prefabHandle, test);
+		auto view = m_Registry.view <PrefabComponent>();
+		for (auto entity : view)
+		{
+			auto& tc = prefabEntity.GetComponent<IdComponent>();
+			auto& id = m_Registry.get<IdComponent>(entity).Id;
+			m_Registry.replace<IdComponent>(entity, tc);
+		}
+
 	}
 #pragma endregion
 

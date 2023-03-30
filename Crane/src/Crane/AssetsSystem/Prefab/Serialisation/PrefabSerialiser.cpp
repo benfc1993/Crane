@@ -1,6 +1,7 @@
 #include "crpch.h"
 #include "PrefabSerialiser.h"
 
+#include "Crane/Core/Application.h"
 #include "Crane/Scene/Serialisation/SceneSerialiser.h"
 
 #include <yaml-cpp/yaml.h>
@@ -53,6 +54,11 @@ namespace Crane {
 		return filepath;
 	}
 
+	Entity PrefabSerialiser::DeserialisePrefab(UUID prefabHandle, const Ref<Scene>& scene, bool resetPosition)
+	{
+		auto filePath = Application::Get().GetAssetRegistry()->GetAsset(prefabHandle).FilePath;
+		return DeserialisePrefab(filePath, scene, resetPosition);
+	}	
 
 	Entity PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition)
 	{

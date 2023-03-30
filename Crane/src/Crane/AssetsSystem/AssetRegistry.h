@@ -53,8 +53,28 @@ namespace Crane {
 		{
 			m_registry.emplace(handle, asset);
 		}
+
+		void Register(std::function<void(UUID, AssetType)> subscriber)
+		{
+			m_Subscribers.emplace_back(subscriber);
+		}
+
+		void OnAssetChanged(UUID handle)
+		{
+			if (m_registry.find(handle) == m_registry.end())
+			{
+				CR_CORE_ERROR("Asset not registered: {}", handle);
+				return;
+			}
+
+			for (auto subscriber : m_Subscribers)
+			{
+				subscriber(handle, m_registry.at(handle).Type);
+			}
+		}
 	private:
 		std::unordered_map<UUID, Asset> m_registry;
+		std::vector<std::function<void(UUID, AssetType)>> m_Subscribers;
 	};
 
 
