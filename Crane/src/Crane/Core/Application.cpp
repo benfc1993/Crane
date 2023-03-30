@@ -13,7 +13,7 @@ namespace Crane
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application(const ApplicationSpecification& specification)
-		: m_Specification(specification)
+		: m_Specification(specification), m_AssetRegistry(CreateRef<AssetRegistry>())
 	{
 		CR_PROFILE_FUNCTION();
 

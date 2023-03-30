@@ -3,14 +3,14 @@
 #include "Project.h"
 
 namespace Crane {
-    class ProjectSerializer
-    {
-    public:
-        ProjectSerializer(Ref<Project> project);
+	class ProjectSerialiser
+	{
+	public:
+		ProjectSerialiser(Ref<Project> project);
 
-        bool Serialize(const std::filesystem::path& filepath);
-        bool Deserialize(const std::filesystem::path& filepath);
-    private:
-        Ref<Project> m_Project;
-    };
+		bool Serialise(const std::filesystem::path& filepath);
+		bool Deserialise(const std::filesystem::path& filepath);
+	private:
+		Ref<Project> m_Project;
+	};
 }

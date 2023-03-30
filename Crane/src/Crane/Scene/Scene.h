@@ -72,6 +72,7 @@ namespace Crane {
 		void SetupPhysics();
 		void StopPhysics();
 		void RenderSprites(Time time);
+
 	private:
 		bool m_Running = false;
 		entt::registry m_Registry;

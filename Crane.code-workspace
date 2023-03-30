@@ -270,6 +270,8 @@
 		"bitset": "cpp",
 		"cctype": "cpp",
 		"chrono": "cpp",
+		"bitset": "cpp",
+		"cctype": "cpp",
 		"clocale": "cpp",
 		"cmath": "cpp",
 		"codecvt": "cpp",

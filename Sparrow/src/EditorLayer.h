@@ -2,7 +2,7 @@
 
 #include <Crane.h>
 
-#include "Crane/Scene/Serialization/SceneSerializer.h"
+#include "Crane/Scene/Serialisation/SceneSerialiser.h"
 #include "Crane/Camera/EditorCamera.h"
 
 #include "Settings/EditorSettings.h"
@@ -42,49 +42,38 @@ namespace Crane {
     private:
         bool OnKeyPressed(KeyPressedEvent& e);
 
-        void NewScene();
-        void OpenScene();
-        void SaveScene();
-        void SaveSceneAs();
+		void NewScene();
+		void OpenScene();
+		void SaveScene();
+		void SaveSceneAs();
 
-        void OnDuplicateEntity();
-    private:
-        Ref<VertexArray> m_SquareVertexArray;
-        Ref<VertexArray> m_TriangleVertexArray;
-        Ref<Framebuffer> m_Framebuffer;
+		void OnDuplicateEntity();
+	private:
+		Ref<VertexArray> m_SquareVertexArray;
+		Ref<VertexArray> m_TriangleVertexArray;
+		Ref<Framebuffer> m_Framebuffer;
 
-        Ref<Scene> m_ActiveScene = nullptr;
-        Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
-        // Entity m_CameraEntity;
-        // Entity m_SecondCameraEntity;
-        // Entity m_HoveredEntity;
+    Ref<Scene> m_ActiveScene = nullptr;
+    Ref<Scene> m_EditorScene = nullptr, m_RuntimeScene = nullptr;
 
-        // bool m_PrimaryCamera = true;
+		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportBounds[2];
 
-        // bool m_CanPick = true;
+		SceneState m_SceneState = SceneState::Edit;
 
-        // EditorCamera m_EditorCamera;
+		Ref<EditorSettings> m_EditorSettings = CreateRef<EditorSettings>();
 
-        glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
-        glm::vec2 m_ViewportBounds[2];
+    Viewports m_Viewports;
 
-        // bool m_ViewportFocused = false, m_ViewportHovered = false;
+    //Panels
+    Panels m_Panels;
+    Ref<SettingsPanel> m_SettingsPanel = nullptr;
+    // RenderStatsPanel m_RenderStatsPanel;
 
-        SceneState m_SceneState = SceneState::Edit;
+		//Global State
+		bool m_ShowSettings = false;
 
-        Ref<EditorSettings> m_EditorSettings = CreateRef<EditorSettings>();
-
-        Viewports m_Viewports;
-
-        //Panels
-        Panels m_Panels;
-        Ref<SettingsPanel> m_SettingsPanel = nullptr;
-        // RenderStatsPanel m_RenderStatsPanel;
-
-        //Global State
-        bool m_ShowSettings = false;
-
-        //Gizmos
-        int m_GizmoType = -1;
-    };
+		//Gizmos
+		int m_GizmoType = -1;
+	};
 }

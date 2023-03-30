@@ -37,8 +37,7 @@ namespace Crane
 		std::string hName = "Hierarchy###" + std::to_string(m_Index);
 		ImGui::Begin(hName.c_str());
 
-
-		if (entityAction != EntityAction::Moving && entityAction != EntityAction::Move)
+		if (!ImGui::IsWindowHovered() || (entityAction != EntityAction::Moving && entityAction != EntityAction::Move))
 		{
 			toActOn = UUID(0);
 			toMove = UUID(0);
@@ -250,7 +249,9 @@ namespace Crane
 			toMove = entity.GetUUID();
 			entityAction = EntityAction::Moving;
 
-			ImGui::SetDragDropPayload("ENTITY", NULL, 0);
+			const uint64_t id = entity.GetUUID();
+
+			ImGui::SetDragDropPayload("ENTITY", &id, sizeof(uint64_t));
 			ImGui::Text("%s", entity.GetName().c_str());
 			ImGui::EndDragDropSource();
 		}

@@ -580,6 +580,11 @@ namespace Crane {
 	}
 
 	template<>
+	void Scene::OnComponentAdded<PrefabComponent>(Entity entity, PrefabComponent& component)
+	{
+	}
+
+	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
 	{
 	}
