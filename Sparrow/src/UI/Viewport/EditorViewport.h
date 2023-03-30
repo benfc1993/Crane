@@ -11,6 +11,7 @@ namespace Crane {
 	{
 	public:
 		EditorViewport(std::string name, Ref<Scene> scene, EditorLayer* editorLayer);
+		~EditorViewport();
 		virtual void OnImGuiRender() override;
 		virtual void OnUpdate(Time time) override;
 		virtual void OnEvent(Event& event) override;
@@ -26,13 +27,10 @@ namespace Crane {
 		EditorCamera m_camera;
 
 		EditorLayer* m_editorLayer;
-		Ref<ImGuizmoLayer> m_imGuizmoLayer;
+		ImGuizmoLayer m_imGuizmoLayer;
 
 		Entity m_HoveredEntity;
 
 		bool m_CanPick = false;
-
-		int m_GizmoType = 7;
-		int m_GizmoSpace = 0;
 	};
 }
