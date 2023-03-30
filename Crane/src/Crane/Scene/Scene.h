@@ -30,14 +30,15 @@ namespace Crane {
 
 		entt::registry& Reg() { return m_Registry; }
 
-		void OnUpdateEditor(Time time, EditorCamera& camera);
+		void OnUpdateEditor(Time time);
 
 		void OnUpdateRuntime(Time time);
 
-		void OnUpdateSimulation(Time time, EditorCamera& camera);
+		void OnUpdateSimulation(Time time);
 		void UpdatePhysics(Time time);
 
-		void Render(Time time);
+		void Render(Time time, EditorCamera& camera);
+		void Render(Time time, Camera* camera, glm::mat4 cameraTransform);
 
 		void OnRuntimeStart();
 		void OnRuntimeStop();
@@ -70,6 +71,8 @@ namespace Crane {
 	private:
 		void SetupPhysics();
 		void StopPhysics();
+		void RenderSprites(Time time);
+
 	private:
 		bool m_Running = false;
 		entt::registry m_Registry;
@@ -83,7 +86,7 @@ namespace Crane {
 		b2World* m_PhysicsWorld = nullptr;
 
 		friend class Entity;
-		friend class SceneSerialiser;
+		friend class SceneSerializer;
 
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

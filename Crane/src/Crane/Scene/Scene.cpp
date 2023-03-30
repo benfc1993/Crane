@@ -277,10 +277,8 @@ namespace Crane {
 		}
 	}
 
-	void Scene::OnUpdateEditor(Time time, EditorCamera& camera)
+	void Scene::OnUpdateEditor(Time time)
 	{
-		Renderer2D::BeginScene(camera);
-
 		{
 			auto view = m_Registry.view<TransformComponent, HierarchyComponent>();
 			for (auto e : view)
@@ -309,9 +307,6 @@ namespace Crane {
 				}
 			}
 		}
-
-		Render(time);
-		Renderer2D::EndScene();
 	}
 
 	void Scene::OnUpdateRuntime(Time time)
@@ -379,25 +374,12 @@ namespace Crane {
 				}
 			}
 		}
-
-		if (mainCamera)
-		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform->Transform());
-
-			Render(time);
-
-			Renderer2D::EndScene();
-		}
-
 	}
 
 
-	void Scene::OnUpdateSimulation(Time time, EditorCamera& camera)
+	void Scene::OnUpdateSimulation(Time time)
 	{
-		Renderer2D::BeginScene(camera);
 		UpdatePhysics(time);
-		Render(time);
-		Renderer2D::EndScene();
 	}
 
 
@@ -506,8 +488,26 @@ namespace Crane {
 		}
 	}
 
+	void Scene::Render(Time time, Camera* camera, glm::mat4 cameraTransform)
+	{
+		Renderer2D::BeginScene(*camera, cameraTransform);
 
-	void Scene::Render(Time time)
+		RenderSprites(time);
+
+		Renderer2D::EndScene();
+	}
+
+	void Scene::Render(Time time, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		RenderSprites(time);
+
+		Renderer2D::EndScene();
+
+	}
+
+	void Scene::RenderSprites(Time time)
 	{
 		auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : spriteGroup)

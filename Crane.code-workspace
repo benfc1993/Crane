@@ -261,12 +261,15 @@
 	"C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
 	"C_Cpp.intelliSenseCacheSize": 0,
 	"files.associations": {
-		"chrono": "cpp",
-		"*.tcc": "cpp",
+		"typeinfo": "cpp",
 		"any": "cpp",
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
+		"*.tcc": "cpp",
+		"bitset": "cpp",
+		"cctype": "cpp",
+		"chrono": "cpp",
 		"bitset": "cpp",
 		"cctype": "cpp",
 		"clocale": "cpp",
@@ -329,7 +332,6 @@
 		"streambuf": "cpp",
 		"thread": "cpp",
 		"cinttypes": "cpp",
-		"typeinfo": "cpp",
 		"valarray": "cpp",
 		"variant": "cpp"
 	}

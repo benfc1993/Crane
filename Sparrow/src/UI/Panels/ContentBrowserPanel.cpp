@@ -55,6 +55,7 @@ namespace Crane {
 
 			ImGui::TableNextColumn();
 			DrawDirectoryThumbnails();
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
@@ -67,6 +68,7 @@ namespace Crane {
 					ImGui::EndDragDropTarget();
 				}
 			}
+
 			ImGui::EndTable();
 		}
 
@@ -88,7 +90,9 @@ namespace Crane {
 
 				bool isInPath = m_CurrentDirectory.string().find(entry.path().filename()) != std::string::npos;
 				ImGui::SetNextItemOpen(isInPath);
+
 				bool selected = m_CurrentDirectory == entry.path();
+
 				bool isOpened = ImGui::TreeNodeEx(filename.c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth | (selected ? ImGuiTreeNodeFlags_Selected : 0));
 
 				if (ImGui::IsItemClicked())
@@ -128,7 +132,6 @@ namespace Crane {
 
 		ImGui::Text("%s", m_CurrentDirectory.string().erase(0, s_AssetPath.parent_path().string().length()).c_str());
 
-
 		if (ImGui::BeginTable("thumbnails", columnCount, ImGuiTableFlags_ScrollY, ImGui::GetContentRegionAvail()))
 		{
 			ImGui::TableNextColumn();
@@ -146,6 +149,7 @@ namespace Crane {
 				}
 				ImGui::EndPopup();
 			}
+      
 			for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 			{
 				const auto& path = entry.path();

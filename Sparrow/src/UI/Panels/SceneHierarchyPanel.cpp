@@ -375,7 +375,11 @@ namespace Crane
 
 			if (hc.Parent == 0)
 			{
-				Drawers::Vector("Position", transform.Position);
+				glm::vec3 worldPosition = transform.WorldPosition;
+				if (Drawers::Vector("Position", worldPosition))
+				{
+					transform.Position = worldPosition;
+				}
 				Drawers::Vector("Scale", transform.Scale);
 			}
 			else
