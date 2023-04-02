@@ -28,8 +28,7 @@ namespace Crane
 
 	void EditorLayer::OnAttach()
 	{
-
-		//TODO: Populate asset registry from asset dir
+		Application::Get().GetAssetRegistry()->LoadAssetRegistry(Project::GetActive()->GetRootPath() / "Assets.reg");
 
 		auto scenePath = Project::GetActive()->GetScenePath();
 
@@ -45,7 +44,7 @@ namespace Crane
 
 		// m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
 		// m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
-		m_Viewports.AddViewport<PrefabViewport>(this, "test", UUID(2200605418022896195));
+		m_Viewports.AddViewport<PrefabViewport>(this, "test", UUID(11483811161296809980));
 
 		m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 

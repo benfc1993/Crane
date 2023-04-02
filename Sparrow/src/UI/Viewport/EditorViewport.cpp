@@ -6,6 +6,7 @@
 #include "Crane/Core/Application.h"
 #include "Crane/Input/Input.h"
 #include "Crane/Math/Math.h"
+#include "Crane/AssetsSystem/Prefab/Serialisation/PrefabSerialiser.h"
 
 #include <glm/gtc/type_ptr.hpp>
 

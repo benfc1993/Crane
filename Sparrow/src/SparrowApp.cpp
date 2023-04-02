@@ -21,7 +21,10 @@ namespace Crane
 			PushLayer(new EditorLayer());
 		}
 
-		~Sparrow() {}
+		~Sparrow()
+		{
+			Application::Get().GetAssetRegistry()->SaveAssetRegistry(Project::GetActive()->GetRootPath() / "Assets.reg");
+		}
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)
@@ -30,6 +33,7 @@ namespace Crane
 		spec.Name = "Sandbox";
 		spec.WorkingDirectory = ".";
 		spec.CommandLineArgs = args;
+
 
 		Project::Load("/home/ben/projects/NewProject/NewProject.crproj");
 
