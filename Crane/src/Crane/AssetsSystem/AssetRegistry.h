@@ -5,6 +5,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <fstream>
 
 
 namespace Crane {
@@ -24,17 +25,41 @@ namespace Crane {
 			return AssetType::None;
 		}
 
+		inline std::string AssetTypeToString(AssetType type)
+		{
+			switch (type)
+			{
+			case AssetType::Prefab: return "Prefab";
+			default: return "None";
+			}
+		}
+
+		inline AssetType AssetTypeFromString(std::string str)
+		{
+			if (str == "Prefab") return AssetType::Prefab;
+
+			CR_ASSERT(false, "Invalid asset type");
+			return AssetType::None;
+		}
+
 	}
 
 
 	struct Asset
 	{
+		Asset(std::string name, const std::filesystem::path filePath, AssetType type)
+		{
+			Name = name;
+			Type = type;
+			FilePath = filePath;
+		}
 		Asset(std::string name, const std::filesystem::path filePath)
 		{
 			Name = name;
 			Type = Utils::AssetTypeFromExtension(filePath.extension());
 			FilePath = filePath;
 		}
+
 		std::string Name;
 		AssetType Type;
 		std::string FilePath;
@@ -43,6 +68,10 @@ namespace Crane {
 	class AssetRegistry
 	{
 	public:
+		void SaveAssetRegistry(std::filesystem::path filePath);
+
+		bool LoadAssetRegistry(std::filesystem::path filePath);
+
 		Asset GetAsset(UUID handle)
 		{
 			CR_ASSERT(m_registry.find(handle) != m_registry.end());

@@ -11,5 +11,7 @@ namespace Crane {
 	{
 	public:
 		static void CreatePrefabFile(Ref<Scene> scene, UUID uuid, std::filesystem::path& dirPath);
+
+		static void GetDiff(Ref<Scene> scene, UUID prefabHandle, Entity entityID);
 	};
 }

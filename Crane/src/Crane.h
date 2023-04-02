@@ -28,7 +28,6 @@
 #include "Crane/Renderer/Shader/VertexArray.h"
 
 #include "Crane/AssetsSystem/AssetRegistry.h"
-#include "Crane/AssetsSystem/Prefab/Serialisation/PrefabSerialiser.h"
 
 #include "Crane/Project/Project.h"
 #include "Crane/Scene/Scene.h"

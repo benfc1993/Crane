@@ -4,9 +4,6 @@
 #include "Crane/Core/Application.h"
 #include "Crane/Scene/Serialisation/SceneSerialiser.h"
 
-#include <yaml-cpp/yaml.h>
-
-
 namespace Crane {
 
 	void SerialiseChildren(const Ref<Scene>& scene, Entity entity, YAML::Emitter& out)
@@ -28,9 +25,8 @@ namespace Crane {
 		}
 	}
 
-	std::filesystem::path PrefabSerialiser::SerialisePrefab(const Ref<Scene>& scene, Entity& entity, std::filesystem::path filepath)
+	void PrefabSerialiser::SerialisePrefab(YAML::Emitter& out, const Ref<Scene>& scene, Entity& entity)
 	{
-		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Prefab" << YAML::Value << YAML::BeginMap; // Scene
 		std::string name = entity.GetName();
@@ -43,11 +39,17 @@ namespace Crane {
 
 		SerialiseChildren(scene, entity, out);
 
-
 		out << YAML::EndSeq; // Entities
 		out << YAML::EndMap;
+	}
 
+	std::filesystem::path PrefabSerialiser::SerialisePrefab(const Ref<Scene>& scene, Entity& entity, std::filesystem::path filepath)
+	{
 
+		YAML::Emitter out;
+		auto& tc = entity.GetComponent<TransformComponent>();
+		tc.Position = { 0.0f, 0.0f, 0.0f };
+		SerialisePrefab(out, scene, entity);
 		std::ofstream fout(filepath.c_str());
 		fout << out.c_str();
 
@@ -58,7 +60,7 @@ namespace Crane {
 	{
 		auto filePath = Application::Get().GetAssetRegistry()->GetAsset(prefabHandle).FilePath;
 		return DeserialisePrefab(filePath, scene, resetPosition);
-	}	
+	}
 
 	Entity PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition)
 	{

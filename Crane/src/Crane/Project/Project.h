@@ -22,6 +22,11 @@ namespace Crane {
     public:
         Project(const std::string& projectName, const std::filesystem::path& filepath);
 
+        std::filesystem::path GetRootPath()
+        {
+            return m_Config.ProjectRootDir;
+        }
+
         std::filesystem::path GetScenePath()
         {
             return m_Config.ProjectRootDir / m_Config.AssetDir / "Scenes" / m_Config.StartScene;

@@ -1,7 +1,6 @@
 #include "crpch.h"
 #include "ProjectSerialiser.h"
 
-
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 
