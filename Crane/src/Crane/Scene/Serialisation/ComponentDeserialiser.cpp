@@ -81,7 +81,6 @@ namespace Crane {
 		auto& spriteRendererComponent = entity.AddComponent<SpriteRendererComponent>();
 
 		spriteRendererComponent.Color = node["Color"].as<glm::vec4>();
-		std::string texturePath = node["Texture"].as<std::string>();
 		std::string texture = node["Texture"].as<std::string>();
 		if (texture != "")
 			spriteRendererComponent.Texture = Texture2D::Create(texture);

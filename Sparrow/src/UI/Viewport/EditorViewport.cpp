@@ -29,11 +29,6 @@ namespace Crane {
 		m_Framebuffer = Framebuffer::Create(spec);
 	}
 
-	EditorViewport::~EditorViewport()
-	{
-		ImGui::DestroyContext();
-	}
-
 	glm::vec2 EditorViewport::GetMousePosition()
 	{
 		auto [mx, my] = ImGui::GetMousePos();
@@ -79,7 +74,7 @@ namespace Crane {
 			m_Framebuffer->ClearAttachment(1, -1);
 		}
 
-		m_ActiveScene->Render(time, m_camera);
+		m_Scene->Render(time, m_camera);
 
 		auto mousePos = GetMousePosition();
 		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
@@ -140,7 +135,7 @@ namespace Crane {
 
 				if (extension == ".prefab")
 				{
-					auto prefab = PrefabSerialiser::DeserialisePrefab(path, m_ActiveScene, true);
+					auto prefab = PrefabSerialiser::DeserialisePrefab(path, m_Scene, true);
 					if (prefab)
 						m_editorLayer->GetPanels()->SetSelectedEntity(prefab);
 				}
@@ -253,7 +248,7 @@ namespace Crane {
 	{
 		m_Scene = scene;
 		m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_Scene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 	}
 
 

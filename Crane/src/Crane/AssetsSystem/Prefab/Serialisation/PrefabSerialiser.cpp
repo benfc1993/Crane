@@ -32,14 +32,14 @@ namespace Crane {
 		std::string name = entity.GetName();
 		out << YAML::Key << "Name" << YAML::Value << name;
 		out << YAML::Key << "AssetHandle" << YAML::Value << entity.GetComponent<PrefabComponent>().AssetHandle;
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // Entities
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginMap; // Entities
 
 		auto sceneSerialiser = SceneSerialiser(scene);
 		sceneSerialiser.SerialiseEntity(out, entity);
 
 		SerialiseChildren(scene, entity, out);
 
-		out << YAML::EndSeq; // Entities
+		out << YAML::EndMap; // Entities
 		out << YAML::EndMap;
 	}
 
@@ -62,7 +62,7 @@ namespace Crane {
 		return DeserialisePrefab(filePath, scene, resetPosition);
 	}
 
-	Entity PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition)
+	Entity PrefabSerialiser::DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition, bool asScene)
 	{
 		std::unordered_map<UUID, UUID> entityIdConversions;
 		std::vector<Entity> DeserialisedEntities;
@@ -83,12 +83,15 @@ namespace Crane {
 		auto entities = data["Prefab"]["Entities"];
 		if (entities)
 		{
-			for (auto entity : entities)
+			for (YAML::const_iterator it = entities.begin();it != entities.end();++it)
 			{
+				std::string key = it->first.as<std::string>();
+				YAML::Node entity = entities[key];
+
 				auto beforeId = UUID(entity["Entity"].as<uint64_t>());
 
 				auto sceneSerialiser = SceneSerialiser(scene);
-				Entity deserialisedEntity = sceneSerialiser.DeserialiseEntity(entity, true);
+				Entity deserialisedEntity = sceneSerialiser.DeserialiseEntity(entity, !asScene);
 
 				auto afterId = deserialisedEntity.GetUUID();
 				entityIdConversions.emplace(beforeId, afterId);

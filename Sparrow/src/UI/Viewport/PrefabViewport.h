@@ -11,6 +11,7 @@ namespace Crane {
 		PrefabViewport(EditorLayer* editorLayer, std::string prefabName, UUID prefabHandle);
 		virtual void OnImGuiRender() override;
 		virtual void OnUpdate(Time time) override;
+		virtual void OnSceneStateChanged(Ref<Scene> scene) override {}
 
 	private:
 		void OnSavePrefab();

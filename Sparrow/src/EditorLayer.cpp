@@ -42,9 +42,9 @@ namespace Crane
 		}
 
 
-		// m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
-		// m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
-		m_Viewports.AddViewport<PrefabViewport>(this, "test", UUID(11483811161296809980));
+		m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
+		m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
+		m_Viewports.AddViewport<PrefabViewport>(this, "Prefab", UUID(11483811161296809980));
 
 		m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);
 
@@ -70,18 +70,6 @@ namespace Crane
 
 	void EditorLayer::OnUpdate(Time time)
 	{
-		switch (m_SceneState)
-		{
-		case SceneState::Edit:
-			m_ActiveScene->OnUpdateEditor(time);
-			break;
-		case SceneState::Simulate:
-			m_ActiveScene->OnUpdateSimulation(time);
-			break;
-		case SceneState::Play:
-			m_ActiveScene->OnUpdateRuntime(time);
-			break;
-		}
 		m_Viewports.OnUpdate(time);
 	}
 

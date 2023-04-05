@@ -37,6 +37,7 @@ namespace Crane {
 	{
 		CR_CORE_ASSERT(entity.HasComponent<IdComponent>());
 
+		out << YAML::Key << entity.GetUUID();
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
@@ -57,12 +58,12 @@ namespace Crane {
 	void SceneSerialiser::Serialise(const std::string filePath)
 	{
 		YAML::Emitter out;
-		out << YAML::BeginMap;
+		out << YAML::BeginMap; // root
 		out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap; // Scene
 		out << YAML::Key << "Name" << YAML::Value << "Untitled";
 		out << YAML::Key << "FilePath" << YAML::Value << filePath;
 		out << YAML::EndMap; // Scene
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // Entities
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginMap; // Entities
 
 		m_scene->m_Registry.each([&](auto entityId) {
 			Entity entity = { entityId , m_scene.get() };
@@ -73,8 +74,8 @@ namespace Crane {
 			SerialiseEntity(out, entity);
 		});
 
-		out << YAML::EndSeq; // Entities
-		out << YAML::EndMap;
+		out << YAML::EndMap; // Entities
+		out << YAML::EndMap; // root
 
 		std::ofstream fout(filePath.c_str());
 		fout << out.c_str();
@@ -91,22 +92,23 @@ namespace Crane {
 		strStream << stream.rdbuf();
 
 		YAML::Node data = YAML::Load(strStream.str());
-		if (!data["Scene"])
-		{
-			CR_CORE_INFO("No scene");
-			return false;
-		}
+		// if (!data["Scene"])
+		// {
+		// 	CR_CORE_INFO("No scene");
+		// 	return false;
+		// }
 
-		std::string sceneName = data["Scene"]["Name"].as<std::string>();
-		m_scene->SetFilePath(data["Scene"]["FilePath"].as<std::string>());
-		CR_CORE_TRACE("Deserialising scene {0}", sceneName);
+		// std::string sceneName = data["Scene"]["Name"].as<std::string>();
+		// m_scene->SetFilePath(data["Scene"]["FilePath"].as<std::string>());
+		// CR_CORE_TRACE("Deserialising scene {0}", sceneName);
 
 		auto entities = data["Entities"];
 		if (entities)
 		{
-			for (auto entity : entities)
+			for (YAML::const_iterator it = entities.begin();it != entities.end();++it)
 			{
-				DeserialiseEntity(entity);
+				std::string key = it->first.as<std::string>();       // <- key
+				DeserialiseEntity(entities[key]);
 			}
 		}
 

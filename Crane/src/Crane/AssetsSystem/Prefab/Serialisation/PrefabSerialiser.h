@@ -13,6 +13,6 @@ namespace Crane {
 		static void SerialisePrefab(YAML::Emitter& out, const Ref<Scene>& scene, Entity& entity);
 		static std::filesystem::path SerialisePrefab(const Ref<Scene>& scene, Entity& entity, std::filesystem::path filepath);
 		static Entity DeserialisePrefab(UUID prefabAssetHandle, const Ref<Scene>& scene, bool resetPosition = false);
-		static Entity DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition = false);
+		static Entity DeserialisePrefab(std::filesystem::path filepath, const Ref<Scene>& scene, bool resetPosition = false, bool asScene = false);
 	};
 }

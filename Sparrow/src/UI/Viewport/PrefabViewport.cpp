@@ -9,13 +9,12 @@ namespace Crane {
 	PrefabViewport::PrefabViewport(EditorLayer* editorLayer, std::string prefabName, UUID prefabHandle): m_PrefabHandle(prefabHandle), EditorViewport(prefabName, CreateRef<Scene>(), editorLayer)
 	{
 		auto prefabAsset = Application::Get().GetAssetRegistry()->GetAsset(prefabHandle);
-		m_Prefab = PrefabSerialiser::DeserialisePrefab(prefabAsset.FilePath, m_Scene, true);
+		m_Prefab = PrefabSerialiser::DeserialisePrefab(prefabAsset.FilePath, m_Scene, true, true);
 	}
-
 
 	void PrefabViewport::OnUpdate(Time time)
 	{
-		m_ActiveScene->OnUpdateEditor(time);
+		m_Scene->OnUpdateEditor(time);
 		EditorViewport::OnUpdate(time);
 	}
 
@@ -37,7 +36,7 @@ namespace Crane {
 		auto prefabAsset = Application::Get().GetAssetRegistry()->GetAsset(m_PrefabHandle);
 
 		Prefab::GetDiff(m_Scene, m_PrefabHandle, m_Prefab);
-		// PrefabSerialiser::SerialisePrefab(m_Scene, m_Prefab, prefabAsset.FilePath);
+		PrefabSerialiser::SerialisePrefab(m_Scene, m_Prefab, prefabAsset.FilePath);
 		Application::Get().GetAssetRegistry()->OnAssetChanged(m_PrefabHandle);
 	}
 }

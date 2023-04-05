@@ -20,7 +20,7 @@ namespace Crane {
 	{
 		CR_PROFILE_FUNCTION();
 
-		m_PrimaryCamera = m_ActiveScene->GetPrimaryCameraEntity();
+		m_PrimaryCamera = m_Scene->GetPrimaryCameraEntity();
 
 
 		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
@@ -28,7 +28,7 @@ namespace Crane {
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_Scene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		Renderer2D::ResetStats();
@@ -47,7 +47,7 @@ namespace Crane {
 		Camera* camera = &m_PrimaryCamera.GetComponent<CameraComponent>().Camera;
 		TransformComponent* cameraTransform = &m_PrimaryCamera.GetComponent<TransformComponent>();
 
-		m_ActiveScene->Render(time, camera, cameraTransform->Transform());
+		m_Scene->Render(time, camera, cameraTransform->Transform());
 
 		m_Framebuffer->Unbind();
 	}
@@ -75,6 +75,6 @@ namespace Crane {
 	{
 		m_Scene = scene;
 		m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		m_ActiveScene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_Scene->OnViewportResized((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 	}
 }

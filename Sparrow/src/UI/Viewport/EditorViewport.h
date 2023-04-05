@@ -11,7 +11,6 @@ namespace Crane {
 	{
 	public:
 		EditorViewport(std::string name, Ref<Scene> scene, EditorLayer* editorLayer);
-		~EditorViewport();
 		virtual void OnImGuiRender() override;
 		virtual void OnUpdate(Time time) override;
 		virtual void OnEvent(Event& event) override;

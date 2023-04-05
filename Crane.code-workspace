@@ -42,7 +42,7 @@
         "type": "cppbuild",
         "label": "build debug",
         "command": "/usr/bin/make",
-        "args": ["-Isomewhere"],
+        "args": [],
         "options": {
           "cwd": "${workspaceFolder}/.."
         },
@@ -322,8 +322,7 @@
       "cinttypes": "cpp",
       "typeinfo": "cpp",
       "valarray": "cpp",
-      "variant": "cpp",
-      "filesystem": "cpp"
+      "variant": "cpp"
     }
   }
 }
