@@ -47,19 +47,22 @@ namespace Crane {
 
 	struct Asset
 	{
-		Asset(std::string name, const std::filesystem::path filePath, AssetType type)
+		Asset(UUID assetHandle, std::string name, const std::filesystem::path filePath, AssetType type)
 		{
+			Handle = assetHandle;
 			Name = name;
 			Type = type;
 			FilePath = filePath;
 		}
-		Asset(std::string name, const std::filesystem::path filePath)
+		Asset(UUID assetHandle, std::string name, const std::filesystem::path filePath)
 		{
+			Handle = assetHandle;
 			Name = name;
 			Type = Utils::AssetTypeFromExtension(filePath.extension());
 			FilePath = filePath;
 		}
 
+		UUID Handle;
 		std::string Name;
 		AssetType Type;
 		std::string FilePath;
@@ -86,6 +89,11 @@ namespace Crane {
 		void Register(std::function<void(UUID, AssetType)> subscriber)
 		{
 			m_Subscribers.emplace_back(subscriber);
+
+			//TODO: Return unsub function
+			// return ([&]() {
+			// 	m_Subscribers.erase(m_Subscribers.end());
+			// });
 		}
 
 		void OnAssetChanged(UUID handle)

@@ -14,11 +14,12 @@ namespace Crane {
 
 		void Serialise(const std::string filePath);
 		void SerialiseRuntime(const std::string& filePath);
+		bool SerialisePrefabScene(const std::string filePath);
 
 		bool Deserialise(const std::string filePath);
 		bool DeserialiseRuntime(const std::string& filePath);
 
-		void SerialiseEntity(YAML::Emitter& out, Entity entity);
+		void SerialiseEntity(YAML::Emitter& out, Entity entity, bool prefabScene = false);
 		Entity DeserialiseEntity(YAML::Node entity, bool prefab = false);
 	private:
 		Ref<Scene> m_scene;

@@ -47,8 +47,8 @@ namespace Crane {
 		if (!node) return;
 
 		auto& hc = entity.AddOrReplaceComponent<PrefabComponent>();
-		if (node["AssetHandle"])
-			hc.AssetHandle = node["AssetHandle"].as<uint64_t>();
+		hc.AssetHandle = node["AssetHandle"].as<uint64_t>();
+		hc.PrefabEntityId = node["PrefabEntityId"].as<uint64_t>();
 	}
 
 	template <>

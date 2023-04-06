@@ -7,6 +7,7 @@
 #include "Crane/Input/Input.h"
 #include "Crane/Math/Math.h"
 #include "Crane/AssetsSystem/Prefab/Serialisation/PrefabSerialiser.h"
+#include "Crane/AssetsSystem/Prefab/Serialisation/PrefabDiffDeserialiser.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -16,6 +17,15 @@
 
 
 namespace Crane {
+
+	void EditorViewport::OnPrefabChanged(UUID assetHandle, AssetType assetType)
+	{
+		if (assetType != AssetType::Prefab) return;
+		auto prefabAsset = m_AssetRegistry->GetAsset(assetHandle);
+
+		PrefabDiffDeserialiser::DeserialiseDiff(m_Scene, prefabAsset);
+
+	}
 
 	EditorViewport::EditorViewport(std::string name, Ref<Scene> scene, EditorLayer* editorLayer): Viewport(name, scene), m_imGuizmoLayer(ImGuizmoLayer(&m_camera, m_Scene))
 	{
@@ -27,6 +37,9 @@ namespace Crane {
 		spec.Width = 1280;
 		spec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(spec);
+
+		m_AssetRegistry = Application::Get().GetAssetRegistry();
+		m_AssetRegistry->Register([&](UUID assetHandle, AssetType assetType) {OnPrefabChanged(assetHandle, assetType);});
 	}
 
 	glm::vec2 EditorViewport::GetMousePosition()

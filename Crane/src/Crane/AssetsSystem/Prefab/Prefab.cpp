@@ -27,7 +27,9 @@ namespace Crane {
 			auto handle = UUID();
 
 			auto& pc = entity.AddComponent<PrefabComponent>();
+			auto id = entity.AddComponent<IdComponent>();
 			pc.AssetHandle = handle;
+			pc.PrefabEntityId = id.Id;
 			if (fileExists)
 			{
 				int i = 0;
@@ -41,11 +43,11 @@ namespace Crane {
 			}
 		}
 
-		auto prefabPath = PrefabSerialiser::SerialisePrefab(scene, entity, dirPath / fileName);
+		auto prefabPath = PrefabSerialiser::SerialisePrefab(scene, entity, dirPath / fileName, false);
 
 		auto assetHandle = entity.GetComponent<PrefabComponent>().AssetHandle;
 
-		Application::Get().GetAssetRegistry()->RegisterAsset(assetHandle, Asset(entity.GetName(), prefabPath));
+		Application::Get().GetAssetRegistry()->RegisterAsset(assetHandle, Asset(assetHandle, entity.GetName(), prefabPath));
 
 		auto asset = Application::Get().GetAssetRegistry()->GetAsset(assetHandle);
 	}
@@ -61,7 +63,7 @@ namespace Crane {
 		original = original["Prefab"]["Entities"];
 
 		YAML::Emitter out;
-		PrefabSerialiser::SerialisePrefab(out, scene, entity);
+		PrefabSerialiser::SerialisePrefab(out, scene, entity, true);
 		YAML::Node updated = YAML::Load(out.c_str());
 		updated = updated["Prefab"]["Entities"];
 

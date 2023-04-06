@@ -57,6 +57,7 @@ namespace Crane {
 
 			auto& pc = entity.GetComponent<PrefabComponent>();
 			out << YAML::Key << "AssetHandle" << YAML::Value << pc.AssetHandle;
+			out << YAML::Key << "PrefabEntityId" << YAML::Value << pc.PrefabEntityId;
 
 			out << YAML::EndMap; // PrefabComponent
 		}

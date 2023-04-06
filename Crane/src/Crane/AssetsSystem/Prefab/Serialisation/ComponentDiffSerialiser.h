@@ -11,7 +11,7 @@ namespace Crane {
         static YAML::Node DeserialiseComponentDiff(YAML::Node original, YAML::Node updated, std::string componentName, bool& componentChanged);
     private:
         template <typename T>
-        static bool DeserialiseComponentFieldDiff(YAML::Node& componentNode, YAML::Node original, YAML::Node updated, std::string fieldName);
+        static YAML::Node DeserialiseComponentFieldDiff(YAML::Node original, YAML::Node updated, std::string fieldName, bool& changed);
 
         template<typename T>
         static YAML::Node ValueDiff(YAML::Node original, YAML::Node updated, bool& changed)

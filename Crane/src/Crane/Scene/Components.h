@@ -43,6 +43,7 @@ namespace Crane
 		PrefabComponent() = default;
 
 		UUID AssetHandle;
+		UUID PrefabEntityId;
 	};
 
 	struct TagComponent

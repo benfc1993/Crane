@@ -3,6 +3,7 @@
 #include "SceneSerialiser.h"
 #include "ComponentSerialiser.h"
 #include "ComponentDeserialiser.h"
+#include "Crane/AssetsSystem/Prefab/Serialisation/PrefabSerialiser.h"
 
 #include "Crane/Scene/Components.h"
 
@@ -33,7 +34,7 @@ namespace Crane {
 		}(), ...);
 	}
 
-	void SceneSerialiser::SerialiseEntity(YAML::Emitter& out, Entity entity)
+	void SceneSerialiser::SerialiseEntity(YAML::Emitter& out, Entity entity, bool prefabScene)
 	{
 		CR_CORE_ASSERT(entity.HasComponent<IdComponent>());
 
@@ -41,16 +42,22 @@ namespace Crane {
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
+		if (entity.HasComponent<PrefabComponent>())
+		{
+			ComponentSerialiser::SerialiseComponent<PrefabComponent>(out, entity);
+			if (!prefabScene)
+			{
+				out << YAML::EndMap;
+				return;
+			}
+		}
+
 		ComponentSerialiser::SerialiseComponent<TagComponent>(out, entity);
 
 		ComponentSerialiser::SerialiseComponent<HierarchyComponent>(out, entity);
 
-		if (entity.HasComponent<PrefabComponent>())
-		{
-			ComponentSerialiser::SerialiseComponent<PrefabComponent>(out, entity);
-		}
-
 		SerialiseComponents(AllComponents{}, out, entity);
+
 
 		out << YAML::EndMap; // Entity
 	}
@@ -60,7 +67,7 @@ namespace Crane {
 		YAML::Emitter out;
 		out << YAML::BeginMap; // root
 		out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap; // Scene
-		out << YAML::Key << "Name" << YAML::Value << "Untitled";
+		out << YAML::Key << "Name" << YAML::Value << ((std::filesystem::path)filePath).filename().c_str();
 		out << YAML::Key << "FilePath" << YAML::Value << filePath;
 		out << YAML::EndMap; // Scene
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginMap; // Entities
@@ -92,23 +99,26 @@ namespace Crane {
 		strStream << stream.rdbuf();
 
 		YAML::Node data = YAML::Load(strStream.str());
-		// if (!data["Scene"])
-		// {
-		// 	CR_CORE_INFO("No scene");
-		// 	return false;
-		// }
-
-		// std::string sceneName = data["Scene"]["Name"].as<std::string>();
-		// m_scene->SetFilePath(data["Scene"]["FilePath"].as<std::string>());
-		// CR_CORE_TRACE("Deserialising scene {0}", sceneName);
+		if (!data["Scene"])
+		{
+			CR_CORE_INFO("No scene");
+			return false;
+		}
 
 		auto entities = data["Entities"];
 		if (entities)
 		{
 			for (YAML::const_iterator it = entities.begin();it != entities.end();++it)
 			{
-				std::string key = it->first.as<std::string>();       // <- key
-				DeserialiseEntity(entities[key]);
+				std::string key = it->first.as<std::string>();
+				if (entities[key]["PrefabComponent"])
+				{
+					PrefabSerialiser::DeserialisePrefab(entities[key]["PrefabComponent"]["AssetHandle"].as<uint64_t>(), m_scene);
+				}
+				else
+				{
+					DeserialiseEntity(entities[key]);
+				}
 			}
 		}
 
@@ -126,6 +136,8 @@ namespace Crane {
 		{
 			uuid = entity["Entity"].as<uint64_t>();
 		}
+
+
 
 		std::string name;
 		auto tagComponent = entity["TagComponent"];

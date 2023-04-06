@@ -22,13 +22,15 @@ namespace Crane {
 	private:
 		glm::vec2 GetMousePosition();
 		void DrawImGuizmo(Entity selectedEntity);
+		void OnPrefabChanged(UUID assetHandle, AssetType assetType);
 
 	private:
 		EditorCamera m_camera;
 
 		EditorLayer* m_editorLayer;
-		ImGuizmoLayer m_imGuizmoLayer;
+		Ref<AssetRegistry> m_AssetRegistry;
 
+		ImGuizmoLayer m_imGuizmoLayer;
 		Entity m_HoveredEntity;
 
 		bool m_CanPick = false;

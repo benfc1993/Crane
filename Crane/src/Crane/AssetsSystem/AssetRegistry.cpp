@@ -48,8 +48,9 @@ namespace Crane {
         {
             for (auto asset : assets)
             {
-                Asset newAsset = Asset(asset["Name"].as<std::string>(), asset["FilePath"].as<std::string>(), Utils::AssetTypeFromString(asset["Type"].as<std::string>()));
-                m_registry.emplace(asset["Handle"].as<uint64_t>(), newAsset);
+                auto assetHandle = asset["Handle"].as<uint64_t>();
+                Asset newAsset = Asset(assetHandle, asset["Name"].as<std::string>(), asset["FilePath"].as<std::string>(), Utils::AssetTypeFromString(asset["Type"].as<std::string>()));
+                m_registry.emplace(assetHandle, newAsset);
             }
         }
 

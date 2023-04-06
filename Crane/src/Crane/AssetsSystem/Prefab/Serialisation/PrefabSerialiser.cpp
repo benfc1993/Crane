@@ -6,26 +6,48 @@
 
 namespace Crane {
 
-	void SerialiseChildren(const Ref<Scene>& scene, Entity entity, YAML::Emitter& out)
+	void SerialiseChildren(const Ref<Scene>& scene, Entity entity, YAML::Emitter& out, bool prefabScene)
 	{
 		auto current = entity.GetComponent<HierarchyComponent>().First;
 		while (current != 0)
 		{
 			auto child = scene->GetEntityByUUID(current);
 
+			if (!child.HasComponent<PrefabComponent>())
+			{
+				child.AddComponent<PrefabComponent>();
+			}
+
+			auto& pc = child.GetComponent<PrefabComponent>();
+			auto id = child.GetComponent<IdComponent>();
+			pc.PrefabEntityId = id.Id;
+
 			auto sceneSerialiser = SceneSerialiser(scene);
 
 			auto hc = child.GetComponent<HierarchyComponent>();
 			if (hc.First != 0)
 			{
-				SerialiseChildren(scene, child, out);
+				SerialiseChildren(scene, child, out, prefabScene);
 			}
-			sceneSerialiser.SerialiseEntity(out, child);
+			sceneSerialiser.SerialiseEntity(out, child, prefabScene);
 			current = child.GetComponent<HierarchyComponent>().Next;
 		}
 	}
 
-	void PrefabSerialiser::SerialisePrefab(YAML::Emitter& out, const Ref<Scene>& scene, Entity& entity)
+	std::filesystem::path PrefabSerialiser::SerialisePrefab(const Ref<Scene>& scene, Entity& entity, std::filesystem::path filepath, bool prefabScene)
+	{
+
+		YAML::Emitter out;
+		auto& tc = entity.GetComponent<TransformComponent>();
+		tc.Position = { 0.0f, 0.0f, 0.0f };
+		SerialisePrefab(out, scene, entity, prefabScene);
+		std::ofstream fout(filepath.c_str());
+		fout << out.c_str();
+
+		return filepath;
+	}
+
+	void PrefabSerialiser::SerialisePrefab(YAML::Emitter& out, const Ref<Scene>& scene, Entity& entity, bool prefabScene)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "Prefab" << YAML::Value << YAML::BeginMap; // Scene
@@ -35,26 +57,15 @@ namespace Crane {
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginMap; // Entities
 
 		auto sceneSerialiser = SceneSerialiser(scene);
-		sceneSerialiser.SerialiseEntity(out, entity);
+		sceneSerialiser.SerialiseEntity(out, entity, prefabScene);
 
-		SerialiseChildren(scene, entity, out);
+		SerialiseChildren(scene, entity, out, prefabScene);
 
 		out << YAML::EndMap; // Entities
 		out << YAML::EndMap;
 	}
 
-	std::filesystem::path PrefabSerialiser::SerialisePrefab(const Ref<Scene>& scene, Entity& entity, std::filesystem::path filepath)
-	{
 
-		YAML::Emitter out;
-		auto& tc = entity.GetComponent<TransformComponent>();
-		tc.Position = { 0.0f, 0.0f, 0.0f };
-		SerialisePrefab(out, scene, entity);
-		std::ofstream fout(filepath.c_str());
-		fout << out.c_str();
-
-		return filepath;
-	}
 
 	Entity PrefabSerialiser::DeserialisePrefab(UUID prefabHandle, const Ref<Scene>& scene, bool resetPosition)
 	{
@@ -106,12 +117,15 @@ namespace Crane {
 					hc.First = entityIdConversions.at(hc.First);
 				}
 
-				if (hc.Parent == 0 && resetPosition)
+				if (hc.Parent == 0)
 				{
 					parentEntity = entity;
-					auto& tc = entity.GetComponent<TransformComponent>();
+					if (resetPosition)
+					{
+						auto& tc = entity.GetComponent<TransformComponent>();
 
-					tc.Position = { 0.0f, 0.0f, 0.0f };
+						tc.Position = { 0.0f, 0.0f, 0.0f };
+					}
 				}
 				else
 				{

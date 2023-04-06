@@ -36,7 +36,7 @@ namespace Crane {
 		auto prefabAsset = Application::Get().GetAssetRegistry()->GetAsset(m_PrefabHandle);
 
 		Prefab::GetDiff(m_Scene, m_PrefabHandle, m_Prefab);
-		PrefabSerialiser::SerialisePrefab(m_Scene, m_Prefab, prefabAsset.FilePath);
+		PrefabSerialiser::SerialisePrefab(m_Scene, m_Prefab, prefabAsset.FilePath, true);
 		Application::Get().GetAssetRegistry()->OnAssetChanged(m_PrefabHandle);
 	}
 }
