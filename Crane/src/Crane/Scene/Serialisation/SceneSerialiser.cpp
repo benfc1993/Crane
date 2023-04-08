@@ -92,6 +92,22 @@ namespace Crane {
 		CR_CORE_ASSERT(false, "Not implemented");
 	}
 
+	void ChildTransforms(TransformComponent transform, UUID current, Ref<Scene> scene)
+	{
+		auto& curr = current;
+		while (curr != 0)
+		{
+			Entity child = scene->GetEntityByUUID(curr);
+			auto& childHc = child.GetComponent<HierarchyComponent>();
+			auto& childTransform = child.GetComponent<TransformComponent>();
+
+			childTransform.WorldPosition = transform.WorldPosition + childTransform.Position;
+			childTransform.WorldScale = transform.WorldScale * childTransform.Scale;
+			curr = childHc.Next;
+			ChildTransforms(childTransform, curr, scene);
+		}
+	}
+
 	bool SceneSerialiser::Deserialise(const std::string filePath)
 	{
 		std::ifstream stream(filePath.c_str());
@@ -108,16 +124,43 @@ namespace Crane {
 		auto entities = data["Entities"];
 		if (entities)
 		{
+			std::vector<Entity> DeserialisedEntities;
 			for (YAML::const_iterator it = entities.begin();it != entities.end();++it)
 			{
 				std::string key = it->first.as<std::string>();
 				if (entities[key]["PrefabComponent"])
 				{
-					PrefabSerialiser::DeserialisePrefab(entities[key]["PrefabComponent"]["AssetHandle"].as<uint64_t>(), m_scene);
+					DeserialisedEntities.push_back(PrefabSerialiser::DeserialisePrefab(entities[key]["PrefabComponent"]["AssetHandle"].as<uint64_t>(), m_scene));
 				}
 				else
 				{
-					DeserialiseEntity(entities[key]);
+					DeserialisedEntities.push_back(DeserialiseEntity(entities[key]));
+				}
+			}
+
+			for (auto entity : DeserialisedEntities)
+			{
+				auto& hc = entity.GetComponent<HierarchyComponent>();
+				auto& transform = entity.GetComponent<TransformComponent>();
+
+				if (hc.Parent == 0)
+				{
+					transform.WorldPosition = transform.Position;
+					transform.WorldScale = transform.Scale;
+
+					if (hc.First != 0)
+					{
+						auto curr = hc.First;
+						auto parentTransform = transform;
+						while (curr != 0)
+						{
+							Entity child = m_scene->GetEntityByUUID(curr);
+							auto& childHc = child.GetComponent<HierarchyComponent>();
+							ChildTransforms(parentTransform, curr, m_scene);
+							curr = childHc.First;
+							parentTransform = child.GetComponent<TransformComponent>();
+						}
+					}
 				}
 			}
 		}
@@ -136,8 +179,6 @@ namespace Crane {
 		{
 			uuid = entity["Entity"].as<uint64_t>();
 		}
-
-
 
 		std::string name;
 		auto tagComponent = entity["TagComponent"];

@@ -24,10 +24,12 @@ namespace Crane {
 		void DrawImGuizmo(Entity selectedEntity);
 		void OnPrefabChanged(UUID assetHandle, AssetType assetType);
 
+	protected:
+		EditorLayer* m_editorLayer;
+
 	private:
 		EditorCamera m_camera;
 
-		EditorLayer* m_editorLayer;
 		Ref<AssetRegistry> m_AssetRegistry;
 
 		ImGuizmoLayer m_imGuizmoLayer;

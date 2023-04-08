@@ -287,8 +287,8 @@ namespace Crane {
 
 			childTransform.WorldPosition = transform.WorldPosition + childTransform.Position;
 			childTransform.WorldScale = transform.WorldScale * childTransform.Scale;
-
 			curr = childHc.Next;
+			ChildTransforms(childTransform, curr, scene);
 		}
 	}
 

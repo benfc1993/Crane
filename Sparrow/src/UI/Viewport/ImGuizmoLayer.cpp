@@ -84,6 +84,7 @@ namespace Crane {
 				Math::DecomposeTransform(transform, position, rotation, scale);
 
 				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.WorldPosition = position;
 				tc.Position = position - parentPosition;
 				tc.Rotation += deltaRotation;
 				tc.Scale = scale / parentScale;

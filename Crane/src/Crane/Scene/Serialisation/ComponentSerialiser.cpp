@@ -74,7 +74,9 @@ namespace Crane {
 
 			auto& tc = entity.GetComponent<TransformComponent>();
 			out << YAML::Key << "Position" << YAML::Value << tc.Position;
+			out << YAML::Key << "WorldPosition" << YAML::Value << tc.WorldPosition;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
+			out << YAML::Key << "WorldScale" << YAML::Value << tc.WorldScale;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
 
 			out << YAML::EndMap; // TransformComponent

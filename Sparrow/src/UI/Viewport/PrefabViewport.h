@@ -13,6 +13,8 @@ namespace Crane {
 		virtual void OnUpdate(Time time) override;
 		virtual void OnSceneStateChanged(Ref<Scene> scene) override {}
 
+		virtual void CloseViewport() override;
+
 	private:
 		void OnSavePrefab();
 

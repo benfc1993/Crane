@@ -39,6 +39,7 @@ namespace Crane {
         void AddPanel(const Ref<Panel>& panel)
         {
             m_Panels.push_back(panel);
+            panel->SetSelectionFunction([&](Entity entity) {SetSelectedEntity(entity);});
             panel->SetIndex(m_Panels.size() - 1);
             panel->SetActiveScene(m_ActiveScene);
         }
@@ -70,7 +71,7 @@ namespace Crane {
         {
             for (auto panel : m_Panels)
             {
-                panel->SetSelectedEntity(entity);
+                panel->OnSelectedEntityChanged(entity);
             }
         };
 

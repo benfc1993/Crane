@@ -270,6 +270,7 @@ namespace Crane
 		if (ImGui::IsMouseReleased(0) && ImGui::IsItemHovered(ImGuiHoveredFlags_None) && entityAction == EntityAction::None)
 		{
 			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 		}
 
 		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && entityAction == EntityAction::None)
@@ -378,6 +379,7 @@ namespace Crane
 				glm::vec3 worldPosition = transform.WorldPosition;
 				if (Drawers::Vector("Position", worldPosition))
 				{
+					transform.WorldPosition = worldPosition;
 					transform.Position = worldPosition;
 				}
 				Drawers::Vector("Scale", transform.Scale);
@@ -401,6 +403,7 @@ namespace Crane
 					if (Drawers::Vector("Position", worldPosition))
 					{
 						transform.Position = worldPosition - parentPosition;
+						transform.WorldPosition = worldPosition;
 					}
 
 					glm::vec3 parentScale = parentTransform.WorldScale;

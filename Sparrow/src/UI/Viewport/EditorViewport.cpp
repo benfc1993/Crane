@@ -106,8 +106,16 @@ namespace Crane {
 
 	void EditorViewport::OnImGuiRender()
 	{
+		if (!m_Open) return;
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin(m_Name.c_str(), 0, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar);
+
+		if (!ImGui::Begin(m_Name.c_str(), &m_Open, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar))
+		{
+			ImGui::End();
+			ImGui::PopStyleVar();
+			return;
+		}
 
 		auto viewportOffset = ImGui::GetWindowPos();
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
@@ -150,7 +158,7 @@ namespace Crane {
 				{
 					auto prefab = PrefabSerialiser::DeserialisePrefab(path, m_Scene, true);
 					if (prefab)
-						m_editorLayer->GetPanels()->SetSelectedEntity(prefab);
+						SetSelectedEntity(prefab);
 				}
 
 				ImGui::EndDragDropTarget();
@@ -195,13 +203,12 @@ namespace Crane {
 			auto& transform = selectedEntity.GetComponent<TransformComponent>();
 			if (selectedEntity.HasComponent<SpriteRendererComponent>())
 			{
-
-				Renderer2D::DrawRect(glm::translate(transform.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor);
+				Renderer2D::DrawRect(transform.Transform() * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, projectionCollider.z)), selectedColor);
 			}
 
 			if (selectedEntity.HasComponent<CircleRendererComponent>())
 			{
-				Renderer2D::DrawCircle(glm::translate(transform.Transform(), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor, 0.075f);
+				Renderer2D::DrawCircle(transform.Transform() * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -projectionCollider.z)), selectedColor, 0.075f);
 			}
 		}
 
@@ -234,7 +241,7 @@ namespace Crane {
 					auto [transformC, circle] = view.get<TransformComponent, CircleColliderComponent>(entity);
 
 					glm::vec3 scale = transformC.Scale * glm::vec3(circle.Radius * 2.0f);
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.Position)
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), transformC.WorldPosition)
 						* glm::rotate(glm::mat4(1.0f), transformC.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
 						* glm::translate(glm::mat4(1.0f), glm::vec3(circle.Offset, -projectionCollider.z))
 						* glm::scale(glm::mat4(1.0f), glm::vec3(scale.x, scale.x, scale.z));
@@ -278,7 +285,7 @@ namespace Crane {
 		if (!m_CanPick || !m_ViewportHovered || Input::IsKeyPressed(Key::LeftAlt)) return false;
 		if (e.getMouseButton() == 0)
 		{
-			m_editorLayer->GetPanels()->SetSelectedEntity(m_HoveredEntity);
+			SetSelectedEntity(m_HoveredEntity);
 		}
 		return true;
 	}

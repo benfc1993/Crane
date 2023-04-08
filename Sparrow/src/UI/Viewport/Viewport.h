@@ -16,12 +16,19 @@ namespace Crane {
 		virtual void OnSceneStateChanged(Ref<Scene> scene) {}
 		void SetIndex(int index) { m_Index = index; }
 
+		virtual void CloseViewport() { m_Open = false; }
 
 	protected:
-		virtual void SetSelectedEntity(Entity entity) override
+		virtual void OnSelectedEntityChanged(Entity entity) override
 		{
+			if (m_ActiveScene != m_Scene)
+			{
+				m_SelectedEntity = {};
+				return;
+			}
 			m_SelectedEntity = entity;
 		}
+
 		virtual Entity GetSelectedEntity() const override { return m_SelectedEntity; }
 
 	protected:
@@ -37,6 +44,8 @@ namespace Crane {
 
 		Entity m_SelectedEntity;
 		int m_Index = -1;
+
+		bool m_Open = true;
 
 		friend class Viewports;
 

@@ -41,9 +41,8 @@ namespace Crane
 			LoadScene(scenePath);
 		}
 
-
 		m_Viewports.AddViewport<EditorViewport>("Scene", m_ActiveScene, (EditorLayer*)this);
-		m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
+		// m_Viewports.AddViewport<RuntimeViewport>("Game", m_ActiveScene);
 		m_Viewports.AddViewport<PrefabViewport>(this, "Prefab", UUID(11483811161296809980));
 
 		m_Panels.AddPanel<SceneHierarchyPanel>(m_ActiveScene, true);

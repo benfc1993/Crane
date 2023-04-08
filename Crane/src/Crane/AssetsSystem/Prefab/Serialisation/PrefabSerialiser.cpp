@@ -38,8 +38,8 @@ namespace Crane {
 	{
 
 		YAML::Emitter out;
-		auto& tc = entity.GetComponent<TransformComponent>();
-		tc.Position = { 0.0f, 0.0f, 0.0f };
+		// auto& tc = entity.GetComponent<TransformComponent>();
+		// tc.Position = { 0.0f, 0.0f, 0.0f };
 		SerialisePrefab(out, scene, entity, prefabScene);
 		std::ofstream fout(filepath.c_str());
 		fout << out.c_str();
@@ -112,6 +112,8 @@ namespace Crane {
 			for (auto entity : DeserialisedEntities)
 			{
 				auto& hc = entity.GetComponent<HierarchyComponent>();
+				auto& tc = entity.GetComponent<TransformComponent>();
+
 				if (hc.First != 0)
 				{
 					hc.First = entityIdConversions.at(hc.First);
@@ -120,16 +122,19 @@ namespace Crane {
 				if (hc.Parent == 0)
 				{
 					parentEntity = entity;
+					tc.WorldPosition = tc.Position;
 					if (resetPosition)
 					{
 						auto& tc = entity.GetComponent<TransformComponent>();
 
-						tc.Position = { 0.0f, 0.0f, 0.0f };
+						tc.WorldPosition = { 0.0f, 0.0f, 0.0f };
 					}
 				}
 				else
 				{
 					hc.Parent = entityIdConversions.at(hc.Parent);
+					auto parentTrans = scene->GetEntityByUUID(hc.Parent).GetComponent<TransformComponent>();
+					tc.WorldPosition = parentTrans.Position + tc.Position;
 				}
 
 				if (hc.Prev != 0)

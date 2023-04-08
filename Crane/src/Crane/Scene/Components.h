@@ -75,8 +75,6 @@ namespace Crane
 			return glm::translate(glm::mat4(1.0f), WorldPosition)
 				* rotation
 				* glm::scale(glm::mat4(1.0f), WorldScale);
-
-
 		}
 	};
 

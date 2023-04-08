@@ -12,7 +12,6 @@ namespace Crane {
     template <>
     YAML::Node ComponentDiffDeserialiser::DeserialiseComponentFieldDiff<TransformComponent>(YAML::Node original, YAML::Node updated, std::string fieldName, bool& changed)
     {
-        VALUE_DIFF("Rotation", glm::vec3);
         VALUE_DIFF_ALL(glm::vec3);
     }
 
@@ -57,7 +56,8 @@ namespace Crane {
     {
         VALUE_DIFF("Type", std::string);
         VALUE_DIFF("FixedRotation", bool);
-        return YAML::Node;
+        YAML::Node null;
+        return null;
     }
 
     template <>

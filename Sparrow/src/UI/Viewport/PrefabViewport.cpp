@@ -18,6 +18,12 @@ namespace Crane {
 		EditorViewport::OnUpdate(time);
 	}
 
+	void PrefabViewport::CloseViewport()
+	{
+		// m_editorLayer->OnClosePrefabEditor();
+		EditorViewport::CloseViewport();
+	}
+
 	void PrefabViewport::OnImGuiRender()
 	{
 		ImGui::BeginMenuBar();

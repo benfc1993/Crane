@@ -8,16 +8,16 @@
 
 
 namespace Crane {
-    class SceneToolbar : public Panel
+    class SceneToolbar: public Panel
     {
     public:
         template<typename F, typename G, typename H, typename I>
-        SceneToolbar(Ref<EditorSettings> editorSettings, F onPlay, G onStop, H onSimulateStart, I onSimulateStop) : m_EditorSettings(editorSettings), OnPlay(onPlay), OnStop(onStop), OnSimulateStart(onSimulateStart), OnSimulateStop(onSimulateStop), Panel(true) {}
+        SceneToolbar(Ref<EditorSettings> editorSettings, F onPlay, G onStop, H onSimulateStart, I onSimulateStop): m_EditorSettings(editorSettings), OnPlay(onPlay), OnStop(onStop), OnSimulateStart(onSimulateStart), OnSimulateStop(onSimulateStop), Panel(true) {}
 
         virtual void OnImGuiRender() override;
 
         virtual void SetActiveScene(const Ref<Scene>& scene) { m_ActiveScene = scene; }
-        virtual void SetSelectedEntity(Entity entity) {}
+        virtual void OnSelectedEntityChanged(Entity entity) {}
         virtual Entity GetSelectedEntity() const { return Entity{}; }
 
 

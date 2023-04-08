@@ -44,9 +44,11 @@ namespace Crane {
             if (diff)
             {
                 scene->Reg().patch<TransformComponent>(entity, [&](TransformComponent& transform) {
+                    PATCH_VALUE(WorldPosition, "WorldPosition", glm::vec3);
                     PATCH_VALUE(Position, "Position", glm::vec3);
                     PATCH_VALUE(Rotation, "Rotation", glm::vec3);
-                    PATCH_VALUE(Rotation, "Scale", glm::vec3);
+                    PATCH_VALUE(WorldScale, "WorldScale", glm::vec3);
+                    PATCH_VALUE(Scale, "Scale", glm::vec3);
                 });
             }
         }
